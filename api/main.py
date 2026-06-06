@@ -32,21 +32,28 @@ store = ProjectStore()
 
 @app.on_event("startup")
 def _load() -> None:
-    db_url = os.getenv("DATABASE_URL", "(not set)")
-    url_preview = db_url[:40] + "..." if len(str(db_url)) > 40 else db_url
-    log.info("DATABASE_URL env var: %s", url_preview)
+    import sys
+    log.info("Python version: %s", sys.version)
+    log.info("SUPABASE_URL: %s", os.getenv("SUPABASE_URL", "(using default)"))
+    log.info("SUPABASE_KEY: %s", "***" if os.getenv("SUPABASE_KEY") else "(using default)")
 
-    n = store.load_latest()
-    if n == 0:
-        log.error("CRITICAL: No projects loaded — database connection failed or empty")
-    else:
-        log.info("Successfully loaded %d projects from Supabase", n)
+    try:
+        n = store.load_latest()
+        if n == 0:
+            log.error("CRITICAL: No projects loaded from REST API")
+        else:
+            log.info("Successfully loaded %d projects from Supabase REST API", n)
+    except Exception as e:
+        log.error("FAILED to load projects: %s", e, exc_info=True)
 
-    if load_reputation():
-        log.info("reputation loaded: %d complaint-promoters, %d revoked",
-                 REPUTATION.total_complaint_promoters, REPUTATION.total_revoked)
-    else:
-        log.info("no reputation data loaded")
+    try:
+        if load_reputation():
+            log.info("reputation loaded: %d complaint-promoters, %d revoked",
+                     REPUTATION.total_complaint_promoters, REPUTATION.total_revoked)
+        else:
+            log.info("no reputation data loaded")
+    except Exception as e:
+        log.error("FAILED to load reputation: %s", e, exc_info=True)
 
 
 @app.get("/api/health")
