@@ -10,6 +10,7 @@ The frontend (web/) is served as static files at /.
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -31,14 +32,21 @@ store = ProjectStore()
 
 @app.on_event("startup")
 def _load() -> None:
+    db_url = os.getenv("DATABASE_URL", "(not set)")
+    url_preview = db_url[:40] + "..." if len(str(db_url)) > 40 else db_url
+    log.info("DATABASE_URL env var: %s", url_preview)
+
     n = store.load_latest()
     if n == 0:
-        log.warning("no snapshot data loaded — run the collector first")
+        log.error("CRITICAL: No projects loaded — database connection failed or empty")
+    else:
+        log.info("Successfully loaded %d projects from Supabase", n)
+
     if load_reputation():
         log.info("reputation loaded: %d complaint-promoters, %d revoked",
                  REPUTATION.total_complaint_promoters, REPUTATION.total_revoked)
     else:
-        log.info("no reputation snapshot — real projects will show N/A until collected")
+        log.info("no reputation data loaded")
 
 
 @app.get("/api/health")
