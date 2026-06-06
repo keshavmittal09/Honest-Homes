@@ -1,110 +1,113 @@
-"""Query reputation data from Supabase REST API."""
+"""Load reputation data from local JSONL snapshots."""
 
 from __future__ import annotations
 
+import glob
+import json
 import logging
 import os
-
-import httpx
+import re
+from pathlib import Path
 
 log = logging.getLogger("honesthomes.reputation")
 
-SUPABASE_URL = os.getenv("SUPABASE_URL") or "https://buhxytlquxsxziagooog.supabase.co"
-SUPABASE_KEY = os.getenv("SUPABASE_KEY") or "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1aHh5dGxxdXhzeHppYWdvb29nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MzE0NzYsImV4cCI6MjA5NjMwNzQ3Nn0.z-Tlbk9A843IPWrVtqEHRVKweOSwx-ndjBEfdc5ojAw"
+DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
 
-COMPLAINTS_API = f"{SUPABASE_URL}/rest/v1/complaints"
-REVOKED_API = f"{SUPABASE_URL}/rest/v1/revoked_projects"
+_SUFFIXES = re.compile(
+    r"\b(private|pvt|limited|ltd|llp|developers?|builders?|constructions?|"
+    r"realty|infra(structure)?|estates?|enterprises?|ventures?|co|company|and|&)\b",
+    re.IGNORECASE,
+)
+_NONWORD = re.compile(r"[^a-z0-9]+")
 
-HEADERS = {
-    "apikey": SUPABASE_KEY,
-    "Content-Type": "application/json",
-}
+
+def normalise_name(name: str) -> str:
+    s = (name or "").lower()
+    s = _SUFFIXES.sub(" ", s)
+    s = _NONWORD.sub(" ", s)
+    return " ".join(s.split())
 
 
 class ReputationStore:
     def __init__(self) -> None:
-        self.captured_at = "2026-06-04"
+        self.captured_at = ""
         self.loaded = False
-        self._client = httpx.Client(timeout=10.0)
+        self._complaints_by_promoter: dict[str, int] = {}
+        self._revoked_ids: set[str] = set()
+        self._revoked_by_promoter: dict[str, int] = {}
         self.total_complaint_promoters = 0
         self.total_revoked = 0
 
     def load_latest(self) -> bool:
-        """Load reputation counts from Supabase REST API."""
+        """Load from JSONL snapshots in data/snapshots/reputation/."""
         try:
-            # Count complaints
-            resp = self._client.get(
-                f"{COMPLAINTS_API}?select=count()",
-                headers=HEADERS,
+            snaps = sorted(
+                glob.glob(str(DATA_ROOT / "snapshots" / "reputation" / "*")),
+                key=os.path.getmtime,
+                reverse=True,
             )
-            if resp.status_code == 200:
-                data = resp.json()
-                self.total_complaint_promoters = data[0]["count"] if data else 0
+            if not snaps:
+                log.info("no reputation snapshot found")
+                return False
 
-            # Count revoked
-            resp = self._client.get(
-                f"{REVOKED_API}?select=count()",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                self.total_revoked = data[0]["count"] if data else 0
+            d = Path(snaps[0])
+            self.captured_at = d.name
+            log.info("loading reputation from %s", d)
+
+            # Load complaints
+            comp = d / "complaints.jsonl"
+            if comp.exists():
+                with open(comp, encoding="utf-8") as f:
+                    for line in f:
+                        if not line.strip():
+                            continue
+                        try:
+                            r = json.loads(line)
+                            key = normalise_name(r["promoter"])
+                            if key:
+                                self._complaints_by_promoter[key] = self._complaints_by_promoter.get(key, 0) + int(r["complaints"])
+                        except (json.JSONDecodeError, KeyError):
+                            continue
+                self.total_complaint_promoters = len(self._complaints_by_promoter)
+                log.info("loaded %d complaint-promoters", self.total_complaint_promoters)
+
+            # Load revoked
+            rev = d / "revoked.jsonl"
+            if rev.exists():
+                with open(rev, encoding="utf-8") as f:
+                    for line in f:
+                        if not line.strip():
+                            continue
+                        try:
+                            r = json.loads(line)
+                            if r.get("rera_id"):
+                                self._revoked_ids.add(r["rera_id"])
+                            key = normalise_name(r.get("promoter", ""))
+                            if key:
+                                self._revoked_by_promoter[key] = self._revoked_by_promoter.get(key, 0) + 1
+                        except (json.JSONDecodeError, KeyError):
+                            continue
+                self.total_revoked = len(self._revoked_ids)
+                log.info("loaded %d revoked projects", self.total_revoked)
 
             self.loaded = True
             log.info("reputation loaded: %d complaint-promoters, %d revoked (snapshot %s)",
                      self.total_complaint_promoters, self.total_revoked, self.captured_at)
             return True
         except Exception as e:
-            log.error("failed to load reputation: %s", e)
+            log.error("load_latest failed: %s", e, exc_info=True)
             return False
 
     def complaints_for(self, promoter: str) -> int | None:
-        """Get complaint count for a builder."""
+        """Complaint count for a builder."""
         if not self.loaded:
             return None
-        try:
-            # Case-insensitive search via REST API
-            resp = self._client.get(
-                f"{COMPLAINTS_API}?promoter=ilike.{promoter}&select=complaint_count",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                rows = resp.json()
-                return rows[0]["complaint_count"] if rows else 0
-            return None
-        except Exception as e:
-            log.error("complaints_for(%s) failed: %s", promoter, e)
-            return None
+        return self._complaints_by_promoter.get(normalise_name(promoter), 0)
 
     def is_revoked(self, rera_id: str, promoter: str = "") -> bool:
-        """Check if a project is revoked."""
-        if not self.loaded or not rera_id:
-            return False
-        try:
-            resp = self._client.get(
-                f"{REVOKED_API}?rera_id=eq.{rera_id}&select=rera_id",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                rows = resp.json()
-                return len(rows) > 0
-            return False
-        except Exception:
-            return False
+        return bool(rera_id) and rera_id in self._revoked_ids
 
     def revoked_count_for(self, promoter: str) -> int | None:
-        """Get count of revoked projects for a builder."""
         if not self.loaded:
             return None
-        try:
-            resp = self._client.get(
-                f"{REVOKED_API}?promoter=ilike.{promoter}&select=count()",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                return data[0]["count"] if data else 0
-            return None
-        except Exception as e:
-            log.error("revoked_count_for(%s) failed: %s", promoter, e)
-            return None
+        return self._revoked_by_promoter.get(normalise_name(promoter), 0)

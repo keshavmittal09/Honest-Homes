@@ -34,7 +34,10 @@ wheels/
 data/snapshots/*/recon/
 data/snapshots/*/checkpoint.json
 data/snapshots/index/2026-06-01/
+data/snapshots/index/2026-06-02/snapshot.json
+data/snapshots/reputation/2026-06-04/snapshot.json
 
-# But commit the deployed snapshots
-!data/snapshots/index/2026-06-02/
-!data/snapshots/reputation/2026-06-04/
+# But commit the JSONL files needed for deployment
+!data/snapshots/index/2026-06-02/rows.jsonl
+!data/snapshots/reputation/2026-06-04/complaints.jsonl
+!data/snapshots/reputation/2026-06-04/revoked.jsonl
