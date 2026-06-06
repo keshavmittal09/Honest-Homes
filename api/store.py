@@ -25,9 +25,16 @@ class ProjectStore:
         """Get or reuse database connection."""
         if self._conn is None or self._conn.closed:
             try:
-                self._conn = psycopg2.connect(SUPABASE_URL, sslmode="require")
-            except psycopg2.OperationalError:
-                self._conn = psycopg2.connect(SUPABASE_URL)
+                # Try with SSL first (production)
+                self._conn = psycopg2.connect(SUPABASE_URL, sslmode="require", connect_timeout=5)
+            except Exception as e:
+                log.warning("SSL connection failed: %s, trying without SSL", e)
+                try:
+                    # Fallback to no SSL (local development)
+                    self._conn = psycopg2.connect(SUPABASE_URL, connect_timeout=5)
+                except Exception as e2:
+                    log.error("Database connection failed: %s", e2)
+                    raise
         return self._conn
 
     def load_latest(self) -> int:
