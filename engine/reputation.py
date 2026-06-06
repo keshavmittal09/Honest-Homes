@@ -1,9 +1,8 @@
-"""Load + index the captcha-free reputation snapshot for use by the verdict engine.
+"""Query reputation data (complaints, revocations) from Supabase.
 
 Joins reputation data to a project by:
   • promoter name  -> complaints (normalised match)
   • rera_id / promoter -> revoked status
-And computes per-builder track records (how many of a builder's projects are revoked).
 
 Builder-name matching is deliberately conservative: we normalise (lowercase, strip
 punctuation/whitespace/legal suffixes) and match exactly on the normalised key. This
@@ -13,16 +12,17 @@ avoids false "this builder has complaints" claims — on a trust product, a fals
 
 from __future__ import annotations
 
-import glob
-import json
 import logging
 import os
 import re
-from pathlib import Path
+from typing import Optional
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 log = logging.getLogger("honesthomes.reputation")
 
-DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
+SUPABASE_URL = os.getenv("DATABASE_URL") or "postgresql://postgres:honesthomes_001@db.buhxytlquxsxziagooog.supabase.co:5432/postgres"
 
 # Legal-form suffixes stripped during normalisation so "Lodha Developers Ltd" and
 # "Lodha Developers Limited" match.
@@ -43,65 +43,79 @@ def normalise_name(name: str) -> str:
 
 class ReputationStore:
     def __init__(self) -> None:
-        self.captured_at = ""
+        self.captured_at = "2026-06-04"
         self.loaded = False
-        self._complaints_by_promoter: dict[str, int] = {}   # normalised -> count
-        self._revoked_ids: set[str] = set()                 # rera_ids that are revoked
-        self._revoked_by_promoter: dict[str, int] = {}      # normalised -> #revoked projects
+        self._conn: Optional[psycopg2.extensions.connection] = None
         self.total_complaint_promoters = 0
         self.total_revoked = 0
 
+    def _get_conn(self) -> psycopg2.extensions.connection:
+        """Get or reuse database connection."""
+        if self._conn is None or self._conn.closed:
+            try:
+                self._conn = psycopg2.connect(SUPABASE_URL, sslmode="require")
+            except psycopg2.OperationalError:
+                self._conn = psycopg2.connect(SUPABASE_URL)
+        return self._conn
+
     def load_latest(self) -> bool:
-        snaps = sorted(
-            glob.glob(str(DATA_ROOT / "snapshots" / "reputation" / "*")),
-            key=os.path.getmtime,
-        )
-        if not snaps:
-            log.info("no reputation snapshot found — verdicts stay index-only")
+        """Connect to Supabase and load reputation counts."""
+        try:
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM complaints")
+                self.total_complaint_promoters = cur.fetchone()[0]
+                cur.execute("SELECT COUNT(*) FROM revoked_projects")
+                self.total_revoked = cur.fetchone()[0]
+            self.loaded = True
+            log.info("reputation loaded: %d complaint-promoters, %d revoked (snapshot %s)",
+                     self.total_complaint_promoters, self.total_revoked, self.captured_at)
+            return True
+        except Exception as e:
+            log.error("failed to load reputation: %s", e)
             return False
-        d = Path(snaps[-1])
-        self.captured_at = d.name
 
-        comp = d / "complaints.jsonl"
-        if comp.exists():
-            for line in comp.read_text(encoding="utf-8").splitlines():
-                if not line.strip():
-                    continue
-                r = json.loads(line)
-                key = normalise_name(r["promoter"])
-                if key:
-                    self._complaints_by_promoter[key] = self._complaints_by_promoter.get(key, 0) + int(r["complaints"])
-            self.total_complaint_promoters = len(self._complaints_by_promoter)
-
-        rev = d / "revoked.jsonl"
-        if rev.exists():
-            for line in rev.read_text(encoding="utf-8").splitlines():
-                if not line.strip():
-                    continue
-                r = json.loads(line)
-                if r.get("rera_id"):
-                    self._revoked_ids.add(r["rera_id"])
-                key = normalise_name(r.get("promoter", ""))
-                if key:
-                    self._revoked_by_promoter[key] = self._revoked_by_promoter.get(key, 0) + 1
-            self.total_revoked = len(self._revoked_ids)
-
-        self.loaded = True
-        log.info("reputation loaded: %d complaint-promoters, %d revoked (snapshot %s)",
-                 self.total_complaint_promoters, self.total_revoked, self.captured_at)
-        return True
-
-    # --- lookups used by the verdict engine ---
     def complaints_for(self, promoter: str) -> int | None:
-        """Complaint count for a builder. 0 means 'checked, none found'. None = not loaded."""
+        """Get complaint count for a builder from Supabase."""
         if not self.loaded:
             return None
-        return self._complaints_by_promoter.get(normalise_name(promoter), 0)
+        try:
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT complaint_count FROM complaints WHERE LOWER(promoter) = LOWER(%s)",
+                    (promoter,),
+                )
+                row = cur.fetchone()
+            return row[0] if row else 0
+        except Exception as e:
+            log.error("complaints_for(%s) failed: %s", promoter, e)
+            return None
 
     def is_revoked(self, rera_id: str, promoter: str = "") -> bool:
-        return bool(rera_id) and rera_id in self._revoked_ids
+        """Check if a project is revoked."""
+        if not self.loaded or not rera_id:
+            return False
+        try:
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM revoked_projects WHERE rera_id = %s", (rera_id,))
+            return bool(cur.fetchone())
+        except Exception:
+            return False
 
     def revoked_count_for(self, promoter: str) -> int | None:
+        """Get count of revoked projects for a builder."""
         if not self.loaded:
             return None
-        return self._revoked_by_promoter.get(normalise_name(promoter), 0)
+        try:
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) FROM revoked_projects WHERE LOWER(promoter) = LOWER(%s)",
+                    (promoter,),
+                )
+                return cur.fetchone()[0]
+        except Exception as e:
+            log.error("revoked_count_for(%s) failed: %s", promoter, e)
+            return None
