@@ -1,25 +1,17 @@
-"""Query reputation data from Supabase REST API."""
+"""Query reputation data from Supabase PostgreSQL database."""
 
 from __future__ import annotations
 
 import logging
 import os
 import re
+from typing import Optional
 
-import httpx
+import psycopg2
 
 log = logging.getLogger("honesthomes.reputation")
 
-SUPABASE_URL = os.getenv("SUPABASE_URL") or "https://buhxytlquxsxziagooog.supabase.co"
-SUPABASE_KEY = os.getenv("SUPABASE_KEY") or "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1aHh5dGxxdXhzeFppYWdvb29nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0NzE2NTEsImV4cCI6MTczMzAyMzY1MX0.MsaXkGhCl7gzCz5p4kU_EaZrZ4-dRvH6-4Z1W8L7u-0"
-
-COMPLAINTS_API = f"{SUPABASE_URL}/rest/v1/complaints"
-REVOKED_API = f"{SUPABASE_URL}/rest/v1/revoked_projects"
-
-HEADERS = {
-    "apikey": SUPABASE_KEY,
-    "Content-Type": "application/json",
-}
+SUPABASE_URL = os.getenv("DATABASE_URL") or "postgresql://postgres:honesthomes_001@db.buhxytlquxsxziagooog.supabase.co:5432/postgres"
 
 _SUFFIXES = re.compile(
     r"\b(private|pvt|limited|ltd|llp|developers?|builders?|constructions?|"
@@ -40,29 +32,25 @@ class ReputationStore:
     def __init__(self) -> None:
         self.captured_at = "2026-06-04"
         self.loaded = False
-        self._client = httpx.Client(timeout=10.0)
+        self._conn: Optional[psycopg2.extensions.connection] = None
         self.total_complaint_promoters = 0
         self.total_revoked = 0
 
+    def _get_conn(self) -> psycopg2.extensions.connection:
+        """Get or reuse database connection."""
+        if self._conn is None or self._conn.closed:
+            self._conn = psycopg2.connect(SUPABASE_URL, sslmode="prefer", connect_timeout=5)
+        return self._conn
+
     def load_latest(self) -> bool:
-        """Load reputation counts from Supabase REST API."""
+        """Load reputation counts from Supabase."""
         try:
-            # Count complaints
-            resp = self._client.get(
-                f"{COMPLAINTS_API}?select=count()",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                self.total_complaint_promoters = resp.json()[0]["count"]
-
-            # Count revoked
-            resp = self._client.get(
-                f"{REVOKED_API}?select=count()",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                self.total_revoked = resp.json()[0]["count"]
-
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM complaints")
+                self.total_complaint_promoters = cur.fetchone()[0]
+                cur.execute("SELECT COUNT(*) FROM revoked_projects")
+                self.total_revoked = cur.fetchone()[0]
             self.loaded = True
             log.info("reputation loaded: %d complaint-promoters, %d revoked (snapshot %s)",
                      self.total_complaint_promoters, self.total_revoked, self.captured_at)
@@ -76,14 +64,14 @@ class ReputationStore:
         if not self.loaded:
             return None
         try:
-            resp = self._client.get(
-                f"{COMPLAINTS_API}?promoter=ilike.{promoter}&select=complaint_count",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                rows = resp.json()
-                return rows[0]["complaint_count"] if rows else 0
-            return None
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT complaint_count FROM complaints WHERE LOWER(promoter) = LOWER(%s)",
+                    (promoter,),
+                )
+                row = cur.fetchone()
+            return row[0] if row else 0
         except Exception as e:
             log.error("complaints_for(%s) failed: %s", promoter, e)
             return None
@@ -93,14 +81,10 @@ class ReputationStore:
         if not self.loaded or not rera_id:
             return False
         try:
-            resp = self._client.get(
-                f"{REVOKED_API}?rera_id=eq.{rera_id}&select=rera_id",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                rows = resp.json()
-                return len(rows) > 0
-            return False
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM revoked_projects WHERE rera_id = %s", (rera_id,))
+            return bool(cur.fetchone())
         except Exception:
             return False
 
@@ -109,13 +93,13 @@ class ReputationStore:
         if not self.loaded:
             return None
         try:
-            resp = self._client.get(
-                f"{REVOKED_API}?promoter=ilike.{promoter}&select=count()",
-                headers=HEADERS,
-            )
-            if resp.status_code == 200:
-                return resp.json()[0]["count"]
-            return None
+            conn = self._get_conn()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT COUNT(*) FROM revoked_projects WHERE LOWER(promoter) = LOWER(%s)",
+                    (promoter,),
+                )
+                return cur.fetchone()[0]
         except Exception as e:
             log.error("revoked_count_for(%s) failed: %s", promoter, e)
             return None
