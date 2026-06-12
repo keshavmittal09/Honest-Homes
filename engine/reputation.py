@@ -13,19 +13,56 @@ log = logging.getLogger("honesthomes.reputation")
 
 DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
 
-_SUFFIXES = re.compile(
-    r"\b(private|pvt|limited|ltd|llp|developers?|builders?|constructions?|"
-    r"realty|infra(structure)?|estates?|enterprises?|ventures?|co|company|and|&)\b",
-    re.IGNORECASE,
-)
 _NONWORD = re.compile(r"[^a-z0-9]+")
+
+# Legal-form words: never identify a builder, always safe to drop so
+# "Lodha Developers Ltd" == "Lodha Developers Limited".
+_LEGAL = {"private", "pvt", "limited", "ltd", "llp", "co", "company", "and"}
+
+# Business-type words: descriptive, but dropping them can collapse distinct
+# builders ("Sai Constructions" vs "Sai Builders" both -> "sai"). We only drop
+# these when enough distinguishing core remains (see normalise_name).
+_BIZTYPE = {
+    "developer", "developers", "builder", "builders", "construction",
+    "constructions", "realty", "infra", "infrastructure", "estate", "estates",
+    "enterprise", "enterprises", "venture", "ventures",
+}
+
+# Below this many non-legal tokens, we keep the business-type word(s) rather
+# than strip a name down to a single generic token like "sai" or "krishna".
+_MIN_CORE_TOKENS = 2
 
 
 def normalise_name(name: str) -> str:
+    """Normalise a builder name for matching.
+
+    Two-tier stripping that avoids the over-merge that smears unrelated builders:
+      • legal forms (ltd/limited/pvt/llp/co/and) are always removed;
+      • business-type words (developers/builders/realty/…) are removed only while
+        the remaining core stays >= _MIN_CORE_TOKENS tokens, so single-name
+        builders ("Sai Constructions") keep a distinguishing word.
+    """
     s = (name or "").lower()
-    s = _SUFFIXES.sub(" ", s)
     s = _NONWORD.sub(" ", s)
-    return " ".join(s.split())
+    tokens = [t for t in s.split() if t and t not in _LEGAL]
+
+    # Drop business-type words, but stop once the core would get too short.
+    core = [t for t in tokens if t not in _BIZTYPE]
+    if len(core) >= _MIN_CORE_TOKENS:
+        tokens = core
+    else:
+        # Keep the first business-type word as a discriminator; drop the rest.
+        kept_biz = False
+        out: list[str] = []
+        for t in tokens:
+            if t in _BIZTYPE:
+                if kept_biz:
+                    continue
+                kept_biz = True
+            out.append(t)
+        tokens = out
+
+    return " ".join(tokens)
 
 
 class ReputationStore:
