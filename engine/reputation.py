@@ -41,16 +41,19 @@ class ReputationStore:
     def load_latest(self) -> bool:
         """Load from JSONL snapshots in data/snapshots/reputation/."""
         try:
+            # Only dated snapshot DIRECTORIES (e.g. 2026-06-04/), never the loose
+            # files some repos also keep directly under reputation/. Sort by NAME so
+            # the newest date wins — mtime is unreliable after a git clone (Render),
+            # where every file shares the clone timestamp.
             snaps = sorted(
-                glob.glob(str(DATA_ROOT / "snapshots" / "reputation" / "*")),
-                key=os.path.getmtime,
-                reverse=True,
+                d for d in glob.glob(str(DATA_ROOT / "snapshots" / "reputation" / "*"))
+                if os.path.isdir(d)
             )
             if not snaps:
                 log.info("no reputation snapshot found")
                 return False
 
-            d = Path(snaps[0])
+            d = Path(snaps[-1])
             self.captured_at = d.name
             log.info("loading reputation from %s", d)
 
