@@ -143,21 +143,40 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
             ))
 
         # --- Complaints against the promoter -----------------------------------
+        # Normalise by the builder's project count: 9 complaints on a 1-project
+        # builder is alarming; the same on an 80-project builder is ordinary. We
+        # penalise on complaints-PER-PROJECT, with no upper cap so egregious
+        # records keep scoring worse.
         complaints = reputation.complaints_for(promoter)
         if complaints and complaints > 0:
-            pts = -1 if complaints <= 2 else -3 if complaints <= 9 else -5
-            kind = "caution" if complaints <= 2 else "negative"
+            n_proj = max(1, reputation.projects_for(promoter))
+            ratio = complaints / n_proj
+            # Per-project ratio -> penalty. Tunable thresholds; uncapped tail.
+            if ratio < 0.25:
+                pts, kind = -1, "caution"
+            elif ratio < 0.75:
+                pts, kind = -3, "negative"
+            elif ratio < 1.5:
+                pts, kind = -5, "negative"
+            else:
+                pts, kind = -7, "negative"  # >=1.5 complaints per project: severe
+            proj_note = (f" across {n_proj} project(s) on record" if n_proj > 1
+                         else " on its sole project on record")
             signals.append(Signal(
                 key="complaints", points=pts,
                 reason=(f"{complaints} consumer complaint(s) filed against this builder "
-                        "with MahaRERA."),
+                        f"with MahaRERA{proj_note} "
+                        f"(~{ratio:.1f} per project)."),
                 source=_SRC_COMPLAINTS, as_of=rep_as_of, kind=kind,
             ))
         else:
+            # Absence of complaints is NOT proof of a clean builder — our complaint
+            # register covers only a minority of promoters. Treat as neutral (0),
+            # never a positive bonus, and say "on record" not "clean".
             signals.append(Signal(
-                key="no_complaints", points=2,
-                reason="No consumer complaints found against this builder in the MahaRERA register.",
-                source=_SRC_COMPLAINTS, as_of=rep_as_of, kind="positive",
+                key="no_complaints", points=0,
+                reason="No consumer complaints found on record against this builder in the MahaRERA register.",
+                source=_SRC_COMPLAINTS, as_of=rep_as_of, kind="neutral",
             ))
 
         # --- Honest coverage note (we have reputation, not yet delay history) ---
@@ -191,14 +210,33 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
 def _band_and_headline_scored(score: int, signals: list[Signal], project: dict) -> tuple[str, str]:
     name = project.get("project_name") or "This project"
     builder = project.get("promoter_name") or "the builder"
+
+    # Revoked is always the top red flag, regardless of score.
     if any(s.key == "revoked" for s in signals):
         return BAND_RED, f"{name}'s MahaRERA registration has been revoked — treat with serious caution."
+
     comp = next((s for s in signals if s.key == "complaints"), None)
-    if score >= 7:
-        return BAND_GREEN, f"{name} looks clean on the public MahaRERA record — registered, no complaints found."
-    if score >= 4:
-        msg = f"{name} is registered"
-        if comp:
-            msg += f", but {builder} has complaints on record"
-        return BAND_AMBER, msg + " — worth a closer look."
-    return BAND_RED, f"{name} has serious flags on the MahaRERA record — look closely before proceeding."
+    revoked_sib = any(s.key == "revoked_siblings" for s in signals)
+
+    # GREEN is a positive claim, so it requires the ABSENCE of any negative signal
+    # — not merely a high score from the registered baseline. A builder with
+    # complaints or revoked siblings can never be green, even if the math is high.
+    if score >= 7 and comp is None and not revoked_sib:
+        return BAND_GREEN, (f"{name} is RERA-registered with no complaints or revocations "
+                            "on the public MahaRERA record — but this is a baseline check, "
+                            "not a full clearance.")
+
+    # RED for serious complaint load or low score.
+    if comp is not None and comp.points <= -5:
+        return BAND_RED, (f"{builder} has a heavy complaint record on MahaRERA relative to its "
+                          f"project count — look very closely before proceeding with {name}.")
+    if score < 4:
+        return BAND_RED, f"{name} has serious flags on the MahaRERA record — look closely before proceeding."
+
+    # Everything else is AMBER (caution / incomplete picture).
+    msg = f"{name} is registered"
+    if comp is not None:
+        msg += f", but {builder} has complaints on record"
+    elif revoked_sib:
+        msg += f", but {builder} has other revoked projects on record"
+    return BAND_AMBER, msg + " — worth a closer look."
