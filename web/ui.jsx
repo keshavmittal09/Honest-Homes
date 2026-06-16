@@ -197,4 +197,162 @@ function useToast() {
   return [node, show];
 }
 
-Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON });
+// ============================================================
+// Contact / "request a project" config
+// ------------------------------------------------------------
+// HOW SUBMISSIONS REACH YOU — set ONE of these:
+//   • formEndpoint: a Formspree/Tally/Formspark POST URL. When set, the in-app
+//     form submits silently to it and you receive each request by email/dashboard.
+//     (Recommended — survives Render's ephemeral filesystem.)
+//   • If formEndpoint is "", the form falls back to opening the user's email app
+//     addressed to `email` with everything pre-filled.
+// whatsapp: optional digits-only number (e.g. "9198XXXXXXXX") to also offer a
+//   "Chat on WhatsApp" shortcut. Leave "" to hide it.
+const HH_CONTACT = {
+  formEndpoint: "",                         // TODO: paste your Formspree URL to enable in-app submit
+  email: "shardul.buildup@gmail.com",       // TODO: confirm/replace the destination inbox
+  whatsapp: "",                             // TODO: optional, digits only e.g. "9199XXXXXXXX"
+};
+
+// ---------- Share menu (multi-channel) ----------
+function ShareMenu({ url, title, size = "sm" }) {
+  const [open, setOpen] = useState(false);
+  const [toast, showToast] = useToast();
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onEsc = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onEsc);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onEsc); };
+  }, [open]);
+
+  const enc = encodeURIComponent;
+  const text = title || "The honest verdict on this builder";
+  const channels = [
+    { key: "whatsapp", label: "WhatsApp", icon: "whatsapp", href: `https://wa.me/?text=${enc(text + " " + url)}` },
+    { key: "x",        label: "X (Twitter)", icon: "x-twitter", href: `https://twitter.com/intent/tweet?text=${enc(text)}&url=${enc(url)}` },
+    { key: "telegram", label: "Telegram", icon: "telegram", href: `https://t.me/share/url?url=${enc(url)}&text=${enc(text)}` },
+    { key: "facebook", label: "Facebook", icon: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}` },
+    { key: "email",    label: "Email", icon: "mail", href: `mailto:?subject=${enc(text)}&body=${enc(text + "\n\n" + url)}` },
+  ];
+  const copy = () => {
+    const done = () => showToast("Link copied to clipboard");
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done); else done();
+    setOpen(false);
+  };
+  const canNative = typeof navigator !== "undefined" && !!navigator.share;
+  const native = () => { navigator.share({ title: text, url }).catch(() => {}); setOpen(false); };
+
+  return h("div", { className: "sharewrap", ref },
+    toast,
+    h("button", { className: `btn btn-ghost btn-${size}`, onClick: () => setOpen(o => !o),
+        "aria-haspopup": "menu", "aria-expanded": open },
+      h(Icon, { name: "share", size: 15 }), "Share"),
+    open && h("div", { className: "share-menu fade-in", role: "menu" },
+      canNative && h("button", { className: "share-item", onClick: native, role: "menuitem" },
+        h(Icon, { name: "more", size: 16 }), "Share via apps…"),
+      channels.map(c => h("a", { key: c.key, className: "share-item", href: c.href,
+          target: "_blank", rel: "noopener", role: "menuitem", onClick: () => setOpen(false) },
+        h(Icon, { name: c.icon, size: 16 }), c.label)),
+      h("button", { className: "share-item", onClick: copy, role: "menuitem" },
+        h(Icon, { name: "copy", size: 16 }), "Copy link")
+    )
+  );
+}
+
+// ---------- Contact / request-a-project modal ----------
+function ContactModal({ prefill, onClose }) {
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [project, setProject] = useState(prefill || "");
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    const onEsc = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onEsc);
+    return () => document.removeEventListener("keydown", onEsc);
+  }, []);
+
+  const subject = `Honest Homes — project request: ${project || "(unspecified)"}`;
+  const submit = async (e) => {
+    e.preventDefault();
+    setErr("");
+    if (!name.trim() || !contact.trim() || !project.trim()) {
+      setErr("Please add your name, a contact, and the project or builder."); return;
+    }
+    setBusy(true);
+    const payload = { name, contact, project, message, _subject: subject };
+    try {
+      if (HH_CONTACT.formEndpoint) {
+        const r = await fetch(HH_CONTACT.formEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!r.ok) throw new Error("bad status");
+        setSent(true);
+      } else {
+        const body = `Name: ${name}\nContact: ${contact}\nProject / Builder: ${project}\n\nMessage:\n${message || "—"}`;
+        window.location.href = `mailto:${HH_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        setSent(true);
+      }
+    } catch (_) {
+      setErr(`Couldn't send right now — please email ${HH_CONTACT.email} directly.`);
+    }
+    setBusy(false);
+  };
+
+  const field = (label, node) => h("label", { className: "field" },
+    h("span", { className: "field-l" }, label), node);
+
+  return h("div", { className: "modal-overlay no-print", onMouseDown: onClose },
+    h("div", { className: "modal", onMouseDown: e => e.stopPropagation(), role: "dialog", "aria-modal": "true" },
+      h("button", { className: "modal-close", onClick: onClose, "aria-label": "Close" }, h(Icon, { name: "close", size: 17 })),
+      sent
+        ? h("div", { style: { textAlign: "center", padding: "14px 6px 6px" } },
+            h("div", { className: "modal-ico ok" }, h(Icon, { name: "check", size: 26 })),
+            h("h3", { className: "serif", style: { fontSize: 21, fontWeight: 600, marginTop: 12 } }, "Thanks — we're on it."),
+            h("p", { className: "muted", style: { fontSize: 14, marginTop: 8, lineHeight: 1.55 } },
+              "We'll look into ", h("b", { style: { color: "var(--ink)" } }, project), " and get back to you. Adding new projects to the index is exactly how Honest Homes grows."),
+            h("button", { className: "btn btn-primary", style: { marginTop: 18 }, onClick: onClose }, "Done"))
+        : h("div", null,
+            h("div", { className: "row gap-12", style: { alignItems: "flex-start", marginBottom: 4 } },
+              h("div", { className: "modal-ico" }, h(Icon, { name: "message", size: 22 })),
+              h("div", null,
+                h("h3", { className: "serif", style: { fontSize: 21, fontWeight: 600 } }, "Can't find your project?"),
+                h("p", { className: "muted", style: { fontSize: 13.5, marginTop: 4, lineHeight: 1.5 } },
+                  "Tell us the project or builder you're looking for and we'll add it to our MahaRERA index and follow up."))),
+            h("form", { onSubmit: submit, className: "modal-form" },
+              field("Project or builder *", h("input", { value: project, onChange: e => setProject(e.target.value), placeholder: "e.g. Lodha Park, Worli" })),
+              h("div", { className: "form-2col" },
+                field("Your name *", h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Full name" })),
+                field("Phone or email *", h("input", { value: contact, onChange: e => setContact(e.target.value), placeholder: "How we reach you" }))),
+              field("Anything else (optional)", h("textarea", { value: message, onChange: e => setMessage(e.target.value), rows: 3, placeholder: "Location, RERA ID, or what you'd like to know" })),
+              err && h("div", { className: "form-err" }, h(Icon, { name: "info", size: 14 }), err),
+              h("div", { className: "row gap-8", style: { marginTop: 4, justifyContent: "flex-end" } },
+                HH_CONTACT.whatsapp && h("a", { className: "btn btn-ghost btn-sm", target: "_blank", rel: "noopener",
+                    href: `https://wa.me/${HH_CONTACT.whatsapp}?text=${encodeURIComponent("Hi Honest Homes, I'm looking for: " + (project || ""))}` },
+                  h(Icon, { name: "whatsapp", size: 15 }), "WhatsApp"),
+                h("button", { type: "submit", className: "btn btn-primary", disabled: busy },
+                  busy ? "Sending…" : h("span", { className: "row gap-8" }, h(Icon, { name: "send", size: 15 }), "Send request"))))
+          )
+    )
+  );
+}
+
+// Trigger button + its own modal state. Drop in anywhere.
+function ContactButton({ prefill, label = "Request a project", variant = "btn-ghost", size = "sm", icon = "message" }) {
+  const [open, setOpen] = useState(false);
+  return h(React.Fragment, null,
+    h("button", { className: `btn ${variant} btn-${size}`, onClick: () => setOpen(true) },
+      h(Icon, { name: icon, size: 15 }), label),
+    open && h(ContactModal, { prefill, onClose: () => setOpen(false) })
+  );
+}
+
+Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton });

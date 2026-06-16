@@ -42,6 +42,10 @@ function Landing({ go, onSearch }) {
       h("div", { className: "chips" },
         window.HH.exampleChips.map(c => h("button", { key: c, className: "chip", onClick: () => onSearch(c) }, c))
       ),
+      h("div", { className: "row gap-8", style: { marginTop: 14, fontSize: 13, color: "var(--ink-3)" } },
+        h("span", null, "Don't see your project?"),
+        h(window.ContactButton, { label: "Request it", variant: "btn-quiet", size: "sm", icon: "message" })
+      ),
       h("div", { className: "creds" },
         h("span", { className: "c" }, h(Icon_s, { name: "shield-check", size: 15, style: { color: "var(--brand)" } }),
           "Sourced from ", h("b", null, "official MahaRERA")),
@@ -189,7 +193,9 @@ function EmptyState({ query, filter, onClear }) {
       filter !== "all"
         ? "Try clearing the filter, or search a different name. Our index covers ~44,000 of Maharashtra's RERA projects."
         : "Our index covers ~44,000 MahaRERA projects. Try a builder name (e.g. Lodha, Godrej) or a district."),
-    filter !== "all" && h("button", { className: "btn btn-ghost btn-sm", style: { marginTop: 16 }, onClick: onClear }, "Clear filter")
+    h("div", { className: "row gap-8", style: { marginTop: 18, justifyContent: "center", flexWrap: "wrap" } },
+      filter !== "all" && h("button", { className: "btn btn-ghost btn-sm", onClick: onClear }, "Clear filter"),
+      filter === "all" && h(window.ContactButton, { prefill: query, label: "Can't find it? Tell us", variant: "btn-primary", size: "md" }))
   );
 }
 

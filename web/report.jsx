@@ -17,7 +17,7 @@ function RptRow({ s }) {
   );
 }
 
-function Report({ id, go }) {
+function Report({ id, go, print }) {
   const [data, setData] = useStateR(null);
   const [loading, setLoading] = useStateR(true);
   const [toast, showToast] = window.useToast();
@@ -27,6 +27,15 @@ function Report({ id, go }) {
     window.HH.project(id).then(d => { if (alive) { setData(d); setLoading(false); } });
     return () => { alive = false; };
   }, [id]);
+
+  // When reached via "Download report", open the browser's Save-as-PDF dialog
+  // automatically once the report has rendered.
+  useEffectR(() => {
+    if (print && data && data.project) {
+      const t = setTimeout(() => window.print(), 450);
+      return () => clearTimeout(t);
+    }
+  }, [print, data]);
 
   if (loading) {
     return h("div", { style: { padding: "60px 16px", textAlign: "center" } },
@@ -45,11 +54,8 @@ function Report({ id, go }) {
   const bandWord = { green: "CLEAN", amber: "CAUTION", red: "SERIOUS FLAGS", incomplete: "INCOMPLETE" }[p.band];
   const reraUrl = p.detailUrl || "https://maharera.maharashtra.gov.in/projects-search-result";
 
-  const copyLink = () => {
-    const url = `${location.origin}${location.pathname}#/report/${encodeURIComponent(p.id)}`;
-    const done = () => showToast("Report link copied");
-    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done); else done();
-  };
+  const shareUrl = `${location.origin}${location.pathname}#/verdict/${encodeURIComponent(p.id)}`;
+  const shareTitle = `Honest Homes verdict — ${p.name} (${p.builder})`;
 
   return h("div", { style: { padding: "26px 16px 70px", background: "var(--paper)" } },
     toast,
@@ -58,8 +64,7 @@ function Report({ id, go }) {
       h("button", { className: "btn btn-quiet btn-sm", onClick: () => go.verdict(p.id) },
         h(Icon_r, { name: "back", size: 15 }), "Back to verdict"),
       h("div", { className: "row gap-8" },
-        h("button", { className: "btn btn-ghost btn-sm", onClick: copyLink },
-          h(Icon_r, { name: "share", size: 15 }), "Copy link"),
+        h(window.ShareMenu, { url: shareUrl, title: shareTitle }),
         h("button", { className: "btn btn-primary btn-sm", onClick: () => window.print() },
           h(Icon_r, { name: "download", size: 15 }), "Download / Print PDF"))
     ),

@@ -26,6 +26,7 @@ function App() {
     results: () => nav({ name: "results" }),
     verdict: (id) => nav({ name: "verdict", id }),
     report: (id) => nav({ name: "report", id }),
+    download: (id) => nav({ name: "report", id, print: true }),
     ds: () => nav({ name: "ds" }),
     back: () => { setHist(hh => { if (hh.length) { setRoute(hh[hh.length - 1]); return hh.slice(0, -1); } setRoute({ name: "results" }); return hh; }); },
   };
@@ -35,7 +36,7 @@ function App() {
   if (route.name === "home") screen = h(Landing, { go, onSearch });
   else if (route.name === "results") screen = h(Results, { query, go, onSearch });
   else if (route.name === "verdict") screen = h(Verdict, { id: route.id, go });
-  else if (route.name === "report") screen = h(Report, { id: route.id, go });
+  else if (route.name === "report") screen = h(Report, { id: route.id, go, print: route.print });
   else if (route.name === "ds") screen = h(DesignSystem, { go });
 
   const chrome = h("div", { className: "chrome" },

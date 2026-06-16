@@ -31,7 +31,8 @@ function Verdict({ id, go }) {
   if (!data || !data.project) {
     return h("div", { className: "wrap", style: { paddingTop: 80, textAlign: "center" } },
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back }, h(Icon_v, { name: "back", size: 15 }), "Back"),
-      h("p", { className: "muted", style: { marginTop: 16 } }, "We couldn't load that project from the current dataset. It may be outside our index."));
+      h("p", { className: "muted", style: { marginTop: 16, marginBottom: 16 } }, "We couldn't load that project from the current dataset. It may be outside our index."),
+      h(ContactButton, { prefill: id, label: "Tell us about this project", variant: "btn-primary", size: "md" }));
   }
 
   const p = data.project;
@@ -44,11 +45,8 @@ function Verdict({ id, go }) {
   const mapUrl = p.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || "") + " " + (p.district || "") + " Maharashtra")}`;
   const asOf = p.dataAsOf || (p.signals && p.signals[0] && p.signals[0].asOf) || window.HH.meta().asOf;
 
-  const shareLink = () => {
-    const url = `${location.origin}${location.pathname}#/verdict/${encodeURIComponent(p.id)}`;
-    const done = () => showToast("Link copied to clipboard");
-    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done); else done();
-  };
+  const shareUrl = `${location.origin}${location.pathname}#/verdict/${encodeURIComponent(p.id)}`;
+  const shareTitle = `Honest Homes verdict — ${p.name} (${p.builder})`;
 
   const flags = p.signals.filter(s => s.kind === "severe" || (s.kind === "caution" && (p.band === "amber" || p.band === "red")));
 
@@ -59,10 +57,9 @@ function Verdict({ id, go }) {
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back },
         h(Icon_v, { name: "back", size: 15 }), "Back to results"),
       h("div", { className: "row gap-8" },
-        h("button", { className: "btn btn-ghost btn-sm", onClick: shareLink },
-          h(Icon_v, { name: "share", size: 15 }), "Copy link"),
-        h("button", { className: "btn btn-primary btn-sm", onClick: () => go.report(p.id) },
-          h(Icon_v, { name: "doc", size: 15 }), "Full report")
+        h(ShareMenu, { url: shareUrl, title: shareTitle }),
+        h("button", { className: "btn btn-primary btn-sm", onClick: () => go.download(p.id) },
+          h(Icon_v, { name: "download", size: 15 }), "Download report")
       )
     ),
 

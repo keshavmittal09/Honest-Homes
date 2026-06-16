@@ -82,7 +82,7 @@ def project(rera_id: str) -> dict:
     row = store.get(rera_id)
     if row is None:
         raise HTTPException(status_code=404, detail="project not found in current snapshot")
-    verdict = build_verdict(row)
+    verdict = build_verdict(row, reputation=REPUTATION)
     return {"project": row, "verdict": verdict.to_dict()}
 
 
