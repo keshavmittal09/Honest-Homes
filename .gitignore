@@ -22,6 +22,9 @@ wheels/
 .installed.cfg
 *.egg
 
+# Env (local only; production uses Render dashboard vars). .env.example IS committed.
+.env
+
 # IDE
 .vscode/
 .idea/

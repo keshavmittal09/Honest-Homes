@@ -208,11 +208,16 @@ function useToast() {
 //     addressed to `email` with everything pre-filled.
 // whatsapp: optional digits-only number (e.g. "9198XXXXXXXX") to also offer a
 //   "Chat on WhatsApp" shortcut. Leave "" to hide it.
-const HH_CONTACT = {
-  formEndpoint: "",                         // TODO: paste your Formspree URL to enable in-app submit
-  email: "shardul.buildup@gmail.com",       // TODO: confirm/replace the destination inbox
-  whatsapp: "",                             // TODO: optional, digits only e.g. "9199XXXXXXXX"
-};
+// These are DEFAULTS only. At startup app.jsx fetches GET /api/config and
+// overrides them from the server's env vars (.env locally / Render dashboard in
+// prod), so you can change the email, form endpoint or WhatsApp without editing
+// code. Kept on window so that runtime override mutates the same object the
+// modal reads.
+const HH_CONTACT = window.HH_CONTACT || (window.HH_CONTACT = {
+  formEndpoint: "",
+  email: "29925keshav@gmail.com",
+  whatsapp: "",
+});
 
 // ---------- Share menu (multi-channel) ----------
 function ShareMenu({ url, title, size = "sm" }) {

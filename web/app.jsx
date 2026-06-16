@@ -14,6 +14,14 @@ function App() {
   useEffectA(() => { document.documentElement.setAttribute("data-theme", theme); localStorage.setItem("hh-theme", theme); }, [theme]);
   useEffectA(() => { localStorage.setItem("hh-device", device); }, [device]);
 
+  // Pull public runtime config (contact email / form endpoint / whatsapp) from
+  // the backend so it tracks env vars without a code change.
+  useEffectA(() => {
+    fetch("/api/config").then(r => r.json()).then(c => {
+      if (c && c.contact) window.HH_CONTACT = Object.assign(window.HH_CONTACT || {}, c.contact);
+    }).catch(() => {});
+  }, []);
+
   // scroll the scroll-container to top on route change
   useEffectA(() => {
     const el = device === "mobile" ? document.querySelector(".device .screen") : window;

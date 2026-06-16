@@ -13,6 +13,15 @@ import logging
 import os
 from pathlib import Path
 
+# Load a local .env for development convenience. In production (Render) the
+# environment variables come from the dashboard, so a missing .env or missing
+# python-dotenv is perfectly fine.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except Exception:
+    pass
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -63,6 +72,22 @@ def health() -> dict:
         "projects_loaded": store.count(),
         "snapshot_date": store.snapshot_date,
         "total_in_rera": store.total_reported,
+    }
+
+
+@app.get("/api/config")
+def config() -> dict:
+    """PUBLIC, browser-safe config only. Never put secret keys here — this is
+    fetched by the frontend and visible to anyone. Values come from env vars
+    (.env locally, Render dashboard in prod) so they can change without a code
+    edit. Falls back to sensible defaults when unset.
+    """
+    return {
+        "contact": {
+            "email": os.getenv("HH_CONTACT_EMAIL", "29925keshav@gmail.com"),
+            "formEndpoint": os.getenv("HH_CONTACT_FORM_ENDPOINT", ""),
+            "whatsapp": os.getenv("HH_CONTACT_WHATSAPP", ""),
+        }
     }
 
 

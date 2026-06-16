@@ -4,3 +4,4 @@ tenacity>=8.2
 fastapi>=0.110
 uvicorn>=0.29
 psycopg2-binary>=2.9
+python-dotenv>=1.0
