@@ -168,6 +168,10 @@ function Results({ query, go, onSearch }) {
       )
     ),
 
+    !loading && h("div", { className: "row gap-8", style: { margin: "-6px 0 18px", fontSize: 13, color: "var(--ink-3)", flexWrap: "wrap" } },
+      h("span", null, "Don't see the project you're checking?"),
+      h(window.ContactButton, { label: "Request it", variant: "btn-quiet", size: "sm", icon: "message" })),
+
     loading
       ? h("div", { className: "grid grid-3" }, [0,1,2,3,4,5].map(i => h(SkeletonCard, { key: i })))
       : filtered.length

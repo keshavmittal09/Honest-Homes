@@ -82,12 +82,13 @@ function App() {
                 h("div", { className: "glyph", style: { width: 26, height: 26 } }, h(Icon_a, { name: "shield-check", size: 15 })),
                 h("div", { className: "wordmark", style: { fontSize: 16 } }, "Honest", h("span", null, "Homes"))),
               route.name !== "home" && h("button", { className: "btn btn-quiet btn-sm", onClick: go.back }, h(Icon_a, { name: "back", size: 15 }))),
-            screen
+            screen,
+            h(Footer, { go })
           )))
     );
   }
 
-  return h("div", null, chrome, h("div", { className: "stage" }, screen));
+  return h("div", null, chrome, h("div", { className: "stage" }, screen), h(Footer, { go }));
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(h(App));

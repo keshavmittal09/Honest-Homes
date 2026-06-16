@@ -25,6 +25,9 @@ wheels/
 # Env (local only; production uses Render dashboard vars). .env.example IS committed.
 .env
 
+# Captured visitor leads — never commit personal data
+data/leads.jsonl
+
 # IDE
 .vscode/
 .idea/

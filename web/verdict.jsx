@@ -14,6 +14,7 @@ function KV({ k, v, mono }) {
 function Verdict({ id, go }) {
   const [data, setData] = useStateV(null);
   const [loading, setLoading] = useStateV(true);
+  const [unlocked, setUnlocked] = useStateV(() => window.hasLead());
   const [toast, showToast] = window.useToast();
   useEffectV(() => {
     let alive = true;
@@ -57,12 +58,17 @@ function Verdict({ id, go }) {
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back },
         h(Icon_v, { name: "back", size: 15 }), "Back to results"),
       h("div", { className: "row gap-8" },
-        h(ShareMenu, { url: shareUrl, title: shareTitle }),
-        h("button", { className: "btn btn-primary btn-sm", onClick: () => go.download(p.id) },
-          h(Icon_v, { name: "download", size: 15 }), "Download report")
+        unlocked
+          ? h(React.Fragment, null,
+              h(ShareMenu, { url: shareUrl, title: shareTitle }),
+              h("button", { className: "btn btn-primary btn-sm", onClick: () => go.download(p.id) },
+                h(Icon_v, { name: "download", size: 15 }), "Download report"))
+          : h("span", { className: "faint", style: { fontSize: 12.5, display: "inline-flex", alignItems: "center", gap: 6 } },
+              h(Icon_v, { name: "shield-check", size: 13 }), "Unlock to share & download")
       )
     ),
 
+    h(LeadGate, { project: p, active: !unlocked, onUnlock: () => setUnlocked(true) },
     // ---------- VERDICT HERO ----------
     h("div", { className: "verdict-hero" },
       h("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" } },
@@ -135,7 +141,7 @@ function Verdict({ id, go }) {
         h("span", { className: "row gap-8" },
           h("span", { className: "faint", style: { fontSize: 13 } }, "Final verdict"),
           h(ScoreChip, { score: p.score, band: p.band })))
-    ),
+    )),
 
     // ---------- TWO COLUMN: track record + timeline ----------
     h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 } },

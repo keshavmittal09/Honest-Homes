@@ -360,4 +360,105 @@ function ContactButton({ prefill, label = "Request a project", variant = "btn-gh
   );
 }
 
-Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton });
+// ---------- Lead submission (shared by the unlock gate) ----------
+// Posts to your form endpoint (Formspree etc.) when configured — durable — else
+// falls back to the backend /api/lead (stored in leads.jsonl + Render logs).
+async function submitLead({ name, phone, project }) {
+  const payload = {
+    name, phone,
+    project: (project && project.name) || (typeof project === "string" ? project : "") || "",
+    projectId: (project && project.id) || "",
+    _subject: "Honest Homes — new visitor lead",
+  };
+  if (HH_CONTACT.formEndpoint) {
+    return fetch(HH_CONTACT.formEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  }
+  return fetch("/api/lead", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+// Has this visitor already unlocked? (gate once per visitor, not per project)
+function hasLead() {
+  try { return !!localStorage.getItem("hh-lead"); } catch (_) { return false; }
+}
+
+// ---------- Lead gate (blurs children until name+phone submitted) ----------
+function LeadGate({ project, active = true, onUnlock, children }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  // Already unlocked this visit — render the content normally, no blur.
+  if (!active) return h(React.Fragment, null, children);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setErr("");
+    const digits = phone.replace(/\D/g, "");
+    if (!name.trim()) { setErr("Please enter your name."); return; }
+    if (digits.length < 10) { setErr("Please enter a valid phone number."); return; }
+    setBusy(true);
+    try { await submitLead({ name: name.trim(), phone: phone.trim(), project }); } catch (_) {}
+    try { localStorage.setItem("hh-lead", JSON.stringify({ name: name.trim(), phone: phone.trim(), ts: Date.now() })); } catch (_) {}
+    setBusy(false);
+    onUnlock();
+  };
+
+  const pname = (project && project.name) || "this project";
+  return h("div", { className: "gate-wrap" },
+    h("div", { className: "gate-blur", "aria-hidden": true }, children),
+    h("div", { className: "gate-overlay" },
+      h("div", { className: "gate-card" },
+        h("div", { className: "gate-ico" }, h(Icon, { name: "shield-check", size: 26 })),
+        h("h3", { className: "serif", style: { fontSize: 22, fontWeight: 600, marginTop: 12 } }, "Unlock the honest verdict"),
+        h("p", { className: "muted", style: { fontSize: 13.5, marginTop: 8, lineHeight: 1.5, maxWidth: "40ch", marginInline: "auto" } },
+          "Enter your details to see the full MahaRERA trust verdict for ", h("b", { style: { color: "var(--ink)" } }, pname),
+          ". It's free — we'll only reach out about this project or important builder updates."),
+        h("form", { className: "gate-form", onSubmit: submit },
+          h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Your name", "aria-label": "Your name" }),
+          h("input", { value: phone, onChange: e => setPhone(e.target.value), placeholder: "Phone number", inputMode: "tel", "aria-label": "Phone number" }),
+          err && h("div", { className: "form-err", style: { justifyContent: "center" } }, h(Icon, { name: "info", size: 14 }), err),
+          h("button", { type: "submit", className: "btn btn-primary btn-lg", disabled: busy, style: { width: "100%", justifyContent: "center" } },
+            busy ? "Unlocking…" : h("span", { className: "row gap-8" }, h(Icon, { name: "shield-check", size: 16 }), "Unlock verdict"))),
+        h("div", { className: "gate-fine" }, h(Icon, { name: "shield-check", size: 12 }), "We respect your privacy. No spam — unsubscribe anytime.")
+      )
+    )
+  );
+}
+
+// ---------- Global footer (consistent CTA on every screen) ----------
+function Footer({ go }) {
+  return h("footer", { className: "site-footer no-print" },
+    h("div", { className: "wrap footer-inner" },
+      h("div", { className: "footer-brand" },
+        h("div", { className: "brandmark", onClick: go.home, style: { cursor: "pointer" } },
+          h("div", { className: "glyph", style: { width: 30, height: 30 } }, h(Icon, { name: "shield-check", size: 17 })),
+          h("div", { className: "wordmark", style: { fontSize: 17 } }, "Honest", h("span", null, "Homes"))),
+        h("p", { className: "faint", style: { fontSize: 12.5, marginTop: 10, maxWidth: "42ch", lineHeight: 1.55 } },
+          "Plain-language trust verdicts on Maharashtra builders, sourced from official MahaRERA public records. Information, not legal advice.")),
+      h("div", { className: "footer-col" },
+        h("div", { className: "footer-h" }, "Explore"),
+        h("button", { className: "footer-link", onClick: go.home }, "Search a project"),
+        h("button", { className: "footer-link", onClick: go.results }, "Browse all projects")),
+      h("div", { className: "footer-col footer-cta" },
+        h("div", { className: "footer-h" }, "Missing a project?"),
+        h("p", { className: "faint", style: { fontSize: 12.5, lineHeight: 1.5, marginBottom: 12 } },
+          "Can't find the project or builder you're checking? Tell us and we'll add it to our index."),
+        h(ContactButton, { label: "Request a project", variant: "btn-primary", size: "sm" }))
+    ),
+    h("div", { className: "wrap footer-base" },
+      h("span", { className: "row gap-8" }, h(Icon, { name: "shield-check", size: 13, style: { color: "var(--brand)" } }),
+        "Built on official MahaRERA records · Updated monthly"),
+      h("span", { className: "faint" }, "© ", new Date().getFullYear(), " Honest Homes"))
+  );
+}
+
+Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton, submitLead, hasLead, LeadGate, Footer });

@@ -9,6 +9,8 @@ The frontend (web/) is served as static files at /.
 
 from __future__ import annotations
 
+import datetime
+import json
 import logging
 import os
 from pathlib import Path
@@ -73,6 +75,37 @@ def health() -> dict:
         "snapshot_date": store.snapshot_date,
         "total_in_rera": store.total_reported,
     }
+
+
+LEADS_FILE = Path(__file__).resolve().parent.parent / "data" / "leads.jsonl"
+
+
+@app.post("/api/lead")
+async def lead(payload: dict) -> dict:
+    """Capture a visitor lead (name + phone) from the verdict unlock gate.
+
+    Stored to data/leads.jsonl AND logged (so leads are visible in the Render
+    log stream even though the free-tier filesystem is ephemeral). For durable
+    storage, set HH_CONTACT_FORM_ENDPOINT so the frontend posts to Formspree
+    instead — see /api/config.
+    """
+    rec = {
+        "name": str(payload.get("name", ""))[:120].strip(),
+        "phone": str(payload.get("phone", ""))[:40].strip(),
+        "project": str(payload.get("project", ""))[:200].strip(),
+        "project_id": str(payload.get("projectId", ""))[:40].strip(),
+        "ts": datetime.datetime.utcnow().isoformat(timespec="seconds") + "Z",
+    }
+    if not rec["name"] or not rec["phone"]:
+        raise HTTPException(status_code=400, detail="name and phone are required")
+    try:
+        LEADS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(LEADS_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception as e:  # never fail the user's unlock on a storage hiccup
+        log.error("lead write failed: %s", e)
+    log.info("LEAD %s | %s | %s (%s)", rec["name"], rec["phone"], rec["project"], rec["project_id"])
+    return {"ok": True}
 
 
 @app.get("/api/config")
