@@ -28,6 +28,9 @@ wheels/
 # Captured visitor leads — never commit personal data
 data/leads.jsonl
 
+# Tier-2 detail captures (raw HTML + parsed) — local recon for now
+data/snapshots/detail/
+
 # IDE
 .vscode/
 .idea/

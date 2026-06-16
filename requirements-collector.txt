@@ -1,0 +1,5 @@
+# Extra deps for the Tier-2 human-in-the-loop detail collector ONLY.
+# The web service does not need these. Install locally when collecting:
+#     pip install -r requirements-collector.txt
+# (Playwright drives your already-installed Edge — no browser download needed.)
+playwright>=1.44
