@@ -157,7 +157,7 @@ function Report({ id, go, print }) {
             e.reason ? ` — “${e.reason}”` : ""))),
         p.detail.documents && p.detail.documents.length > 0 && h("div", { style: { marginTop: 10, fontSize: 11.5, color: "var(--ink-2)", lineHeight: 1.7 } },
           h("b", null, "On record: "),
-          p.detail.documents.map(prettyDocR).join(" · "))
+          Array.from(new Set(p.detail.documents.map(o => o.label))).join(" · "))
       ),
 
       // footer disclaimer

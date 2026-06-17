@@ -17,6 +17,7 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 from pathlib import Path
 
 DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
@@ -27,6 +28,49 @@ PARSED_ROOT = DATA_ROOT / "snapshots" / "detail_parsed"
 def _ro(api: dict, ep: str):
     v = api.get("endpoints", {}).get(ep, {})
     return v.get("responseObject") if isinstance(v, dict) else None
+
+
+# Map a raw document filename -> (clean label, category, is_important).
+# Order matters: first match wins.
+_DOC_RULES = [
+    (r"commencement|cc[ _\-]?compress|\bcc[ _\-]\d", "Commencement Certificate", "Approvals & certificates", True),
+    (r"occupanc|\boc[ _\-]", "Occupancy Certificate", "Approvals & certificates", True),
+    (r"completion", "Completion Certificate", "Approvals & certificates", True),
+    (r"registration", "RERA Registration Certificate", "Approvals & certificates", True),
+    (r"agreement.*sale|agreement_for_sale|sale.*agreement|allotment", "Agreement for Sale", "Agreements & legal", True),
+    (r"\biod\b|building.?aproov|building.?approv|sanction|approved.?plan|intimation of disapproval", "Building Approval (IOD)", "Approvals & certificates", True),
+    (r"title", "Title Report", "Agreements & legal", True),
+    (r"layout", "Layout Plan", "Plans", False),
+    (r"floor.?plan|\bplan\b|drawing", "Building Plan", "Plans", False),
+    (r"encumbr", "Encumbrance Certificate", "Agreements & legal", False),
+    (r"form.?1|architect", "Form 1 — Architect's Certificate", "Professional certificates", False),
+    (r"form.?2|engineer", "Form 2 — Engineer's Certificate", "Professional certificates", False),
+    (r"form.?3|chartered|\bca[ _\-]", "Form 3 — CA Certificate", "Professional certificates", False),
+    (r"\bpan\b", "PAN Card", "KYC & financial", False),
+    (r"aadha", "Aadhaar", "KYC & financial", False),
+    (r"\bgst", "GST Certificate", "KYC & financial", False),
+    (r"7.?12|extract", "7/12 Extract", "Agreements & legal", False),
+    (r"deed", "Deed", "Agreements & legal", False),
+    (r"\bnoc\b", "NOC", "Approvals & certificates", False),
+    (r"receipt|payment", "Payment Receipt", "KYC & financial", False),
+    (r"declarat|affidav", "Declaration / Affidavit", "Agreements & legal", False),
+    (r"brochure|advertis", "Brochure", "Other", False),
+    (r"profileimage|photo", "Photograph", "Other", False),
+    (r"apartment|association", "Apartment Association", "Other", False),
+]
+_DOC_COMPILED = [(re.compile(rx, re.I), lab, cat, imp) for rx, lab, cat, imp in _DOC_RULES]
+DOC_CATEGORY_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
+                      "Professional certificates", "KYC & financial", "Other"]
+
+
+def label_document(filename: str) -> dict:
+    for rx, label, cat, imp in _DOC_COMPILED:
+        if rx.search(filename or ""):
+            return {"file": filename, "label": label, "category": cat, "important": imp}
+    base = re.sub(r"\.[a-z0-9]+$", "", filename or "").replace("_", " ").strip()
+    base = re.sub(r"\s+", " ", base)
+    base = base[:1].upper() + base[1:] if base else (filename or "Document")
+    return {"file": filename, "label": base[:54], "category": "Other", "important": False}
 
 
 def _first(api: dict, ep: str) -> dict:
@@ -148,7 +192,7 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "units": units,
         "litigation": litigation,
         "complaints": complaints,
-        "documents": sorted(doc_files),
+        "documents": [label_document(f) for f in sorted(doc_files)],
         "document_count": len(doc_files),
     }
 

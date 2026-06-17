@@ -224,77 +224,432 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "10_Profileimage.jpeg",
-      "11_Profileimage.jpeg",
-      "1_4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
-      "1_792.pdf",
-      "1_Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
-      "1_Apartment_Association.pdf",
-      "1_Architect_3.pdf",
-      "1_Architect_cert.pdf",
-      "1_CA_certificate_1.pdf",
-      "1_CA_certificate__1.pdf",
-      "1_Commencement_cert.pdf",
-      "1_Declaration.pdf",
-      "1_Engineer_s_Final_Certificate_July2019.pdf",
-      "1_Engineers_Certificate.pdf",
-      "1_Form_4.pdf",
-      "1_Form_5.pdf",
-      "1_MAHARERA_Authority__2_.pdf",
-      "1_OC.pdf",
-      "1_Occupancy_Certificate.pdf",
-      "1_PAN.pdf",
-      "1_PaymentReceipt_REA50500000459_459.pdf",
-      "1_Profileimage.jpeg",
-      "1_Title_report.pdf",
-      "1_arch_cert_april.pdf",
-      "1_ca_cert_4.pdf",
-      "1_ca_certificate3.pdf",
-      "1_ca_certificate_april.pdf",
-      "1_engg_cert_3.pdf",
-      "1_engineer_cert_april.pdf",
-      "2_Commencement_cert.pdf",
-      "2_Profileimage.jpeg",
-      "2_Title_report.pdf",
-      "3_Commencement_cert.pdf",
-      "3_Profileimage.jpeg",
-      "3_Title_report.pdf",
-      "4_Commencement_cert.pdf",
-      "4_Profileimage.jpeg",
-      "4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
-      "5_Commencement_cert.pdf",
-      "5_Profileimage.jpeg",
-      "6_Profileimage.jpeg",
-      "792.pdf",
-      "7_Profileimage.jpeg",
-      "8_Profileimage.jpeg",
-      "9_Profileimage.jpeg",
-      "Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
-      "Apartment_Association.pdf",
-      "Architect_3.pdf",
-      "Architect_cert.pdf",
-      "CA_certificate_1.pdf",
-      "CA_certificate__1.pdf",
-      "Commencement_cert.pdf",
-      "Declaration.pdf",
-      "Engineer_s_Final_Certificate_July2019.pdf",
-      "Engineers_Certificate.pdf",
-      "Form_4.pdf",
-      "Form_5.pdf",
-      "MAHARERA_Authority__2_.pdf",
-      "OC.pdf",
-      "Occupancy_Certificate.pdf",
-      "PAN.pdf",
-      "PaymentReceipt_REA50500000459_459.pdf",
-      "Profileimage.jpeg",
-      "Title_report.pdf",
-      "arch_cert_april.pdf",
-      "ca_cert_4.pdf",
-      "ca_certificate3.pdf",
-      "ca_certificate_april.pdf",
-      "engg_cert_3.pdf",
-      "engineer_cert_april.pdf",
-      "maharera-logo-bg-blue.png"
+      {
+        "file": "10_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "11_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
+        "label": "7/12 Extract",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "1_792.pdf",
+        "label": "1 792",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
+        "label": "1 Agreement to sell FIN-ilovepdf-compressed",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Apartment_Association.pdf",
+        "label": "Apartment Association",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Architect_3.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_Architect_cert.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_CA_certificate_1.pdf",
+        "label": "1 CA certificate 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_CA_certificate__1.pdf",
+        "label": "1 CA certificate 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_Declaration.pdf",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "1_Engineer_s_Final_Certificate_July2019.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_Engineers_Certificate.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_Form_4.pdf",
+        "label": "1 Form 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Form_5.pdf",
+        "label": "1 Form 5",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_MAHARERA_Authority__2_.pdf",
+        "label": "1 MAHARERA Authority 2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_OC.pdf",
+        "label": "1 OC",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Occupancy_Certificate.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_PAN.pdf",
+        "label": "1 PAN",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_PaymentReceipt_REA50500000459_459.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "1_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Title_report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "1_arch_cert_april.pdf",
+        "label": "1 arch cert april",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_ca_cert_4.pdf",
+        "label": "1 ca cert 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_ca_certificate3.pdf",
+        "label": "1 ca certificate3",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_ca_certificate_april.pdf",
+        "label": "1 ca certificate april",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_engg_cert_3.pdf",
+        "label": "1 engg cert 3",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_engineer_cert_april.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "2_Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "2_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "2_Title_report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "3_Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "3_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "3_Title_report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "4_Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "4_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
+        "label": "7/12 Extract",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "5_Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "5_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "6_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "792.pdf",
+        "label": "792",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "7_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "8_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "9_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
+        "label": "Agreement to sell FIN-ilovepdf-compressed",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Apartment_Association.pdf",
+        "label": "Apartment Association",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Architect_3.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Architect_cert.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "CA_certificate_1.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "CA_certificate__1.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Commencement_cert.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Declaration.pdf",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "Engineer_s_Final_Certificate_July2019.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Engineers_Certificate.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Form_4.pdf",
+        "label": "Form 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form_5.pdf",
+        "label": "Form 5",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "MAHARERA_Authority__2_.pdf",
+        "label": "MAHARERA Authority 2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "OC.pdf",
+        "label": "OC",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Occupancy_Certificate.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PAN.pdf",
+        "label": "PAN Card",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA50500000459_459.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Title_report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "arch_cert_april.pdf",
+        "label": "Arch cert april",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ca_cert_4.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "ca_certificate3.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "ca_certificate_april.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "engg_cert_3.pdf",
+        "label": "Engg cert 3",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "engineer_cert_april.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "maharera-logo-bg-blue.png",
+        "label": "Maharera-logo-bg-blue",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 71
   },
@@ -370,30 +725,150 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "232db1c4-b298-48bf-bb82-4f1e924e7683.pdf",
-      "ARCH_CERTIFICATE__compressed__1_.pdf",
-      "ARCH_FORM_4.pdf",
-      "Allotment_Letter_and_Agreement_Copy.pdf",
-      "CA_Letter__1_.pdf",
-      "Commencement_Certificate__1_.pdf",
-      "Design_-_Royal_Residency_-_CA_Certificate_Form_5.pdf",
-      "Design_Develover_Pan_Card.pdf",
-      "Download_File__6_-min.pdf",
-      "Download_File__6_.pdf",
-      "ENGINEER_CERTIFICATES_compressed.pdf",
-      "FORM_3_CA_CERTIFICATE_New.pdf",
-      "Form_B__1_.pdf",
-      "Index_2.pdf",
-      "MergedFile-min.pdf",
-      "NEW_FORM_B.pdf",
-      "New_Architech_Certificate.pdf",
-      "New_Structure_Engineer_Certificate.pdf",
-      "OCCUPANCY_CERTIFICATE.pdf",
-      "PaymentReceipt_REA50500003626_3626.pdf",
-      "RL_Letter.pdf",
-      "Royal_Residency_-_Building_Plan__1_.pdf",
-      "Search_Report_-_Royal_Residency.pdf",
-      "nit_layout_plan.pdf"
+      {
+        "file": "232db1c4-b298-48bf-bb82-4f1e924e7683.pdf",
+        "label": "232db1c4-b298-48bf-bb82-4f1e924e7683",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ARCH_CERTIFICATE__compressed__1_.pdf",
+        "label": "ARCH CERTIFICATE compressed 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ARCH_FORM_4.pdf",
+        "label": "ARCH FORM 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Allotment_Letter_and_Agreement_Copy.pdf",
+        "label": "Agreement for Sale",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "CA_Letter__1_.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Commencement_Certificate__1_.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Design_-_Royal_Residency_-_CA_Certificate_Form_5.pdf",
+        "label": "Design - Royal Residency - CA Certificate Form 5",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Design_Develover_Pan_Card.pdf",
+        "label": "Design Develover Pan Card",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Download_File__6_-min.pdf",
+        "label": "Download File 6 -min",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Download_File__6_.pdf",
+        "label": "Download File 6",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ENGINEER_CERTIFICATES_compressed.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "FORM_3_CA_CERTIFICATE_New.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Form_B__1_.pdf",
+        "label": "Form B 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Index_2.pdf",
+        "label": "Index 2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "MergedFile-min.pdf",
+        "label": "MergedFile-min",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "NEW_FORM_B.pdf",
+        "label": "NEW FORM B",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "New_Architech_Certificate.pdf",
+        "label": "New Architech Certificate",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "New_Structure_Engineer_Certificate.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "OCCUPANCY_CERTIFICATE.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PaymentReceipt_REA50500003626_3626.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "RL_Letter.pdf",
+        "label": "RL Letter",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Royal_Residency_-_Building_Plan__1_.pdf",
+        "label": "Royal Residency - Building Plan 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Search_Report_-_Royal_Residency.pdf",
+        "label": "Search Report - Royal Residency",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "nit_layout_plan.pdf",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      }
     ],
     "document_count": 24
   },
@@ -506,27 +981,132 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "1_OCCUPANCY_CERTIFICATE.pdf",
-      "1_Profileimage.jpeg",
-      "7c5e6480-850b-495c-96c6-7149cd49863a.pdf",
-      "Architect_Certificate-ilovepdf-compressed.pdf",
-      "BUILDING_PERMIT.pdf",
-      "Blank_Draft_for_Rera.pdf",
-      "Building_Plan.pdf",
-      "Engineers_Certificate-ilovepdf-compressed.pdf",
-      "FORM_4.pdf",
-      "LAYOUT_PLAN.pdf",
-      "OCCUPANCY_CERTIFICATE.pdf",
-      "PAN_CARD_SAMBHAV.pdf",
-      "PaymentReceipt_REA50500008592_8592.pdf",
-      "ProfileImage.jpeg",
-      "SOCIETY.pdf",
-      "Society_Handover_Letter.pdf",
-      "allotement_letter.pdf",
-      "ca_certificate.pdf",
-      "encumbrance_certificate.pdf",
-      "form_B__2_.pdf",
-      "legal_report.pdf"
+      {
+        "file": "1_OCCUPANCY_CERTIFICATE.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "7c5e6480-850b-495c-96c6-7149cd49863a.pdf",
+        "label": "7c5e6480-850b-495c-96c6-7149cd49863a",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Architect_Certificate-ilovepdf-compressed.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "BUILDING_PERMIT.pdf",
+        "label": "BUILDING PERMIT",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Blank_Draft_for_Rera.pdf",
+        "label": "Blank Draft for Rera",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Building_Plan.pdf",
+        "label": "Building Plan",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Engineers_Certificate-ilovepdf-compressed.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "FORM_4.pdf",
+        "label": "FORM 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "LAYOUT_PLAN.pdf",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      },
+      {
+        "file": "OCCUPANCY_CERTIFICATE.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PAN_CARD_SAMBHAV.pdf",
+        "label": "PAN CARD SAMBHAV",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA50500008592_8592.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "ProfileImage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "SOCIETY.pdf",
+        "label": "SOCIETY",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Society_Handover_Letter.pdf",
+        "label": "Society Handover Letter",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "allotement_letter.pdf",
+        "label": "Allotement letter",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ca_certificate.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "encumbrance_certificate.pdf",
+        "label": "Encumbrance Certificate",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "form_B__2_.pdf",
+        "label": "Form B 2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "legal_report.pdf",
+        "label": "Legal report",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 21
   },
@@ -620,37 +1200,192 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "1_COMMENCEMENT.pdf",
-      "1_LETTER.pdf",
-      "1_Profileimage.jpeg",
-      "2_Profileimage.jpeg",
-      "3_Profileimage.jpeg",
-      "BS-2019.pdf",
-      "BS-2020.pdf",
-      "BS-2021.pdf",
-      "COMMENCEMENT.pdf",
-      "FROM_4.pdf",
-      "Form5.pdf",
-      "Form_B.PDF",
-      "Form_D_Declaration_abt_commencement_certificate.pdf",
-      "LETTER.pdf",
-      "Occupancy_Certificate.pdf",
-      "PaymentReceipt_REA51500020696_20696.pdf",
-      "ProfileImage.jpeg",
-      "Sold_Unsold_List.pdf",
-      "a2a7235f-36b1-4bc8-8dad-218eee0fbf1b.pdf",
-      "agreement_to_sale.PDF",
-      "apart1.PDF",
-      "apart2.PDF",
-      "architect.PDF",
-      "ca_certificate0001.PDF",
-      "encumbrance0001.PDF",
-      "engineer.PDF",
-      "occupancy.pdf",
-      "pancard.PDF",
-      "row_house.PDF",
-      "sainath_villa.pdf",
-      "search_report.PDF"
+      {
+        "file": "1_COMMENCEMENT.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_LETTER.pdf",
+        "label": "1 LETTER",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "2_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "3_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "BS-2019.pdf",
+        "label": "BS-2019",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "BS-2020.pdf",
+        "label": "BS-2020",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "BS-2021.pdf",
+        "label": "BS-2021",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "COMMENCEMENT.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "FROM_4.pdf",
+        "label": "FROM 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form5.pdf",
+        "label": "Form5",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form_B.PDF",
+        "label": "Form B.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form_D_Declaration_abt_commencement_certificate.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "LETTER.pdf",
+        "label": "LETTER",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Occupancy_Certificate.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PaymentReceipt_REA51500020696_20696.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "ProfileImage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Sold_Unsold_List.pdf",
+        "label": "Sold Unsold List",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "a2a7235f-36b1-4bc8-8dad-218eee0fbf1b.pdf",
+        "label": "A2a7235f-36b1-4bc8-8dad-218eee0fbf1b",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "agreement_to_sale.PDF",
+        "label": "Agreement for Sale",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "apart1.PDF",
+        "label": "Apart1.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "apart2.PDF",
+        "label": "Apart2.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "architect.PDF",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "ca_certificate0001.PDF",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "encumbrance0001.PDF",
+        "label": "Encumbrance Certificate",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "engineer.PDF",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "occupancy.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "pancard.PDF",
+        "label": "Pancard.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "row_house.PDF",
+        "label": "Row house.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "sainath_villa.pdf",
+        "label": "Sainath villa",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "search_report.PDF",
+        "label": "Search report.PDF",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 31
   },
@@ -1012,45 +1747,240 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "00_OC_part_1.pdf",
-      "00_Oc_Part_2.pdf",
-      "00_Oc_Part_3.pdf",
-      "01_Architect_Certficate_as_on_31July2017.pdf",
-      "01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
-      "02_Architect_Certificate_as_on_31102017.pdf",
-      "02_ENGINEER_S_CERTIFICATE_as_on_31July2017.pdf",
-      "03_CA_Certificate_as_on_31Juy2017.pdf",
-      "03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
-      "11_Certificates_of_Engineer__Form_2_.pdf",
-      "12_Commencement_Certificate.pdf",
-      "1_01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
-      "1_02_Architect_Certificate_as_on_31102017.pdf",
-      "1_03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
-      "1_MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
-      "1_Pan_Card_-_MHPL.pdf",
-      "1_Profileimage.jpeg",
-      "2_Copy_of_the_legal_title_report.pdf",
-      "3_Details_of_encumbrances.pdf",
-      "4_Copy_of_Approved_Plan.pdf",
-      "4_Copy_of_Approved_Plan_IOD.pdf",
-      "531ea281-e3a8-4997-bdc5-460dd2405827.pdf",
-      "5_Signed_Proforma_of_the_allotment_letter_and_agreement_for_sale.pdf",
-      "6_Declaration_in_Form_B.pdf",
-      "7_Certificate_of_Architect__Form_1_.pdf",
-      "9_Certificate_of_CA__Form_3_.pdf",
-      "Architect_Certificate_Form_No_4.pdf",
-      "GRIEVANCE_REDRESSAL_CELL_VISHWARAJA.pdf",
-      "HDFC_NO_DUES_LETTER.pdf",
-      "Index_II_of_ABFL_Mortgage_Deed.pdf",
-      "MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
-      "OC_Letter.pdf",
-      "PaymentReceipt_REA51700000001_1.pdf",
-      "Profileimage.jpeg",
-      "Society_Registration_Certificate_A_Wing.pdf",
-      "Society_Registration_Certificate_B_Wing.pdf",
-      "Society_Registration_Certificate_F_Wing.pdf",
-      "Society_Registration_Certificate_G_Wing.pdf",
-      "Vishwaraja_Audit_Report_31March2019.pdf"
+      {
+        "file": "00_OC_part_1.pdf",
+        "label": "00 OC part 1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "00_Oc_Part_2.pdf",
+        "label": "00 Oc Part 2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "00_Oc_Part_3.pdf",
+        "label": "00 Oc Part 3",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "01_Architect_Certficate_as_on_31July2017.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
+        "label": "01 Mayfair Vishwaraja RERA CA Certtificate 31102017",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "02_Architect_Certificate_as_on_31102017.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "02_ENGINEER_S_CERTIFICATE_as_on_31July2017.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "03_CA_Certificate_as_on_31Juy2017.pdf",
+        "label": "03 CA Certificate as on 31Juy2017",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "11_Certificates_of_Engineer__Form_2_.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "12_Commencement_Certificate.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
+        "label": "1 01 Mayfair Vishwaraja RERA CA Certtificate 31102017",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_02_Architect_Certificate_as_on_31102017.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "1_MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
+        "label": "1 MAYFAIR VISHWARAJA RERA AUDIT REPORT as on 30th Sep ",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Pan_Card_-_MHPL.pdf",
+        "label": "1 Pan Card - MHPL",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "2_Copy_of_the_legal_title_report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "3_Details_of_encumbrances.pdf",
+        "label": "Encumbrance Certificate",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "4_Copy_of_Approved_Plan.pdf",
+        "label": "Building Approval (IOD)",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "4_Copy_of_Approved_Plan_IOD.pdf",
+        "label": "Building Approval (IOD)",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "531ea281-e3a8-4997-bdc5-460dd2405827.pdf",
+        "label": "531ea281-e3a8-4997-bdc5-460dd2405827",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "5_Signed_Proforma_of_the_allotment_letter_and_agreement_for_sale.pdf",
+        "label": "Agreement for Sale",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "6_Declaration_in_Form_B.pdf",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "7_Certificate_of_Architect__Form_1_.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "9_Certificate_of_CA__Form_3_.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Architect_Certificate_Form_No_4.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "GRIEVANCE_REDRESSAL_CELL_VISHWARAJA.pdf",
+        "label": "GRIEVANCE REDRESSAL CELL VISHWARAJA",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "HDFC_NO_DUES_LETTER.pdf",
+        "label": "HDFC NO DUES LETTER",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Index_II_of_ABFL_Mortgage_Deed.pdf",
+        "label": "Deed",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
+        "label": "MAYFAIR VISHWARAJA RERA AUDIT REPORT as on 30th Sep 18",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "OC_Letter.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PaymentReceipt_REA51700000001_1.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Society_Registration_Certificate_A_Wing.pdf",
+        "label": "RERA Registration Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Society_Registration_Certificate_B_Wing.pdf",
+        "label": "RERA Registration Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Society_Registration_Certificate_F_Wing.pdf",
+        "label": "RERA Registration Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Society_Registration_Certificate_G_Wing.pdf",
+        "label": "RERA Registration Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Vishwaraja_Audit_Report_31March2019.pdf",
+        "label": "Vishwaraja Audit Report 31March2019",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 39
   },
@@ -1135,34 +2065,174 @@
     "litigation": null,
     "complaints": 2,
     "documents": [
-      "18422007-2cfd-439b-bf1a-a5df6e9038c4.pdf",
-      "1_layout.pdf",
-      "310608.pdf",
-      "6298.pdf",
-      "Declaration_-_Form_B.pdf",
-      "Form_-_2A_UW-VII-A.pdf",
-      "Form_1_Architect_Certificate-ilovepdf-compressed.pdf",
-      "Form_2_Engineer_s_Certificate_Unnathi_Woods_Ph_VII.pdf",
-      "G1-G2_OC.pdf",
-      "Index_II_IOM_with_JM_Finance.pdf",
-      "Mortgage_Deed_Index_2-ilovepdf-compressed.pdf",
-      "PaymentReceipt_REA51700000002_2.pdf",
-      "ProfileImage.jpeg",
-      "Title_Surinder_rao.pdf",
-      "Unnathi_Woods_-_VII-A.pdf",
-      "Unnathi_Woods_G1.pdf",
-      "Unnathi_Woods_G2.pdf",
-      "Unnathi_Woods_Phase_VII-A-_G1-G2.pdf",
-      "Unnathi_Woods_Phase_VII_-_A.pdf",
-      "Unnathi_Woods_Phase_VII_A.pdf",
-      "Unnathi_Woods_VII-A.pdf",
-      "VI_PANCARD__AC_.pdf",
-      "XV-_I___-_CC_S__AC_.pdf",
-      "XXIII_Architect_Certificate_-_Form_1.pdf",
-      "XXIV_Engineers_Certificate_-.pdf",
-      "XXV_Ca_Certificate.pdf",
-      "XX___XXI_Combine.pdf",
-      "layout.pdf"
+      {
+        "file": "18422007-2cfd-439b-bf1a-a5df6e9038c4.pdf",
+        "label": "18422007-2cfd-439b-bf1a-a5df6e9038c4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "1_layout.pdf",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      },
+      {
+        "file": "310608.pdf",
+        "label": "310608",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "6298.pdf",
+        "label": "6298",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Declaration_-_Form_B.pdf",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "Form_-_2A_UW-VII-A.pdf",
+        "label": "Form - 2A UW-VII-A",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form_1_Architect_Certificate-ilovepdf-compressed.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Form_2_Engineer_s_Certificate_Unnathi_Woods_Ph_VII.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "G1-G2_OC.pdf",
+        "label": "G1-G2 OC",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Index_II_IOM_with_JM_Finance.pdf",
+        "label": "Index II IOM with JM Finance",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Mortgage_Deed_Index_2-ilovepdf-compressed.pdf",
+        "label": "Deed",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA51700000002_2.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "ProfileImage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Title_Surinder_rao.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "Unnathi_Woods_-_VII-A.pdf",
+        "label": "Unnathi Woods - VII-A",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_G1.pdf",
+        "label": "Unnathi Woods G1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_G2.pdf",
+        "label": "Unnathi Woods G2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_Phase_VII-A-_G1-G2.pdf",
+        "label": "Unnathi Woods Phase VII-A- G1-G2",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_Phase_VII_-_A.pdf",
+        "label": "Unnathi Woods Phase VII - A",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_Phase_VII_A.pdf",
+        "label": "Unnathi Woods Phase VII A",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Unnathi_Woods_VII-A.pdf",
+        "label": "Unnathi Woods VII-A",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "VI_PANCARD__AC_.pdf",
+        "label": "VI PANCARD AC",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "XV-_I___-_CC_S__AC_.pdf",
+        "label": "XV- I - CC S AC",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "XXIII_Architect_Certificate_-_Form_1.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "XXIV_Engineers_Certificate_-.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "XXV_Ca_Certificate.pdf",
+        "label": "XXV Ca Certificate",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "XX___XXI_Combine.pdf",
+        "label": "XX XXI Combine",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "layout.pdf",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      }
     ],
     "document_count": 28
   },
@@ -1264,29 +2334,144 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "1_Form_1.pdf",
-      "3163.pdf",
-      "AGREEMENT_FOR_SALE__RERA__-_Meridian_Fountainhead_Mystic_-_Final_-_25-7-2017.pdf",
-      "Building_Aprooval_IOD_1.pdf",
-      "Building_Aprooval_IOD_2.pdf",
-      "Building_Aprooval_IOD_3.pdf",
-      "CC_Compressed.pdf",
-      "Encumbrances.pdf",
-      "FORM_1.pdf",
-      "FORM_2.pdf",
-      "FORM_3.pdf",
-      "Form_5_Scanned.pdf",
-      "Form_B.pdf",
-      "Image__29_.pdf",
-      "Image__30_.pdf",
-      "Layot_Aprooval_Plan.pdf",
-      "Layot_Aprooval_Plan_Besment.pdf",
-      "OC_Copy.pdf",
-      "PaymentReceipt_REA51700006804_6804.pdf",
-      "RERA_FORM_4.pdf",
-      "Title_Report.pdf",
-      "f3dfab6e-3465-4526-99f3-c4f049801d20.pdf",
-      "ilovepdf_jpg_to_pdf.pdf"
+      {
+        "file": "1_Form_1.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "3163.pdf",
+        "label": "3163",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "AGREEMENT_FOR_SALE__RERA__-_Meridian_Fountainhead_Mystic_-_Final_-_25-7-2017.pdf",
+        "label": "Agreement for Sale",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "Building_Aprooval_IOD_1.pdf",
+        "label": "Building Approval (IOD)",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Building_Aprooval_IOD_2.pdf",
+        "label": "Building Approval (IOD)",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Building_Aprooval_IOD_3.pdf",
+        "label": "Building Approval (IOD)",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "CC_Compressed.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "Encumbrances.pdf",
+        "label": "Encumbrance Certificate",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "FORM_1.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "FORM_2.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "FORM_3.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Form_5_Scanned.pdf",
+        "label": "Form 5 Scanned",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form_B.pdf",
+        "label": "Form B",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Image__29_.pdf",
+        "label": "Image 29",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Image__30_.pdf",
+        "label": "Image 30",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Layot_Aprooval_Plan.pdf",
+        "label": "Layot Aprooval Plan",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Layot_Aprooval_Plan_Besment.pdf",
+        "label": "Layot Aprooval Plan Besment",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "OC_Copy.pdf",
+        "label": "Occupancy Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "PaymentReceipt_REA51700006804_6804.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "RERA_FORM_4.pdf",
+        "label": "RERA FORM 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Title_Report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "f3dfab6e-3465-4526-99f3-c4f049801d20.pdf",
+        "label": "F3dfab6e-3465-4526-99f3-c4f049801d20",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ilovepdf_jpg_to_pdf.pdf",
+        "label": "Ilovepdf jpg to pdf",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 23
   },
@@ -1423,23 +2608,108 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "1_FORM_B_AFFIDAVIT.PDF",
-      "2243590_OC_signed.pdf",
-      "3709.pdf",
-      "Allotment_letter.PDF",
-      "Arch_Certificate.PDF",
-      "CA_CERTIFICATE.PDF",
-      "Decleration_Layout.PDF",
-      "Dhavalkaria_pancard.pdf",
-      "FORM_4.pdf",
-      "FORM_B_AFFIDAVIT.PDF",
-      "Form2.PDF",
-      "PaymentReceipt_REA51800007817_7817.pdf",
-      "RERA_CA_CERTIFICATE.PDF",
-      "Title_Report.pdf",
-      "a814c7af-7724-46b8-8820-f29d16f928a6.pdf",
-      "commencement_certificate_20180326183306.pdf",
-      "iod_first_page.PDF"
+      {
+        "file": "1_FORM_B_AFFIDAVIT.PDF",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "2243590_OC_signed.pdf",
+        "label": "2243590 OC signed",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "3709.pdf",
+        "label": "3709",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Allotment_letter.PDF",
+        "label": "Agreement for Sale",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "Arch_Certificate.PDF",
+        "label": "Arch Certificate.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "CA_CERTIFICATE.PDF",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Decleration_Layout.PDF",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      },
+      {
+        "file": "Dhavalkaria_pancard.pdf",
+        "label": "Dhavalkaria pancard",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "FORM_4.pdf",
+        "label": "FORM 4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "FORM_B_AFFIDAVIT.PDF",
+        "label": "Declaration / Affidavit",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "Form2.PDF",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA51800007817_7817.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "RERA_CA_CERTIFICATE.PDF",
+        "label": "RERA CA CERTIFICATE.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Title_Report.pdf",
+        "label": "Title Report",
+        "category": "Agreements & legal",
+        "important": true
+      },
+      {
+        "file": "a814c7af-7724-46b8-8820-f29d16f928a6.pdf",
+        "label": "A814c7af-7724-46b8-8820-f29d16f928a6",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "commencement_certificate_20180326183306.pdf",
+        "label": "Commencement Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "iod_first_page.PDF",
+        "label": "Iod first page.PDF",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 17
   },
@@ -1529,22 +2799,102 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "AMITDEVELOPERS_NA_ORDER_NEW.pdf",
-      "AMIT_DEVELOPERS_COMPLITION_CERTIFICATE.pdf",
-      "ARKITECT_CERTIFICATE.PDF",
-      "Annual_Report_on_Statement_of_Accounts___FORM-5__Amit_Developer.pdf",
-      "CERTIFICATE_OF_ENCUMBRANCE.pdf",
-      "ENGG_CERTIFICATE.pdf",
-      "FORM_3.pdf",
-      "Koregaonmul_-_Rera_-_Booking_-.pdf",
-      "LEGAL_OPINION.pdf",
-      "OWNER_FORM_B.pdf",
-      "PAN_CARD.pdf",
-      "Page1.PDF",
-      "Page2.PDF",
-      "PaymentReceipt_REA52100009862_9862.pdf",
-      "afba242a-2e8a-409e-91f4-15416c3f9077.pdf",
-      "from_4.pdf"
+      {
+        "file": "AMITDEVELOPERS_NA_ORDER_NEW.pdf",
+        "label": "AMITDEVELOPERS NA ORDER NEW",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "AMIT_DEVELOPERS_COMPLITION_CERTIFICATE.pdf",
+        "label": "AMIT DEVELOPERS COMPLITION CERTIFICATE",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "ARKITECT_CERTIFICATE.PDF",
+        "label": "ARKITECT CERTIFICATE.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Annual_Report_on_Statement_of_Accounts___FORM-5__Amit_Developer.pdf",
+        "label": "Annual Report on Statement of Accounts FORM-5 Amit Dev",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "CERTIFICATE_OF_ENCUMBRANCE.pdf",
+        "label": "Encumbrance Certificate",
+        "category": "Agreements & legal",
+        "important": false
+      },
+      {
+        "file": "ENGG_CERTIFICATE.pdf",
+        "label": "ENGG CERTIFICATE",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "FORM_3.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Koregaonmul_-_Rera_-_Booking_-.pdf",
+        "label": "Koregaonmul - Rera - Booking -",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "LEGAL_OPINION.pdf",
+        "label": "LEGAL OPINION",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "OWNER_FORM_B.pdf",
+        "label": "OWNER FORM B",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "PAN_CARD.pdf",
+        "label": "PAN CARD",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Page1.PDF",
+        "label": "Page1.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Page2.PDF",
+        "label": "Page2.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA52100009862_9862.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "afba242a-2e8a-409e-91f4-15416c3f9077.pdf",
+        "label": "Afba242a-2e8a-409e-91f4-15416c3f9077",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "from_4.pdf",
+        "label": "From 4",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 16
   },
@@ -1648,28 +2998,138 @@
     "litigation": null,
     "complaints": null,
     "documents": [
-      "1_Completion_certificate.pdf",
-      "1_ProfileImage.jpeg",
-      "2_Completion_certificate.pdf",
-      "2_Profileimage.jpeg",
-      "3_Profileimage.jpeg",
-      "4_Profileimage.jpeg",
-      "74f22998-23ef-4414-8453-19081ea24b9e.pdf",
-      "Building_plans.PDF",
-      "Completion_certificate.pdf",
-      "FORM-1.pdf",
-      "FORM-3.pdf",
-      "Final_Rera_Agreement_SHIVNERI.pdf",
-      "Form-2.pdf",
-      "Form-4.pdf",
-      "Form-B.pdf",
-      "Layout.pdf",
-      "PaymentReceipt_REA52300003483_3483.pdf",
-      "ProfileImage.jpeg",
-      "Search_report.pdf",
-      "comencement_certificate1.pdf",
-      "encrumbance_certificate.pdf",
-      "pan_card.pdf"
+      {
+        "file": "1_Completion_certificate.pdf",
+        "label": "Completion Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "1_ProfileImage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "2_Completion_certificate.pdf",
+        "label": "Completion Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "2_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "3_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "4_Profileimage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "74f22998-23ef-4414-8453-19081ea24b9e.pdf",
+        "label": "74f22998-23ef-4414-8453-19081ea24b9e",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Building_plans.PDF",
+        "label": "Building plans.PDF",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Completion_certificate.pdf",
+        "label": "Completion Certificate",
+        "category": "Approvals & certificates",
+        "important": true
+      },
+      {
+        "file": "FORM-1.pdf",
+        "label": "Form 1 — Architect's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "FORM-3.pdf",
+        "label": "Form 3 — CA Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Final_Rera_Agreement_SHIVNERI.pdf",
+        "label": "Final Rera Agreement SHIVNERI",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form-2.pdf",
+        "label": "Form 2 — Engineer's Certificate",
+        "category": "Professional certificates",
+        "important": false
+      },
+      {
+        "file": "Form-4.pdf",
+        "label": "Form-4",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Form-B.pdf",
+        "label": "Form-B",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Layout.pdf",
+        "label": "Layout Plan",
+        "category": "Plans",
+        "important": false
+      },
+      {
+        "file": "PaymentReceipt_REA52300003483_3483.pdf",
+        "label": "Payment Receipt",
+        "category": "KYC & financial",
+        "important": false
+      },
+      {
+        "file": "ProfileImage.jpeg",
+        "label": "Photograph",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "Search_report.pdf",
+        "label": "Search report",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "comencement_certificate1.pdf",
+        "label": "Comencement certificate1",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "encrumbance_certificate.pdf",
+        "label": "Encrumbance certificate",
+        "category": "Other",
+        "important": false
+      },
+      {
+        "file": "pan_card.pdf",
+        "label": "Pan card",
+        "category": "Other",
+        "important": false
+      }
     ],
     "document_count": 22
   }

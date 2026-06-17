@@ -11,22 +11,14 @@ function KV({ k, v, mono }) {
   );
 }
 
-// Tidy a raw document filename into a human label.
-function prettyDoc(name) {
-  let s = (name || "").replace(/\.[a-z0-9]+$/i, "").replace(/[_]+/g, " ").replace(/\s+/g, " ").trim();
-  s = s.replace(/\b\w/g, c => c.toUpperCase());           // Title Case
-  return s || name;
-}
-function docCategory(name) {
-  const n = (name || "").toLowerCase();
-  if (/agreement|allotment|\bsale\b|deed/.test(n)) return "Agreements";
-  if (/iod|\bcc\b|commencement|occupanc|noc|approv|sanction|intimation/.test(n)) return "Approvals & NOCs";
-  if (/cert/.test(n)) return "Certificates";
-  if (/plan|layout|map|drawing|floor/.test(n)) return "Plans & layouts";
-  if (/pan|gst|aadha|title|legal|encumbr|7\/12|index/.test(n)) return "Legal & KYC";
-  return "Other documents";
-}
-const DOC_ORDER = ["Certificates", "Approvals & NOCs", "Agreements", "Plans & layouts", "Legal & KYC", "Other documents"];
+// Document categories in display order (labels come from the parser).
+const DOC_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
+  "Professional certificates", "KYC & financial", "Other"];
+const DOC_ICON = {
+  "Commencement Certificate": "shield-check", "Occupancy Certificate": "shield-check",
+  "Completion Certificate": "shield-check", "RERA Registration Certificate": "shield-check",
+  "Agreement for Sale": "doc", "Building Approval (IOD)": "building", "Title Report": "doc",
+};
 
 function SpecCell({ k, v, accent }) {
   return h("div", { className: "spec-cell" },
@@ -47,15 +39,19 @@ function DetailSection({ p }) {
   const pct = total ? Math.round((booked / total) * 100) : 0;
   const mix = (u.mix || []).filter(m => m.count);
 
-  // group documents by category
+  // group documents by category + collect the key (important) ones, deduped by label
   const groups = {};
-  docs.forEach(fn => { const c = docCategory(fn); (groups[c] = groups[c] || []).push(fn); });
-  const docLink = (fn, i) => {
+  docs.forEach(o => { (groups[o.category] = groups[o.category] || []).push(o); });
+  const keyDocs = [];
+  const seenKey = new Set();
+  docs.forEach(o => { if (o.important && !seenKey.has(o.label)) { seenKey.add(o.label); keyDocs.push(o); } });
+  const docHref = (o) => `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(o.file)}`;
+  const docItem = (o, i) => {
     const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
       h(Icon_v, { name: "doc", size: 15, className: "doc-ic" }),
-      h("span", { className: "doc-name" }, prettyDoc(fn)));
+      h("span", { className: "doc-name" }, o.label));
     return d.documentsAvailable
-      ? h("a", { key: i, className: "doc-item", href: `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(fn)}`, target: "_blank", rel: "noopener" },
+      ? h("a", { key: i, className: "doc-item", href: docHref(o), target: "_blank", rel: "noopener" },
           inner, h(Icon_v, { name: "download", size: 14, className: "faint" }))
       : h("div", { key: i, className: "doc-item disabled" }, inner);
   };
@@ -118,16 +114,35 @@ function DetailSection({ p }) {
         h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
           h(SourceTag, { source: "MahaRERA — extension certificates", asOf: d.capturedAt })))),
 
-    // ---- Documents on record (grouped) ----
+    // ---- Documents on record ----
     docs.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", null, "Documents on record"),
-        h("span", { className: "faint", style: { fontSize: 12.5 } }, d.documentCount, " files",
-          d.documentsAvailable ? "" : " · on the MahaRERA portal")),
+        p.detailUrl && h("a", { className: "btn btn-ghost btn-sm", href: p.detailUrl, target: "_blank", rel: "noopener" },
+          h(Icon_v, { name: "link", size: 14 }), "View on MahaRERA")),
       h("div", { className: "panel-b" },
+        // Featured key documents
+        keyDocs.length > 0 && h("div", { style: { marginBottom: 20 } },
+          h("div", { className: "doc-group-h" }, "Key documents"),
+          h("div", { className: "keydoc-grid" },
+            keyDocs.map((o, i) => {
+              const body = h(React.Fragment, null,
+                h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.label] || "doc", size: 19 })),
+                h("div", { style: { minWidth: 0, flex: 1 } },
+                  h("div", { className: "keydoc-label" }, o.label),
+                  h("div", { className: "keydoc-act" }, d.documentsAvailable ? "Download PDF" : "On MahaRERA record")));
+              return d.documentsAvailable
+                ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
+                    body, h(Icon_v, { name: "download", size: 16, className: "faint" }))
+                : h("div", { key: i, className: "keydoc disabled" }, body);
+            }))),
+        // All documents, grouped
+        h("div", { className: "doc-group-h" }, "All documents · ", d.documentCount),
         DOC_ORDER.filter(g => groups[g]).map(g => h("div", { key: g, className: "doc-group" },
-          h("div", { className: "doc-group-h" }, g, h("span", { className: "faint" }, " · ", groups[g].length)),
-          h("div", { className: "doc-grid" }, groups[g].map((fn, i) => docLink(fn, i)))))))
+          h("div", { className: "doc-subcat" }, g, h("span", { className: "faint" }, " · ", groups[g].length)),
+          h("div", { className: "doc-grid" }, groups[g].map((o, i) => docItem(o, i))))),
+        !d.documentsAvailable && h("p", { className: "faint", style: { fontSize: 12, marginTop: 6 } },
+          "Open any of these on the official MahaRERA portal via the button above.")))
   );
 }
 
