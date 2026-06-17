@@ -1,0 +1,888 @@
+{
+  "P50500000005": {
+    "rera_id": "P50500000005",
+    "project_id": 1,
+    "project_name": "GREEN CITY 3",
+    "promoter_name": "GREEN SPACE INFRA VENTURES",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-05-20",
+      "originalCompletion": "2018-12-31",
+      "proposedCompletion": "2018-12-31",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 82072.1,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-05-20"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-12-31"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "ORCHID 1 BLOCK A Type 1",
+        "wing": null,
+        "floorsProposed": 6,
+        "floorsSanctioned": 6,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "ORCHID 2, 3 BLOCK B Type 1",
+        "wing": null,
+        "floorsProposed": 10,
+        "floorsSanctioned": 10,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+        "wing": null,
+        "floorsProposed": 11,
+        "floorsSanctioned": 11,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "LIG E TYPE PLOT NO 65",
+        "wing": null,
+        "floorsProposed": 0,
+        "floorsSanctioned": 0,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "10_Profileimage.jpeg",
+      "11_Profileimage.jpeg",
+      "1_4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
+      "1_792.pdf",
+      "1_Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
+      "1_Apartment_Association.pdf",
+      "1_Architect_3.pdf",
+      "1_Architect_cert.pdf",
+      "1_CA_certificate_1.pdf",
+      "1_CA_certificate__1.pdf",
+      "1_Commencement_cert.pdf",
+      "1_Declaration.pdf",
+      "1_Engineer_s_Final_Certificate_July2019.pdf",
+      "1_Engineers_Certificate.pdf",
+      "1_Form_4.pdf",
+      "1_Form_5.pdf",
+      "1_MAHARERA_Authority__2_.pdf",
+      "1_OC.pdf",
+      "1_Occupancy_Certificate.pdf",
+      "1_PAN.pdf",
+      "1_PaymentReceipt_REA50500000459_459.pdf",
+      "1_Profileimage.jpeg",
+      "1_Title_report.pdf",
+      "1_arch_cert_april.pdf",
+      "1_ca_cert_4.pdf",
+      "1_ca_certificate3.pdf",
+      "1_ca_certificate_april.pdf",
+      "1_engg_cert_3.pdf",
+      "1_engineer_cert_april.pdf",
+      "2_Commencement_cert.pdf",
+      "2_Profileimage.jpeg",
+      "2_Title_report.pdf",
+      "3_Commencement_cert.pdf",
+      "3_Profileimage.jpeg",
+      "3_Title_report.pdf",
+      "4_Commencement_cert.pdf",
+      "4_Profileimage.jpeg",
+      "4dcc5407-12d9-4f08-baae-4a23c04410b5.pdf",
+      "5_Commencement_cert.pdf",
+      "5_Profileimage.jpeg",
+      "6_Profileimage.jpeg",
+      "792.pdf",
+      "7_Profileimage.jpeg",
+      "8_Profileimage.jpeg",
+      "9_Profileimage.jpeg",
+      "Agreement_to_sell_FIN-ilovepdf-compressed.pdf",
+      "Apartment_Association.pdf",
+      "Architect_3.pdf",
+      "Architect_cert.pdf",
+      "CA_certificate_1.pdf",
+      "CA_certificate__1.pdf",
+      "Commencement_cert.pdf",
+      "Declaration.pdf",
+      "Engineer_s_Final_Certificate_July2019.pdf",
+      "Engineers_Certificate.pdf",
+      "Form_4.pdf",
+      "Form_5.pdf",
+      "MAHARERA_Authority__2_.pdf",
+      "OC.pdf",
+      "Occupancy_Certificate.pdf",
+      "PAN.pdf",
+      "PaymentReceipt_REA50500000459_459.pdf",
+      "Profileimage.jpeg",
+      "Title_report.pdf",
+      "arch_cert_april.pdf",
+      "ca_cert_4.pdf",
+      "ca_certificate3.pdf",
+      "ca_certificate_april.pdf",
+      "engg_cert_3.pdf",
+      "engineer_cert_april.pdf",
+      "maharera-logo-bg-blue.png"
+    ],
+    "document_count": 71
+  },
+  "P50500000348": {
+    "rera_id": "P50500000348",
+    "project_id": 16,
+    "project_name": "ROYAL RESIDENCY",
+    "promoter_name": "DESIGN DEVELOPERS PRIVATE LIMITED",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "New",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-07-15",
+      "originalCompletion": "2020-11-30",
+      "proposedCompletion": "2020-11-30",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-07-15"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2020-11-30"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "ROYAL RESIDENCY",
+        "wing": null,
+        "floorsProposed": 6,
+        "floorsSanctioned": 6,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "232db1c4-b298-48bf-bb82-4f1e924e7683.pdf",
+      "ARCH_CERTIFICATE__compressed__1_.pdf",
+      "ARCH_FORM_4.pdf",
+      "Allotment_Letter_and_Agreement_Copy.pdf",
+      "CA_Letter__1_.pdf",
+      "Commencement_Certificate__1_.pdf",
+      "Design_-_Royal_Residency_-_CA_Certificate_Form_5.pdf",
+      "Design_Develover_Pan_Card.pdf",
+      "Download_File__6_-min.pdf",
+      "Download_File__6_.pdf",
+      "ENGINEER_CERTIFICATES_compressed.pdf",
+      "FORM_3_CA_CERTIFICATE_New.pdf",
+      "Form_B__1_.pdf",
+      "Index_2.pdf",
+      "MergedFile-min.pdf",
+      "NEW_FORM_B.pdf",
+      "New_Architech_Certificate.pdf",
+      "New_Structure_Engineer_Certificate.pdf",
+      "OCCUPANCY_CERTIFICATE.pdf",
+      "PaymentReceipt_REA50500003626_3626.pdf",
+      "RL_Letter.pdf",
+      "Royal_Residency_-_Building_Plan__1_.pdf",
+      "Search_Report_-_Royal_Residency.pdf",
+      "nit_layout_plan.pdf"
+    ],
+    "document_count": 24
+  },
+  "P50500002280": {
+    "rera_id": "P50500002280",
+    "project_id": 13,
+    "project_name": "SHIVAM PARK",
+    "promoter_name": "SAMBHAV INFRA",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-07-31",
+      "originalCompletion": "2019-01-31",
+      "proposedCompletion": "2019-01-31",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-07-31"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2019-01-31"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "JASMINE",
+        "wing": null,
+        "floorsProposed": 6,
+        "floorsSanctioned": 6,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "TWIN UNIT",
+        "wing": null,
+        "floorsProposed": 3,
+        "floorsSanctioned": 3,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "1_OCCUPANCY_CERTIFICATE.pdf",
+      "1_Profileimage.jpeg",
+      "7c5e6480-850b-495c-96c6-7149cd49863a.pdf",
+      "Architect_Certificate-ilovepdf-compressed.pdf",
+      "BUILDING_PERMIT.pdf",
+      "Blank_Draft_for_Rera.pdf",
+      "Building_Plan.pdf",
+      "Engineers_Certificate-ilovepdf-compressed.pdf",
+      "FORM_4.pdf",
+      "LAYOUT_PLAN.pdf",
+      "OCCUPANCY_CERTIFICATE.pdf",
+      "PAN_CARD_SAMBHAV.pdf",
+      "PaymentReceipt_REA50500008592_8592.pdf",
+      "ProfileImage.jpeg",
+      "SOCIETY.pdf",
+      "Society_Handover_Letter.pdf",
+      "allotement_letter.pdf",
+      "ca_certificate.pdf",
+      "encumbrance_certificate.pdf",
+      "form_B__2_.pdf",
+      "legal_report.pdf"
+    ],
+    "document_count": 21
+  },
+  "P51500011537": {
+    "rera_id": "P51500011537",
+    "project_id": 8,
+    "project_name": "SAINATHVILLA Phase II",
+    "promoter_name": "Sainath Builders & Developers",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-08-31",
+      "originalCompletion": "2018-05-31",
+      "proposedCompletion": "2018-05-31",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-08-31"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-05-31"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "Vithal",
+        "wing": null,
+        "floorsProposed": 5,
+        "floorsSanctioned": 5,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "Rukmani",
+        "wing": null,
+        "floorsProposed": 5,
+        "floorsSanctioned": 5,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "Row House",
+        "wing": null,
+        "floorsProposed": 2,
+        "floorsSanctioned": 2,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "1_COMMENCEMENT.pdf",
+      "1_LETTER.pdf",
+      "1_Profileimage.jpeg",
+      "2_Profileimage.jpeg",
+      "3_Profileimage.jpeg",
+      "BS-2019.pdf",
+      "BS-2020.pdf",
+      "BS-2021.pdf",
+      "COMMENCEMENT.pdf",
+      "FROM_4.pdf",
+      "Form5.pdf",
+      "Form_B.PDF",
+      "Form_D_Declaration_abt_commencement_certificate.pdf",
+      "LETTER.pdf",
+      "Occupancy_Certificate.pdf",
+      "PaymentReceipt_REA51500020696_20696.pdf",
+      "ProfileImage.jpeg",
+      "Sold_Unsold_List.pdf",
+      "a2a7235f-36b1-4bc8-8dad-218eee0fbf1b.pdf",
+      "agreement_to_sale.PDF",
+      "apart1.PDF",
+      "apart2.PDF",
+      "architect.PDF",
+      "ca_certificate0001.PDF",
+      "encumbrance0001.PDF",
+      "engineer.PDF",
+      "occupancy.pdf",
+      "pancard.PDF",
+      "row_house.PDF",
+      "sainath_villa.pdf",
+      "search_report.PDF"
+    ],
+    "document_count": 31
+  },
+  "P51700000001": {
+    "rera_id": "P51700000001",
+    "project_id": 4,
+    "project_name": "MAYFAIR VISHWARAJA",
+    "promoter_name": "MAYFAIR HOUSING PRIVATE LIMITED",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-05-09",
+      "originalCompletion": "2018-06-30",
+      "proposedCompletion": "2018-06-30",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 59342.3,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-05-09"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-06-30"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "A - TARUN",
+        "wing": null,
+        "floorsProposed": 14,
+        "floorsSanctioned": 14,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "B - GAJANAN",
+        "wing": null,
+        "floorsProposed": 13,
+        "floorsSanctioned": 13,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "F - OMKAR",
+        "wing": null,
+        "floorsProposed": 13,
+        "floorsSanctioned": 13,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "G - EKDANTA",
+        "wing": null,
+        "floorsProposed": 14,
+        "floorsSanctioned": 14,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "00_OC_part_1.pdf",
+      "00_Oc_Part_2.pdf",
+      "00_Oc_Part_3.pdf",
+      "01_Architect_Certficate_as_on_31July2017.pdf",
+      "01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
+      "02_Architect_Certificate_as_on_31102017.pdf",
+      "02_ENGINEER_S_CERTIFICATE_as_on_31July2017.pdf",
+      "03_CA_Certificate_as_on_31Juy2017.pdf",
+      "03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
+      "11_Certificates_of_Engineer__Form_2_.pdf",
+      "12_Commencement_Certificate.pdf",
+      "1_01_Mayfair_Vishwaraja_RERA_CA_Certtificate_31102017.pdf",
+      "1_02_Architect_Certificate_as_on_31102017.pdf",
+      "1_03_Mayfair_Vishwaraja_Certificate_from_Engineer_08112017.pdf",
+      "1_MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
+      "1_Pan_Card_-_MHPL.pdf",
+      "1_Profileimage.jpeg",
+      "2_Copy_of_the_legal_title_report.pdf",
+      "3_Details_of_encumbrances.pdf",
+      "4_Copy_of_Approved_Plan.pdf",
+      "4_Copy_of_Approved_Plan_IOD.pdf",
+      "531ea281-e3a8-4997-bdc5-460dd2405827.pdf",
+      "5_Signed_Proforma_of_the_allotment_letter_and_agreement_for_sale.pdf",
+      "6_Declaration_in_Form_B.pdf",
+      "7_Certificate_of_Architect__Form_1_.pdf",
+      "9_Certificate_of_CA__Form_3_.pdf",
+      "Architect_Certificate_Form_No_4.pdf",
+      "GRIEVANCE_REDRESSAL_CELL_VISHWARAJA.pdf",
+      "HDFC_NO_DUES_LETTER.pdf",
+      "Index_II_of_ABFL_Mortgage_Deed.pdf",
+      "MAYFAIR_VISHWARAJA_RERA_AUDIT_REPORT_as_on_30th_Sep_18.pdf",
+      "OC_Letter.pdf",
+      "PaymentReceipt_REA51700000001_1.pdf",
+      "Profileimage.jpeg",
+      "Society_Registration_Certificate_A_Wing.pdf",
+      "Society_Registration_Certificate_B_Wing.pdf",
+      "Society_Registration_Certificate_F_Wing.pdf",
+      "Society_Registration_Certificate_G_Wing.pdf",
+      "Vishwaraja_Audit_Report_31March2019.pdf"
+    ],
+    "document_count": 39
+  },
+  "P51700000002": {
+    "rera_id": "P51700000002",
+    "project_id": 3,
+    "project_name": "UNNATHI WOODS PHASE VII A",
+    "promoter_name": "UNNATHI ESTATES",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-05-09",
+      "originalCompletion": "2025-12-30",
+      "proposedCompletion": "2025-12-30",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50862.5,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-05-09"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2025-12-30"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "G1",
+        "wing": null,
+        "floorsProposed": 15,
+        "floorsSanctioned": 15,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      },
+      {
+        "name": "G2",
+        "wing": null,
+        "floorsProposed": 20,
+        "floorsSanctioned": 20,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": 2,
+    "documents": [
+      "18422007-2cfd-439b-bf1a-a5df6e9038c4.pdf",
+      "1_layout.pdf",
+      "310608.pdf",
+      "6298.pdf",
+      "Declaration_-_Form_B.pdf",
+      "Form_-_2A_UW-VII-A.pdf",
+      "Form_1_Architect_Certificate-ilovepdf-compressed.pdf",
+      "Form_2_Engineer_s_Certificate_Unnathi_Woods_Ph_VII.pdf",
+      "G1-G2_OC.pdf",
+      "Index_II_IOM_with_JM_Finance.pdf",
+      "Mortgage_Deed_Index_2-ilovepdf-compressed.pdf",
+      "PaymentReceipt_REA51700000002_2.pdf",
+      "ProfileImage.jpeg",
+      "Title_Surinder_rao.pdf",
+      "Unnathi_Woods_-_VII-A.pdf",
+      "Unnathi_Woods_G1.pdf",
+      "Unnathi_Woods_G2.pdf",
+      "Unnathi_Woods_Phase_VII-A-_G1-G2.pdf",
+      "Unnathi_Woods_Phase_VII_-_A.pdf",
+      "Unnathi_Woods_Phase_VII_A.pdf",
+      "Unnathi_Woods_VII-A.pdf",
+      "VI_PANCARD__AC_.pdf",
+      "XV-_I___-_CC_S__AC_.pdf",
+      "XXIII_Architect_Certificate_-_Form_1.pdf",
+      "XXIV_Engineers_Certificate_-.pdf",
+      "XXV_Ca_Certificate.pdf",
+      "XX___XXI_Combine.pdf",
+      "layout.pdf"
+    ],
+    "document_count": 28
+  },
+  "P51700002065": {
+    "rera_id": "P51700002065",
+    "project_id": 5,
+    "project_name": "MERIDIAN MYSTIC",
+    "promoter_name": "MANOJ  AWASTHI",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-07-31",
+      "originalCompletion": "2018-12-31",
+      "proposedCompletion": "2019-12-31",
+      "revisedCompletion": "2019-12-31",
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-07-31"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-12-31"
+      },
+      {
+        "type": "revised",
+        "label": "Revised completion",
+        "date": "2019-12-31"
+      }
+    ],
+    "extensions": [
+      {
+        "appNo": "EXT51700000952",
+        "originalDate": "2019-12-31",
+        "revisedDate": "2019-12-31",
+        "reason": "N.M.M.C has given us the Commencement certificate for G +17th floors & we have also received the part Occupancy Certificate upto 14th floor. we have applied for the Civil Aviation N.O.C for the above floors & are awaiting the same soon. Hence we are requesting for extension of one year ."
+      }
+    ],
+    "buildings": [
+      {
+        "name": "MERIDIAN MYSTIC",
+        "wing": null,
+        "floorsProposed": 20,
+        "floorsSanctioned": 20,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "1_Form_1.pdf",
+      "3163.pdf",
+      "AGREEMENT_FOR_SALE__RERA__-_Meridian_Fountainhead_Mystic_-_Final_-_25-7-2017.pdf",
+      "Building_Aprooval_IOD_1.pdf",
+      "Building_Aprooval_IOD_2.pdf",
+      "Building_Aprooval_IOD_3.pdf",
+      "CC_Compressed.pdf",
+      "Encumbrances.pdf",
+      "FORM_1.pdf",
+      "FORM_2.pdf",
+      "FORM_3.pdf",
+      "Form_5_Scanned.pdf",
+      "Form_B.pdf",
+      "Image__29_.pdf",
+      "Image__30_.pdf",
+      "Layot_Aprooval_Plan.pdf",
+      "Layot_Aprooval_Plan_Besment.pdf",
+      "OC_Copy.pdf",
+      "PaymentReceipt_REA51700006804_6804.pdf",
+      "RERA_FORM_4.pdf",
+      "Title_Report.pdf",
+      "f3dfab6e-3465-4526-99f3-c4f049801d20.pdf",
+      "ilovepdf_jpg_to_pdf.pdf"
+    ],
+    "document_count": 23
+  },
+  "P51800002451": {
+    "rera_id": "P51800002451",
+    "project_id": 15,
+    "project_name": "VIKI HEIGHTS",
+    "promoter_name": "Divij Developers",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-08-01",
+      "originalCompletion": "2018-11-30",
+      "proposedCompletion": "2019-11-30",
+      "revisedCompletion": "2019-11-30",
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-08-01"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-11-30"
+      },
+      {
+        "type": "revised",
+        "label": "Revised completion",
+        "date": "2019-11-30"
+      }
+    ],
+    "extensions": [
+      {
+        "appNo": "EXT51800001385",
+        "originalDate": "2019-11-30",
+        "revisedDate": "2019-11-30",
+        "reason": "Additional FSI as per road with to be utilized. concessions approved and are available on Autodcr site. amended plans and cc procurement in process"
+      }
+    ],
+    "buildings": [
+      {
+        "name": "Viki Heights",
+        "wing": null,
+        "floorsProposed": 33,
+        "floorsSanctioned": 33,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "1_FORM_B_AFFIDAVIT.PDF",
+      "2243590_OC_signed.pdf",
+      "3709.pdf",
+      "Allotment_letter.PDF",
+      "Arch_Certificate.PDF",
+      "CA_CERTIFICATE.PDF",
+      "Decleration_Layout.PDF",
+      "Dhavalkaria_pancard.pdf",
+      "FORM_4.pdf",
+      "FORM_B_AFFIDAVIT.PDF",
+      "Form2.PDF",
+      "PaymentReceipt_REA51800007817_7817.pdf",
+      "RERA_CA_CERTIFICATE.PDF",
+      "Title_Report.pdf",
+      "a814c7af-7724-46b8-8820-f29d16f928a6.pdf",
+      "commencement_certificate_20180326183306.pdf",
+      "iod_first_page.PDF"
+    ],
+    "document_count": 17
+  },
+  "P52100012200": {
+    "rera_id": "P52100012200",
+    "project_id": 11,
+    "project_name": "NANDHA RESIDENCY",
+    "promoter_name": "AMIT C THAKUR",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "Ongoing",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-09-01",
+      "originalCompletion": "2018-06-15",
+      "proposedCompletion": "2018-06-15",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-09-01"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2018-06-15"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "NANDA RESIDENCY",
+        "wing": null,
+        "floorsProposed": 6,
+        "floorsSanctioned": 6,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "AMITDEVELOPERS_NA_ORDER_NEW.pdf",
+      "AMIT_DEVELOPERS_COMPLITION_CERTIFICATE.pdf",
+      "ARKITECT_CERTIFICATE.PDF",
+      "Annual_Report_on_Statement_of_Accounts___FORM-5__Amit_Developer.pdf",
+      "CERTIFICATE_OF_ENCUMBRANCE.pdf",
+      "ENGG_CERTIFICATE.pdf",
+      "FORM_3.pdf",
+      "Koregaonmul_-_Rera_-_Booking_-.pdf",
+      "LEGAL_OPINION.pdf",
+      "OWNER_FORM_B.pdf",
+      "PAN_CARD.pdf",
+      "Page1.PDF",
+      "Page2.PDF",
+      "PaymentReceipt_REA52100009862_9862.pdf",
+      "afba242a-2e8a-409e-91f4-15416c3f9077.pdf",
+      "from_4.pdf"
+    ],
+    "document_count": 16
+  },
+  "P52300000176": {
+    "rera_id": "P52300000176",
+    "project_id": 18,
+    "project_name": "SHIVNERI APPARTMENT",
+    "promoter_name": "SHIVNERI DEVELOPERS ASHTI",
+    "specs": {
+      "type": "Residential / Group Housing",
+      "status": "New",
+      "stage": "Certificate Signed",
+      "registeredOn": "2017-07-10",
+      "originalCompletion": "2019-05-15",
+      "proposedCompletion": "2019-05-15",
+      "revisedCompletion": null,
+      "unitsTotal": 0,
+      "unitsSold": 0,
+      "feesPayable": 50885.0,
+      "lapsed": false
+    },
+    "timeline": [
+      {
+        "type": "registered",
+        "label": "RERA registered",
+        "date": "2017-07-10"
+      },
+      {
+        "type": "promised",
+        "label": "Promised completion",
+        "date": "2019-05-15"
+      }
+    ],
+    "extensions": [],
+    "buildings": [
+      {
+        "name": "SHIVNERI APPARTMENT",
+        "wing": null,
+        "floorsProposed": 6,
+        "floorsSanctioned": 6,
+        "residential": 0,
+        "nonResidential": 0,
+        "total": 0
+      }
+    ],
+    "litigation": null,
+    "complaints": null,
+    "documents": [
+      "1_Completion_certificate.pdf",
+      "1_ProfileImage.jpeg",
+      "2_Completion_certificate.pdf",
+      "2_Profileimage.jpeg",
+      "3_Profileimage.jpeg",
+      "4_Profileimage.jpeg",
+      "74f22998-23ef-4414-8453-19081ea24b9e.pdf",
+      "Building_plans.PDF",
+      "Completion_certificate.pdf",
+      "FORM-1.pdf",
+      "FORM-3.pdf",
+      "Final_Rera_Agreement_SHIVNERI.pdf",
+      "Form-2.pdf",
+      "Form-4.pdf",
+      "Form-B.pdf",
+      "Layout.pdf",
+      "PaymentReceipt_REA52300003483_3483.pdf",
+      "ProfileImage.jpeg",
+      "Search_report.pdf",
+      "comencement_certificate1.pdf",
+      "encrumbance_certificate.pdf",
+      "pan_card.pdf"
+    ],
+    "document_count": 22
+  }
+}

@@ -30,7 +30,7 @@ from fastapi.staticfiles import StaticFiles
 
 from engine.verdict import build_verdict
 from .store import ProjectStore
-from .shape import project_to_card, project_to_full, builder_stub, load_reputation, REPUTATION
+from .shape import project_to_card, project_to_full, builder_stub, load_reputation, load_detail, REPUTATION, DETAIL
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("honesthomes.api")
@@ -65,6 +65,15 @@ def _load() -> None:
             log.info("no reputation data loaded")
     except Exception as e:
         log.error("FAILED to load reputation: %s", e, exc_info=True)
+
+    try:
+        if load_detail():
+            log.info("tier-2 detail loaded: %d projects (snapshot %s, docs_available=%s)",
+                     len(DETAIL.records), DETAIL.captured_at, DETAIL.docs_available)
+        else:
+            log.info("no tier-2 detail data loaded")
+    except Exception as e:
+        log.error("FAILED to load detail: %s", e, exc_info=True)
 
 
 @app.get("/api/health")
@@ -180,6 +189,15 @@ def hh_project(rera_id: str) -> dict:
         raise HTTPException(status_code=404, detail="project not found")
     full = project_to_full(row)
     return {"project": full, "builder": builder_stub(row), "as_of": store.snapshot_date}
+
+
+@app.get("/api/hh/doc/{rera_id}/{filename}")
+def hh_doc(rera_id: str, filename: str) -> FileResponse:
+    """Serve a captured Tier-2 document file (PDF/image) when present locally."""
+    p = DETAIL.doc_path(rera_id, filename) if DETAIL.loaded else None
+    if p is None:
+        raise HTTPException(status_code=404, detail="document not available")
+    return FileResponse(p, filename=filename)
 
 
 # --- static frontend ---------------------------------------------------------------

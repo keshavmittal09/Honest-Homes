@@ -17,14 +17,21 @@ from datetime import date
 
 from engine.verdict import build_verdict
 from engine.reputation import ReputationStore
+from engine.detail import DetailStore
 
 # Loaded once at import / startup. When a reputation snapshot exists, real projects get
 # real green/amber/red scores; otherwise they honestly stay 'incomplete' (N/A).
 REPUTATION = ReputationStore()
+# Tier-2 detail (timeline, specs, documents) for the projects we've enriched.
+DETAIL = DetailStore()
 
 
 def load_reputation() -> bool:
     return REPUTATION.load_latest()
+
+
+def load_detail() -> bool:
+    return DETAIL.load_latest()
 
 # Map our engine's signal kinds -> the design's kinds + icons.
 _KIND = {"positive": "positive", "caution": "caution", "negative": "severe", "neutral": "neutral"}
@@ -123,6 +130,33 @@ def project_to_full(row: dict) -> dict:
         "dataComplete": complete,
         "dataAsOf": as_of,
     })
+
+    # --- Merge Tier-2 detail (timeline, specs, documents) when we have it ---
+    det = DETAIL.get(row.get("rera_id", "")) if DETAIL.loaded else None
+    if det:
+        sp = det.get("specs", {})
+        exts = det.get("extensions", [])
+        if det.get("timeline"):
+            card["timeline"] = det["timeline"]
+        card["promisedCompletion"] = sp.get("originalCompletion") or "—"
+        card["revisedCompletion"] = sp.get("revisedCompletion")
+        card["extensions"] = len(exts)
+        card["units"] = sp.get("unitsTotal")
+        card["statusNote"] = sp.get("status") or card["statusNote"]
+        card["hasDetail"] = True
+        card["detail"] = {
+            "specs": sp,
+            "extensions": exts,
+            "buildings": det.get("buildings", []),
+            "litigation": det.get("litigation"),
+            "documents": det.get("documents", []),
+            "documentCount": det.get("document_count", 0),
+            "documentsAvailable": DETAIL.docs_available,
+            "capturedAt": DETAIL.captured_at,
+        }
+    else:
+        card["hasDetail"] = False
+
     return card
 
 

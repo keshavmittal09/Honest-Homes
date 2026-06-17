@@ -11,6 +11,82 @@ function KV({ k, v, mono }) {
   );
 }
 
+// Tidy a raw document filename into a human label.
+function prettyDoc(name) {
+  return (name || "").replace(/\.[a-z0-9]+$/i, "").replace(/[_]+/g, " ").replace(/\s+/g, " ").trim() || name;
+}
+
+function SpecCell({ k, v, accent }) {
+  return h("div", { className: "spec-cell" },
+    h("div", { className: "spec-k" }, k),
+    h("div", { className: `spec-v ${accent ? "accent" : ""}` }, (v === null || v === undefined || v === "") ? "—" : v));
+}
+
+// The Tier-2 detail block: project specs, delay/extension history, and documents.
+function DetailSection({ p }) {
+  const d = p.detail || {};
+  const sp = d.specs || {};
+  const exts = d.extensions || [];
+  const docs = d.documents || [];
+  const delayed = sp.originalCompletion && sp.revisedCompletion && sp.revisedCompletion > sp.originalCompletion;
+  const fee = sp.feesPayable ? "₹" + Number(sp.feesPayable).toLocaleString("en-IN") : "—";
+
+  return h(React.Fragment, null,
+    // ---- Project details ----
+    h("div", { className: "panel", style: { marginTop: 16 } },
+      h("div", { className: "panel-h" },
+        h("h2", null, "Project details"),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Official MahaRERA registration · as of ", d.capturedAt)),
+      h("div", { className: "panel-b" },
+        h("div", { className: "spec-grid" },
+          h(SpecCell, { k: "Type", v: sp.type }),
+          h(SpecCell, { k: "Status", v: sp.status }),
+          h(SpecCell, { k: "Current stage", v: sp.stage }),
+          h(SpecCell, { k: "Registered on", v: sp.registeredOn }),
+          h(SpecCell, { k: "Promised completion", v: sp.originalCompletion }),
+          h(SpecCell, { k: "Revised completion", v: sp.revisedCompletion, accent: delayed }),
+          h(SpecCell, { k: "Units (sold / total)", v: `${sp.unitsSold == null ? "—" : sp.unitsSold} / ${sp.unitsTotal == null ? "—" : sp.unitsTotal}` }),
+          h(SpecCell, { k: "RERA fee", v: fee })
+        ))),
+
+    // ---- Delay / extension history (a real risk signal) ----
+    exts.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
+      h("div", { className: "panel-h" },
+        h("h2", { className: "row gap-8" }, h(Icon_v, { name: "calendar-clock", size: 17, style: { color: "var(--amber)" } }),
+          `Completion revised ${exts.length} time${exts.length > 1 ? "s" : ""}`),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Promised vs revised, with the builder's stated reason")),
+      h("div", { className: "panel-b" },
+        exts.map((e, i) => h("div", { key: i, className: "ext-row" },
+          h("div", { className: "ext-dates mono" },
+            (e.originalDate || "—"), " → ", h("b", { style: { color: "var(--amber)" } }, e.revisedDate || "—"),
+            e.appNo && h("span", { className: "faint", style: { marginLeft: 8 } }, "· ", e.appNo)),
+          e.reason && h("p", { className: "muted", style: { fontSize: 13, marginTop: 5, lineHeight: 1.55 } }, "“", e.reason, "”"))),
+        h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
+          h(SourceTag, { source: "MahaRERA — extension certificates", asOf: d.capturedAt })))),
+
+    // ---- Documents on record ----
+    docs.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
+      h("div", { className: "panel-h" },
+        h("h2", null, "Documents on record"),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, d.documentCount, " files")),
+      h("div", { className: "panel-b" },
+        h("div", { className: "doc-grid" },
+          docs.map((fn, i) => {
+            const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
+              h(Icon_v, { name: "doc", size: 15, className: "faint" }),
+              h("span", { className: "doc-name" }, prettyDoc(fn)));
+            if (d.documentsAvailable) {
+              return h("a", { key: i, className: "doc-item",
+                  href: `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(fn)}`, target: "_blank", rel: "noopener" },
+                inner, h(Icon_v, { name: "download", size: 14, className: "faint" }));
+            }
+            return h("div", { key: i, className: "doc-item disabled" }, inner);
+          })),
+        !d.documentsAvailable && h("p", { className: "faint", style: { fontSize: 12, marginTop: 12 } },
+          "These documents are on the official MahaRERA record for this project.")))
+  );
+}
+
 function Verdict({ id, go }) {
   const [data, setData] = useStateV(null);
   const [loading, setLoading] = useStateV(true);
@@ -190,6 +266,9 @@ function Verdict({ id, go }) {
         )
       )
     ),
+
+    // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
+    p.hasDetail && h(DetailSection, { p }),
 
     // ---------- DISCLAIMER ----------
     h("div", { className: "disclaimer", style: { marginTop: 18 } },
