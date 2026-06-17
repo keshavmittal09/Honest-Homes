@@ -89,6 +89,27 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
                 "total": b.get("totalUnitCount"),
             })
 
+    # --- Units / flats (apartment inventory with booked = sold counts) ---
+    units = {"total": 0, "booked": 0, "mix": []}
+    mb = _ro(api, "getMigratedBuildingDetails")
+    if isinstance(mb, list):
+        for r in mb:
+            cnt = r.get("numberOfApartment") or 0
+            bkd = r.get("numberOfBookedApartments") or 0
+            units["total"] += cnt
+            units["booked"] += bkd
+            units["mix"].append({
+                "building": r.get("buildingNameNumber"),
+                "type": r.get("apartmentType"),
+                "carpetArea": r.get("carpetArea"),
+                "count": cnt,
+                "booked": bkd,
+            })
+    if units["total"] == 0:  # non-migrated projects keep the header totals
+        units["total"] = g.get("totalNumberOfUnits") or 0
+        units["booked"] = g.get("totalNumberOfSoldUnits") or 0
+    units["mix"] = [m for m in units["mix"] if m.get("count")]
+
     # --- Litigation ---
     lit_ro = _ro(api, "getProjectLitigationDetails")
     litigation = None
@@ -109,8 +130,8 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "originalCompletion": original,
         "proposedCompletion": proposed,
         "revisedCompletion": revised,
-        "unitsTotal": g.get("totalNumberOfUnits"),
-        "unitsSold": g.get("totalNumberOfSoldUnits"),
+        "unitsTotal": units["total"],
+        "unitsSold": units["booked"],
         "feesPayable": g.get("projectFeesPayableAmount"),
         "lapsed": bool(g.get("isProjectLapsed")),
     }
@@ -124,6 +145,7 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "timeline": timeline,
         "extensions": extensions,
         "buildings": buildings,
+        "units": units,
         "litigation": litigation,
         "complaints": complaints,
         "documents": sorted(doc_files),

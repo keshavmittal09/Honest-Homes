@@ -12,8 +12,8 @@
       "originalCompletion": "2018-12-31",
       "proposedCompletion": "2018-12-31",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 232,
+      "unitsSold": 37,
       "feesPayable": 82072.1,
       "lapsed": false
     },
@@ -68,6 +68,159 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 232,
+      "booked": 37,
+      "mix": [
+        {
+          "building": "ORCHID 1 BLOCK A Type 1",
+          "type": "FLAT",
+          "carpetArea": 52.49,
+          "count": 16,
+          "booked": 2
+        },
+        {
+          "building": "ORCHID 1 BLOCK A Type 1",
+          "type": "SHOP",
+          "carpetArea": 12.09,
+          "count": 4,
+          "booked": 2
+        },
+        {
+          "building": "ORCHID 1 BLOCK A Type 1",
+          "type": "SHOP",
+          "carpetArea": 17.13,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 1 BLOCK A Type 1",
+          "type": "SHOP",
+          "carpetArea": 12.96,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 2, 3 BLOCK B Type 1",
+          "type": "FLAT",
+          "carpetArea": 46.44,
+          "count": 32,
+          "booked": 5
+        },
+        {
+          "building": "ORCHID 2, 3 BLOCK B Type 1",
+          "type": "FLAT",
+          "carpetArea": 44.32,
+          "count": 28,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 2, 3 BLOCK B Type 1",
+          "type": "FLAT",
+          "carpetArea": 45.68,
+          "count": 4,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 2, 3 BLOCK B Type 1",
+          "type": "FLAT",
+          "carpetArea": 43.12,
+          "count": 28,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 2, 3 BLOCK B Type 1",
+          "type": "FLAT",
+          "carpetArea": 46.9,
+          "count": 4,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 43.17,
+          "count": 17,
+          "booked": 7
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 50.76,
+          "count": 9,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 44.63,
+          "count": 1,
+          "booked": 1
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 51.65,
+          "count": 18,
+          "booked": 3
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 51.75,
+          "count": 9,
+          "booked": 5
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 41.55,
+          "count": 2,
+          "booked": 1
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 42.97,
+          "count": 18,
+          "booked": 2
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 43.08,
+          "count": 18,
+          "booked": 3
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 41.45,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 50.79,
+          "count": 18,
+          "booked": 5
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 43.28,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "ORCHID 4 BLOCK C Type 2 Wing A, B, C",
+          "type": "FLAT",
+          "carpetArea": 44.66,
+          "count": 1,
+          "booked": 1
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -158,8 +311,8 @@
       "originalCompletion": "2020-11-30",
       "proposedCompletion": "2020-11-30",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 10,
+      "unitsSold": 10,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -187,6 +340,33 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 10,
+      "booked": 10,
+      "mix": [
+        {
+          "building": "ROYAL RESIDENCY",
+          "type": "2BHK PENTHOUSE",
+          "carpetArea": 51.0,
+          "count": 1,
+          "booked": 1
+        },
+        {
+          "building": "ROYAL RESIDENCY",
+          "type": "2BHK",
+          "carpetArea": 53.0,
+          "count": 5,
+          "booked": 5
+        },
+        {
+          "building": "ROYAL RESIDENCY",
+          "type": "3BHK",
+          "carpetArea": 65.0,
+          "count": 4,
+          "booked": 4
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -230,8 +410,8 @@
       "originalCompletion": "2019-01-31",
       "proposedCompletion": "2019-01-31",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 37,
+      "unitsSold": 16,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -268,6 +448,61 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 37,
+      "booked": 16,
+      "mix": [
+        {
+          "building": "JASMINE",
+          "type": "2BHK",
+          "carpetArea": 43.52,
+          "count": 6,
+          "booked": 2
+        },
+        {
+          "building": "JASMINE",
+          "type": "2BHK",
+          "carpetArea": 43.66,
+          "count": 14,
+          "booked": 7
+        },
+        {
+          "building": "JASMINE",
+          "type": "2BHK",
+          "carpetArea": 43.58,
+          "count": 9,
+          "booked": 3
+        },
+        {
+          "building": "JASMINE",
+          "type": "2BHK",
+          "carpetArea": 42.04,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "JASMINE",
+          "type": "2BHK",
+          "carpetArea": 43.6,
+          "count": 3,
+          "booked": 2
+        },
+        {
+          "building": "TWIN UNIT",
+          "type": "2BHK",
+          "carpetArea": 50.32,
+          "count": 2,
+          "booked": 1
+        },
+        {
+          "building": "TWIN UNIT",
+          "type": "2BHK",
+          "carpetArea": 50.43,
+          "count": 2,
+          "booked": 1
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -308,8 +543,8 @@
       "originalCompletion": "2018-05-31",
       "proposedCompletion": "2018-05-31",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 32,
+      "unitsSold": 21,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -355,6 +590,33 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 32,
+      "booked": 21,
+      "mix": [
+        {
+          "building": "Vithal",
+          "type": "Flat",
+          "carpetArea": 48.14,
+          "count": 12,
+          "booked": 7
+        },
+        {
+          "building": "Rukmani",
+          "type": "Flat",
+          "carpetArea": 35.07,
+          "count": 12,
+          "booked": 11
+        },
+        {
+          "building": "Row House",
+          "type": "RowHouse",
+          "carpetArea": 56.85,
+          "count": 8,
+          "booked": 3
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -405,8 +667,8 @@
       "originalCompletion": "2018-06-30",
       "proposedCompletion": "2018-06-30",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 236,
+      "unitsSold": 62,
       "feesPayable": 59342.3,
       "lapsed": false
     },
@@ -461,6 +723,292 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 236,
+      "booked": 62,
+      "mix": [
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 44.35,
+          "count": 12,
+          "booked": 1
+        },
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 41.39,
+          "count": 3,
+          "booked": 1
+        },
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 32.64,
+          "count": 9,
+          "booked": 2
+        },
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 30.04,
+          "count": 12,
+          "booked": 2
+        },
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 28.61,
+          "count": 9,
+          "booked": 7
+        },
+        {
+          "building": "A - TARUN",
+          "type": "Residential",
+          "carpetArea": 33.59,
+          "count": 12,
+          "booked": 0
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 30.04,
+          "count": 11,
+          "booked": 0
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 41.39,
+          "count": 3,
+          "booked": 0
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 28.61,
+          "count": 8,
+          "booked": 5
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 32.64,
+          "count": 8,
+          "booked": 2
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 33.59,
+          "count": 11,
+          "booked": 3
+        },
+        {
+          "building": "B - GAJANAN",
+          "type": "Residential",
+          "carpetArea": 44.35,
+          "count": 11,
+          "booked": 1
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 28.61,
+          "count": 8,
+          "booked": 7
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 30.04,
+          "count": 11,
+          "booked": 4
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 32.64,
+          "count": 8,
+          "booked": 3
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 33.59,
+          "count": 11,
+          "booked": 6
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 41.39,
+          "count": 3,
+          "booked": 1
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 11.2,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 8.71,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 20.98,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Residential",
+          "carpetArea": 46.51,
+          "count": 11,
+          "booked": 1
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 14.71,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 12.64,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 17.86,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 11.7,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "F - OMKAR",
+          "type": "Commercial-Shop",
+          "carpetArea": 8.92,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 33.59,
+          "count": 12,
+          "booked": 1
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 44.35,
+          "count": 12,
+          "booked": 1
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 41.39,
+          "count": 3,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 30.04,
+          "count": 12,
+          "booked": 4
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 32.64,
+          "count": 9,
+          "booked": 3
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 11.2,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 8.71,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 20.98,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 14.71,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 8.92,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 11.7,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 17.86,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Commercial-Shop",
+          "carpetArea": 12.65,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "G - EKDANTA",
+          "type": "Residential",
+          "carpetArea": 28.61,
+          "count": 9,
+          "booked": 7
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -519,8 +1067,8 @@
       "originalCompletion": "2025-12-30",
       "proposedCompletion": "2025-12-30",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 234,
+      "unitsSold": 230,
       "feesPayable": 50862.5,
       "lapsed": false
     },
@@ -557,6 +1105,33 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 234,
+      "booked": 230,
+      "mix": [
+        {
+          "building": "G1",
+          "type": "1 BHK",
+          "carpetArea": 30.69,
+          "count": 102,
+          "booked": 100
+        },
+        {
+          "building": "G2",
+          "type": "1 BHK",
+          "carpetArea": 30.82,
+          "count": 64,
+          "booked": 63
+        },
+        {
+          "building": "G2",
+          "type": "1 BHK",
+          "carpetArea": 35.04,
+          "count": 68,
+          "booked": 67
+        }
+      ]
+    },
     "litigation": null,
     "complaints": 2,
     "documents": [
@@ -604,8 +1179,8 @@
       "originalCompletion": "2018-12-31",
       "proposedCompletion": "2019-12-31",
       "revisedCompletion": "2019-12-31",
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 48,
+      "unitsSold": 42,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -645,6 +1220,47 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 48,
+      "booked": 42,
+      "mix": [
+        {
+          "building": "MERIDIAN MYSTIC",
+          "type": "3BHK",
+          "carpetArea": 63.74,
+          "count": 2,
+          "booked": 2
+        },
+        {
+          "building": "MERIDIAN MYSTIC",
+          "type": "2BHK",
+          "carpetArea": 45.84,
+          "count": 14,
+          "booked": 13
+        },
+        {
+          "building": "MERIDIAN MYSTIC",
+          "type": "3BHK",
+          "carpetArea": 75.17,
+          "count": 14,
+          "booked": 11
+        },
+        {
+          "building": "MERIDIAN MYSTIC",
+          "type": "2BHK",
+          "carpetArea": 57.61,
+          "count": 2,
+          "booked": 2
+        },
+        {
+          "building": "MERIDIAN MYSTIC",
+          "type": "2BHK",
+          "carpetArea": 42.12,
+          "count": 16,
+          "booked": 14
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -687,8 +1303,8 @@
       "originalCompletion": "2018-11-30",
       "proposedCompletion": "2019-11-30",
       "revisedCompletion": "2019-11-30",
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 27,
+      "unitsSold": 19,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -728,6 +1344,82 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 27,
+      "booked": 19,
+      "mix": [
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 62.8,
+          "count": 10,
+          "booked": 9
+        },
+        {
+          "building": "Viki Heights",
+          "type": "SHOP",
+          "carpetArea": 34.3,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 18.92,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 57.27,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 43.67,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 85.0,
+          "count": 2,
+          "booked": 1
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 99.59,
+          "count": 1,
+          "booked": 1
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 31.03,
+          "count": 2,
+          "booked": 2
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 37.35,
+          "count": 2,
+          "booked": 2
+        },
+        {
+          "building": "Viki Heights",
+          "type": "FLAT",
+          "carpetArea": 91.05,
+          "count": 4,
+          "booked": 4
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -764,8 +1456,8 @@
       "originalCompletion": "2018-06-15",
       "proposedCompletion": "2018-06-15",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 27,
+      "unitsSold": 9,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -793,6 +1485,47 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 27,
+      "booked": 9,
+      "mix": [
+        {
+          "building": "NANDA RESIDENCY",
+          "type": "SHOP",
+          "carpetArea": 5.6,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "NANDA RESIDENCY",
+          "type": "SHOP",
+          "carpetArea": 6.01,
+          "count": 2,
+          "booked": 0
+        },
+        {
+          "building": "NANDA RESIDENCY",
+          "type": "2 BHK",
+          "carpetArea": 57.59,
+          "count": 8,
+          "booked": 4
+        },
+        {
+          "building": "NANDA RESIDENCY",
+          "type": "1 BHK",
+          "carpetArea": 41.05,
+          "count": 8,
+          "booked": 2
+        },
+        {
+          "building": "NANDA RESIDENCY",
+          "type": "1 BHK",
+          "carpetArea": 39.69,
+          "count": 8,
+          "booked": 3
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [
@@ -828,8 +1561,8 @@
       "originalCompletion": "2019-05-15",
       "proposedCompletion": "2019-05-15",
       "revisedCompletion": null,
-      "unitsTotal": 0,
-      "unitsSold": 0,
+      "unitsTotal": 15,
+      "unitsSold": 8,
       "feesPayable": 50885.0,
       "lapsed": false
     },
@@ -857,6 +1590,61 @@
         "total": 0
       }
     ],
+    "units": {
+      "total": 15,
+      "booked": 8,
+      "mix": [
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "1BHK",
+          "carpetArea": 34.78,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "1BHK",
+          "carpetArea": 28.95,
+          "count": 2,
+          "booked": 2
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "2BHK",
+          "carpetArea": 41.72,
+          "count": 4,
+          "booked": 0
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "1BHK",
+          "carpetArea": 35.07,
+          "count": 4,
+          "booked": 4
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "2BHK",
+          "carpetArea": 42.31,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "2BHK",
+          "carpetArea": 38.53,
+          "count": 1,
+          "booked": 0
+        },
+        {
+          "building": "SHIVNERI APPARTMENT",
+          "type": "2BHK",
+          "carpetArea": 41.56,
+          "count": 2,
+          "booked": 2
+        }
+      ]
+    },
     "litigation": null,
     "complaints": null,
     "documents": [

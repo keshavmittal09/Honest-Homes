@@ -143,7 +143,7 @@ function Report({ id, go, print }) {
           [["Type", p.detail.specs.type], ["Status", p.detail.specs.status], ["Current stage", p.detail.specs.stage],
            ["Registered on", p.detail.specs.registeredOn], ["Promised completion", p.detail.specs.originalCompletion],
            ["Revised completion", p.detail.specs.revisedCompletion],
-           ["Units (sold / total)", `${p.detail.specs.unitsSold == null ? "—" : p.detail.specs.unitsSold} / ${p.detail.specs.unitsTotal == null ? "—" : p.detail.specs.unitsTotal}`],
+           ["Units (booked / total)", `${p.detail.specs.unitsSold == null ? "—" : p.detail.specs.unitsSold} / ${p.detail.specs.unitsTotal == null ? "—" : p.detail.specs.unitsTotal}`],
            ["RERA fee", p.detail.specs.feesPayable ? "₹" + Number(p.detail.specs.feesPayable).toLocaleString("en-IN") : "—"],
            ["Documents on record", String(p.detail.documentCount)]
           ].map(([k, v], i) =>

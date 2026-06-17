@@ -13,8 +13,20 @@ function KV({ k, v, mono }) {
 
 // Tidy a raw document filename into a human label.
 function prettyDoc(name) {
-  return (name || "").replace(/\.[a-z0-9]+$/i, "").replace(/[_]+/g, " ").replace(/\s+/g, " ").trim() || name;
+  let s = (name || "").replace(/\.[a-z0-9]+$/i, "").replace(/[_]+/g, " ").replace(/\s+/g, " ").trim();
+  s = s.replace(/\b\w/g, c => c.toUpperCase());           // Title Case
+  return s || name;
 }
+function docCategory(name) {
+  const n = (name || "").toLowerCase();
+  if (/agreement|allotment|\bsale\b|deed/.test(n)) return "Agreements";
+  if (/iod|\bcc\b|commencement|occupanc|noc|approv|sanction|intimation/.test(n)) return "Approvals & NOCs";
+  if (/cert/.test(n)) return "Certificates";
+  if (/plan|layout|map|drawing|floor/.test(n)) return "Plans & layouts";
+  if (/pan|gst|aadha|title|legal|encumbr|7\/12|index/.test(n)) return "Legal & KYC";
+  return "Other documents";
+}
+const DOC_ORDER = ["Certificates", "Approvals & NOCs", "Agreements", "Plans & layouts", "Legal & KYC", "Other documents"];
 
 function SpecCell({ k, v, accent }) {
   return h("div", { className: "spec-cell" },
@@ -22,20 +34,37 @@ function SpecCell({ k, v, accent }) {
     h("div", { className: `spec-v ${accent ? "accent" : ""}` }, (v === null || v === undefined || v === "") ? "—" : v));
 }
 
-// The Tier-2 detail block: project specs, delay/extension history, and documents.
+// The Tier-2 detail block: specs, sales/inventory, delays, documents.
 function DetailSection({ p }) {
   const d = p.detail || {};
   const sp = d.specs || {};
   const exts = d.extensions || [];
+  const u = d.units || {};
   const docs = d.documents || [];
   const delayed = sp.originalCompletion && sp.revisedCompletion && sp.revisedCompletion > sp.originalCompletion;
   const fee = sp.feesPayable ? "₹" + Number(sp.feesPayable).toLocaleString("en-IN") : "—";
+  const total = u.total || 0, booked = u.booked || 0;
+  const pct = total ? Math.round((booked / total) * 100) : 0;
+  const mix = (u.mix || []).filter(m => m.count);
+
+  // group documents by category
+  const groups = {};
+  docs.forEach(fn => { const c = docCategory(fn); (groups[c] = groups[c] || []).push(fn); });
+  const docLink = (fn, i) => {
+    const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
+      h(Icon_v, { name: "doc", size: 15, className: "doc-ic" }),
+      h("span", { className: "doc-name" }, prettyDoc(fn)));
+    return d.documentsAvailable
+      ? h("a", { key: i, className: "doc-item", href: `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(fn)}`, target: "_blank", rel: "noopener" },
+          inner, h(Icon_v, { name: "download", size: 14, className: "faint" }))
+      : h("div", { key: i, className: "doc-item disabled" }, inner);
+  };
 
   return h(React.Fragment, null,
-    // ---- Project details ----
+    // ---- Project snapshot ----
     h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
-        h("h2", null, "Project details"),
+        h("h2", null, "Project snapshot"),
         h("span", { className: "faint", style: { fontSize: 12.5 } }, "Official MahaRERA registration · as of ", d.capturedAt)),
       h("div", { className: "panel-b" },
         h("div", { className: "spec-grid" },
@@ -45,11 +74,36 @@ function DetailSection({ p }) {
           h(SpecCell, { k: "Registered on", v: sp.registeredOn }),
           h(SpecCell, { k: "Promised completion", v: sp.originalCompletion }),
           h(SpecCell, { k: "Revised completion", v: sp.revisedCompletion, accent: delayed }),
-          h(SpecCell, { k: "Units (sold / total)", v: `${sp.unitsSold == null ? "—" : sp.unitsSold} / ${sp.unitsTotal == null ? "—" : sp.unitsTotal}` }),
+          h(SpecCell, { k: "Total units", v: total || "—" }),
           h(SpecCell, { k: "RERA fee", v: fee })
         ))),
 
-    // ---- Delay / extension history (a real risk signal) ----
+    // ---- Sales & inventory ----
+    total > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
+      h("div", { className: "panel-h" },
+        h("h2", null, "Sales & inventory"),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Booked vs total, per configuration")),
+      h("div", { className: "panel-b" },
+        h("div", { className: "sold-head" },
+          h("div", null, h("span", { className: "sold-big" }, booked.toLocaleString("en-IN")),
+            h("span", { className: "sold-small" }, " of ", total.toLocaleString("en-IN"), " units booked")),
+          h("div", { className: "sold-pct" }, pct, "%")),
+        h("div", { className: "sold-bar" }, h("div", { className: "sold-fill", style: { width: pct + "%" } })),
+        mix.length > 0 && h("div", { className: "inv-wrap" },
+          h("table", { className: "inv-table" },
+            h("thead", null, h("tr", null,
+              h("th", null, "Configuration"), h("th", null, "Carpet (sq.m)"),
+              h("th", { className: "num" }, "Booked"), h("th", { className: "num" }, "Total"))),
+            h("tbody", null, mix.map((m, i) => h("tr", { key: i },
+              h("td", null, h("b", null, m.type || "Unit"),
+                m.building && h("span", { className: "faint", style: { marginLeft: 7, fontSize: 11 } }, m.building)),
+              h("td", null, m.carpetArea == null ? "—" : m.carpetArea),
+              h("td", { className: "num" }, h("b", { style: m.booked ? { color: "var(--green)" } : {} }, m.booked)),
+              h("td", { className: "num" }, m.count)))))),
+        h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
+          h(SourceTag, { source: "MahaRERA — building & unit details", asOf: d.capturedAt })))),
+
+    // ---- Delay / extension history ----
     exts.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", { className: "row gap-8" }, h(Icon_v, { name: "calendar-clock", size: 17, style: { color: "var(--amber)" } }),
@@ -64,26 +118,16 @@ function DetailSection({ p }) {
         h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
           h(SourceTag, { source: "MahaRERA — extension certificates", asOf: d.capturedAt })))),
 
-    // ---- Documents on record ----
+    // ---- Documents on record (grouped) ----
     docs.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", null, "Documents on record"),
-        h("span", { className: "faint", style: { fontSize: 12.5 } }, d.documentCount, " files")),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, d.documentCount, " files",
+          d.documentsAvailable ? "" : " · on the MahaRERA portal")),
       h("div", { className: "panel-b" },
-        h("div", { className: "doc-grid" },
-          docs.map((fn, i) => {
-            const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
-              h(Icon_v, { name: "doc", size: 15, className: "faint" }),
-              h("span", { className: "doc-name" }, prettyDoc(fn)));
-            if (d.documentsAvailable) {
-              return h("a", { key: i, className: "doc-item",
-                  href: `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(fn)}`, target: "_blank", rel: "noopener" },
-                inner, h(Icon_v, { name: "download", size: 14, className: "faint" }));
-            }
-            return h("div", { key: i, className: "doc-item disabled" }, inner);
-          })),
-        !d.documentsAvailable && h("p", { className: "faint", style: { fontSize: 12, marginTop: 12 } },
-          "These documents are on the official MahaRERA record for this project.")))
+        DOC_ORDER.filter(g => groups[g]).map(g => h("div", { key: g, className: "doc-group" },
+          h("div", { className: "doc-group-h" }, g, h("span", { className: "faint" }, " · ", groups[g].length)),
+          h("div", { className: "doc-grid" }, groups[g].map((fn, i) => docLink(fn, i)))))))
   );
 }
 

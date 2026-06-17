@@ -148,6 +148,7 @@ def project_to_full(row: dict) -> dict:
             "specs": sp,
             "extensions": exts,
             "buildings": det.get("buildings", []),
+            "units": det.get("units", {}),
             "litigation": det.get("litigation"),
             "documents": det.get("documents", []),
             "documentCount": det.get("document_count", 0),
