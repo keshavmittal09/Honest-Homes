@@ -165,8 +165,8 @@ function ScrollScene({ go }) {
               h("p", { className: "scene-p" }, s.p),
               i === 2 && h("button", { className: "btn btn-primary",
                   style: { marginTop: 24, opacity: `clamp(0, calc((var(--p) - 0.85) * 8), 1)` },
-                  onClick: () => go.verdict("DEMO-RED") },
-                "See the full verdict", h(Icon_sc, { name: "arrow", size: 16 }))))
+                  onClick: () => go.results() },
+                "Check a project", h(Icon_sc, { name: "arrow", size: 16 }))))
         )
       ),
 
@@ -194,7 +194,7 @@ function ScrollScene({ go }) {
           h("div", { className: "stem right" })),
         h("div", { className: "stamp" }, "REVOKED"),
         h("div", { className: "vchip", "data-shown": stage === 2 ? "1" : "0" },
-          h("button", { className: "card", onClick: () => go.verdict("DEMO-RED"), style: { cursor: "pointer" } },
+          h("button", { className: "card", onClick: () => go.results(), style: { cursor: "pointer" } },
             h("div", { className: "sc" }, "1.8", h("small", null, "/10")),
             h("div", null,
               h(BandBadge, { band: "red" }),

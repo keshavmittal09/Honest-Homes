@@ -8,12 +8,12 @@ const Icon_s = window.Icon;
 // ---------------- LANDING ----------------
 function Landing({ go, onSearch }) {
   const [q, setQ] = useStateS("");
-  const [featured, setFeatured] = useStateS(window.HH.showcase);
+  const [featured, setFeatured] = useStateS([]);
   const [meta, setMeta] = useStateS(window.HH.meta());
 
   useEffectS(() => {
-    window.HH.featured().then(({ showcase, real, meta }) => {
-      setFeatured([...showcase, ...real.slice(0, 5)]);
+    window.HH.featured().then(({ real, meta }) => {
+      setFeatured(real.slice(0, 8));
       setMeta(meta);
     });
   }, []);
@@ -72,7 +72,7 @@ function Landing({ go, onSearch }) {
       ),
       h("p", { className: "faint", style: { fontSize: 12.5, marginTop: 18, textAlign: "center" } },
         h(Icon_s, { name: "info", size: 13, style: { verticalAlign: "-2px", marginRight: 5 } }),
-        "The first three are illustrative examples of clean, caution and flagged verdicts. The rest are live MahaRERA projects from our index.")
+        "Live MahaRERA projects from our index. Search any builder or project above to see its verdict.")
     ),
 
     // how it works strip
