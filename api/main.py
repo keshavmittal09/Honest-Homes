@@ -15,6 +15,8 @@ import logging
 import os
 from pathlib import Path
 
+import httpx
+
 # Load a local .env for development convenience. In production (Render) the
 # environment variables come from the dashboard, so a missing .env or missing
 # python-dotenv is perfectly fine.
@@ -112,6 +114,32 @@ def _mask(phone: str) -> str:
     return ("*" * max(0, len(p) - 4) + p[-4:]) if p else ""
 
 
+async def _supabase_insert(rec: dict) -> bool:
+    """Insert a submission into Supabase (durable). No-op unless SUPABASE_KEY is set.
+    Uses the service key server-side only; the table has RLS on with no public
+    policies, so submissions are never readable by the anon/public API."""
+    url = os.getenv("SUPABASE_URL", "https://buhxytlquxsxziagooog.supabase.co").rstrip("/")
+    key = os.getenv("SUPABASE_KEY", "")
+    if not key:
+        return False
+    try:
+        async with httpx.AsyncClient(timeout=10) as c:
+            r = await c.post(
+                f"{url}/rest/v1/submissions",
+                headers={"apikey": key, "Authorization": f"Bearer {key}",
+                         "Content-Type": "application/json", "Prefer": "return=minimal"},
+                json={"type": rec["type"], "name": rec["name"], "phone": rec["phone"],
+                      "project": rec["project"], "project_id": rec["project_id"], "message": rec["message"]},
+            )
+        if r.status_code in (200, 201, 204):
+            return True
+        log.error("supabase insert HTTP %s: %s", r.status_code, r.text[:200])
+        return False
+    except Exception as e:
+        log.error("supabase insert failed: %s", e)
+        return False
+
+
 @app.post("/api/lead")
 async def lead(payload: dict, request: Request) -> dict:
     """Capture a visitor submission — unlock lead, project request, or inquiry.
@@ -136,13 +164,15 @@ async def lead(payload: dict, request: Request) -> dict:
     }
     if not rec["name"] or not rec["phone"]:
         raise HTTPException(status_code=400, detail="name and phone are required")
-    try:
+
+    stored = await _supabase_insert(rec)          # durable store (when configured)
+    try:                                          # local backup / dev visibility
         LEADS_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(LEADS_FILE, "a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     except Exception as e:  # never fail the user's submission on a storage hiccup
         log.error("lead write failed: %s", e)
-    log.info("SUBMIT[%s] %s | %s | %s", kind, rec["name"], _mask(rec["phone"]), rec["project"])
+    log.info("SUBMIT[%s] %s | %s | %s (supabase=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
     return {"ok": True}
 
 

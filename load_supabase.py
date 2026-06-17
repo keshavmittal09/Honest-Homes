@@ -13,12 +13,13 @@ if sys.platform == "win32":
 import psycopg2
 from psycopg2.extras import execute_batch
 
-# Supabase connection details
-SUPABASE_HOST = "db.buhxytlquxsxziagooog.supabase.co"
-SUPABASE_DB = "postgres"
-SUPABASE_USER = "postgres"
-SUPABASE_PASSWORD = "honesthomes_001"
-SUPABASE_PORT = 5432
+# Supabase connection details (read from env — never hard-code secrets).
+# Set SUPABASE_DB_PASSWORD in your environment before running this loader.
+SUPABASE_HOST = os.getenv("SUPABASE_DB_HOST", "db.buhxytlquxsxziagooog.supabase.co")
+SUPABASE_DB = os.getenv("SUPABASE_DB_NAME", "postgres")
+SUPABASE_USER = os.getenv("SUPABASE_DB_USER", "postgres")
+SUPABASE_PASSWORD = os.getenv("SUPABASE_DB_PASSWORD", "")
+SUPABASE_PORT = int(os.getenv("SUPABASE_DB_PORT", "5432"))
 
 DATA_DIR = Path(__file__).parent / "data" / "snapshots"
 
