@@ -193,6 +193,7 @@ function Verdict({ id, go }) {
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back },
         h(Icon_v, { name: "back", size: 15 }), "Back to results"),
       h("div", { className: "row gap-8" },
+        h(InquiryButton, { project: p, label: "Ask a question", variant: "btn-ghost", size: "sm" }),
         unlocked
           ? h(React.Fragment, null,
               h(ShareMenu, { url: shareUrl, title: shareTitle }),

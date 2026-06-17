@@ -267,11 +267,12 @@ function ShareMenu({ url, title, size = "sm" }) {
   );
 }
 
-// ---------- Contact / request-a-project modal ----------
-function ContactModal({ prefill, onClose }) {
+// ---------- Contact modal: request-a-project OR ask-about-a-project ----------
+function ContactModal({ onClose, type = "request", projectName = "", projectId = "",
+    lockProject = false, prefill = "", heading, intro, requireMessage = false, cta = "Send request" }) {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
-  const [project, setProject] = useState(prefill || "");
+  const [project, setProject] = useState(lockProject ? projectName : (prefill || ""));
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -283,37 +284,32 @@ function ContactModal({ prefill, onClose }) {
     return () => document.removeEventListener("keydown", onEsc);
   }, []);
 
-  const subject = `Honest Homes — project request: ${project || "(unspecified)"}`;
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
     if (!name.trim() || !contact.trim() || !project.trim()) {
-      setErr("Please add your name, a contact, and the project or builder."); return;
+      setErr("Please add your name, your phone, and the project."); return;
     }
+    if (requireMessage && !message.trim()) { setErr("Please type your question."); return; }
     setBusy(true);
-    const payload = { name, contact, project, message, _subject: subject };
     try {
-      if (HH_CONTACT.formEndpoint) {
-        const r = await fetch(HH_CONTACT.formEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!r.ok) throw new Error("bad status");
-        setSent(true);
-      } else {
-        const body = `Name: ${name}\nContact: ${contact}\nProject / Builder: ${project}\n\nMessage:\n${message || "—"}`;
-        window.location.href = `mailto:${HH_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        setSent(true);
-      }
+      const r = await submitEntry({ type, name: name.trim(), phone: contact.trim(),
+        project: project.trim(), projectId, message: message.trim() });
+      if (!r.ok) throw new Error("bad");
+      setSent(true);
     } catch (_) {
-      setErr(`Couldn't send right now — please email ${HH_CONTACT.email} directly.`);
+      setErr("Couldn't send right now — please try again in a moment.");
     }
     setBusy(false);
   };
 
   const field = (label, node) => h("label", { className: "field" },
     h("span", { className: "field-l" }, label), node);
+  const inquiry = type === "inquiry";
+  const H = heading || (inquiry ? "Ask about this project" : "Can't find your project?");
+  const I = intro || (inquiry
+    ? "Ask anything about this project — pricing, availability, documents or possession. We'll get back to you."
+    : "Tell us the project or builder you're looking for and we'll add it to our MahaRERA index and follow up.");
 
   return h("div", { className: "modal-overlay no-print", onMouseDown: onClose },
     h("div", { className: "modal", onMouseDown: e => e.stopPropagation(), role: "dialog", "aria-modal": "true" },
@@ -323,34 +319,40 @@ function ContactModal({ prefill, onClose }) {
             h("div", { className: "modal-ico ok" }, h(Icon, { name: "check", size: 26 })),
             h("h3", { className: "serif", style: { fontSize: 21, fontWeight: 600, marginTop: 12 } }, "Thanks — we're on it."),
             h("p", { className: "muted", style: { fontSize: 14, marginTop: 8, lineHeight: 1.55 } },
-              "We'll look into ", h("b", { style: { color: "var(--ink)" } }, project), " and get back to you. Adding new projects to the index is exactly how Honest Homes grows."),
+              inquiry ? "We've received your question about " : "We'll look into ",
+              h("b", { style: { color: "var(--ink)" } }, project),
+              inquiry ? " and will reach out shortly." : " and get back to you."),
             h("button", { className: "btn btn-primary", style: { marginTop: 18 }, onClick: onClose }, "Done"))
         : h("div", null,
             h("div", { className: "row gap-12", style: { alignItems: "flex-start", marginBottom: 4 } },
-              h("div", { className: "modal-ico" }, h(Icon, { name: "message", size: 22 })),
+              h("div", { className: "modal-ico" }, h(Icon, { name: inquiry ? "help" : "message", size: 22 })),
               h("div", null,
-                h("h3", { className: "serif", style: { fontSize: 21, fontWeight: 600 } }, "Can't find your project?"),
-                h("p", { className: "muted", style: { fontSize: 13.5, marginTop: 4, lineHeight: 1.5 } },
-                  "Tell us the project or builder you're looking for and we'll add it to our MahaRERA index and follow up."))),
+                h("h3", { className: "serif", style: { fontSize: 21, fontWeight: 600 } }, H),
+                h("p", { className: "muted", style: { fontSize: 13.5, marginTop: 4, lineHeight: 1.5 } }, I))),
             h("form", { onSubmit: submit, className: "modal-form" },
-              field("Project or builder *", h("input", { value: project, onChange: e => setProject(e.target.value), placeholder: "e.g. Lodha Park, Worli" })),
+              lockProject
+                ? field("Project", h("input", { value: project, readOnly: true, className: "ro" }))
+                : field("Project or builder *", h("input", { value: project, onChange: e => setProject(e.target.value), placeholder: "e.g. Lodha Park, Worli" })),
               h("div", { className: "form-2col" },
                 field("Your name *", h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Full name" })),
-                field("Phone or email *", h("input", { value: contact, onChange: e => setContact(e.target.value), placeholder: "How we reach you" }))),
-              field("Anything else (optional)", h("textarea", { value: message, onChange: e => setMessage(e.target.value), rows: 3, placeholder: "Location, RERA ID, or what you'd like to know" })),
+                field("Phone *", h("input", { value: contact, onChange: e => setContact(e.target.value), placeholder: "Mobile number", inputMode: "tel" }))),
+              field(inquiry ? "Your question *" : "Anything else (optional)",
+                h("textarea", { value: message, onChange: e => setMessage(e.target.value), rows: 3,
+                  placeholder: inquiry ? "e.g. What's the price of a 2BHK? Is possession on track?" : "Location, RERA ID, or what you'd like to know" })),
               err && h("div", { className: "form-err" }, h(Icon, { name: "info", size: 14 }), err),
-              h("div", { className: "row gap-8", style: { marginTop: 4, justifyContent: "flex-end" } },
+              h("div", { className: "modal-consent" }, "By submitting, you agree we may contact you about this enquiry. We don't share your number."),
+              h("div", { className: "row gap-8", style: { marginTop: 6, justifyContent: "flex-end" } },
                 HH_CONTACT.whatsapp && h("a", { className: "btn btn-ghost btn-sm", target: "_blank", rel: "noopener",
-                    href: `https://wa.me/${HH_CONTACT.whatsapp}?text=${encodeURIComponent("Hi Honest Homes, I'm looking for: " + (project || ""))}` },
+                    href: `https://wa.me/${HH_CONTACT.whatsapp}?text=${encodeURIComponent((inquiry ? "Question about " : "Looking for ") + (project || ""))}` },
                   h(Icon, { name: "whatsapp", size: 15 }), "WhatsApp"),
                 h("button", { type: "submit", className: "btn btn-primary", disabled: busy },
-                  busy ? "Sending…" : h("span", { className: "row gap-8" }, h(Icon, { name: "send", size: 15 }), "Send request"))))
+                  busy ? "Sending…" : h("span", { className: "row gap-8" }, h(Icon, { name: "send", size: 15 }), cta))))
           )
     )
   );
 }
 
-// Trigger button + its own modal state. Drop in anywhere.
+// Request a project (global). Opens the contact modal in "request" mode.
 function ContactButton({ prefill, label = "Request a project", variant = "btn-ghost", size = "sm", icon = "message" }) {
   const [open, setOpen] = useState(false);
   return h(React.Fragment, null,
@@ -360,28 +362,45 @@ function ContactButton({ prefill, label = "Request a project", variant = "btn-gh
   );
 }
 
-// ---------- Lead submission (shared by the unlock gate) ----------
-// Posts to your form endpoint (Formspree etc.) when configured — durable — else
-// falls back to the backend /api/lead (stored in leads.jsonl + Render logs).
-async function submitLead({ name, phone, project }) {
+// Ask a question about a specific project. Opens the modal in "inquiry" mode.
+function InquiryButton({ project, label = "Ask about this project", variant = "btn-ghost", size = "sm" }) {
+  const [open, setOpen] = useState(false);
+  return h(React.Fragment, null,
+    h("button", { className: `btn ${variant} btn-${size}`, onClick: () => setOpen(true) },
+      h(Icon, { name: "help", size: 15 }), label),
+    open && h(ContactModal, { type: "inquiry", lockProject: true, requireMessage: true, cta: "Send question",
+      projectName: (project && project.name) || "", projectId: (project && project.id) || "",
+      onClose: () => setOpen(false) })
+  );
+}
+
+// ---------- Unified submission pipeline ----------
+// Every user submission (unlock lead, project request, project inquiry) goes
+// through here. Posts to your form endpoint (Formspree etc.) when configured —
+// durable — else to the backend /api/lead (leads.jsonl + Render logs).
+async function submitEntry(entry) {
+  const project = entry.project;
   const payload = {
-    name, phone,
+    type: entry.type || "lead",
+    name: entry.name || "",
+    phone: entry.phone || "",
     project: (project && project.name) || (typeof project === "string" ? project : "") || "",
-    projectId: (project && project.id) || "",
-    _subject: "Honest Homes — new visitor lead",
+    projectId: entry.projectId || (project && project.id) || "",
+    message: entry.message || "",
+    _subject: `Honest Homes — ${entry.type || "lead"}`,
   };
-  if (HH_CONTACT.formEndpoint) {
-    return fetch(HH_CONTACT.formEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  }
-  return fetch("/api/lead", {
+  const useForm = !!HH_CONTACT.formEndpoint;
+  return fetch(useForm ? HH_CONTACT.formEndpoint : "/api/lead", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: useForm
+      ? { "Content-Type": "application/json", "Accept": "application/json" }
+      : { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+}
+
+async function submitLead({ name, phone, project }) {
+  return submitEntry({ type: "unlock", name, phone, project });
 }
 
 // Has this visitor already unlocked? (gate once per visitor, not per project)
@@ -461,4 +480,4 @@ function Footer({ go }) {
   );
 }
 
-Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton, submitLead, hasLead, LeadGate, Footer });
+Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton, InquiryButton, submitEntry, submitLead, hasLead, LeadGate, Footer });

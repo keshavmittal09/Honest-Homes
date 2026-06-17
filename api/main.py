@@ -24,7 +24,7 @@ try:
 except Exception:
     pass
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -88,21 +88,50 @@ def health() -> dict:
 
 LEADS_FILE = Path(__file__).resolve().parent.parent / "data" / "leads.jsonl"
 
+# Best-effort in-memory rate limit (per client IP). Single Render instance, so a
+# plain dict is fine; it just blunts casual spam/abuse of the public endpoint.
+_RATE: dict[str, list[float]] = {}
+_RATE_MAX = 12          # submissions
+_RATE_WINDOW = 600      # per 10 minutes
+
+
+def _rate_ok(ip: str) -> bool:
+    import time
+    now = time.time()
+    hits = [t for t in _RATE.get(ip, []) if now - t < _RATE_WINDOW]
+    if len(hits) >= _RATE_MAX:
+        _RATE[ip] = hits
+        return False
+    hits.append(now)
+    _RATE[ip] = hits
+    return True
+
+
+def _mask(phone: str) -> str:
+    p = "".join(ch for ch in phone if ch.isdigit())
+    return ("*" * max(0, len(p) - 4) + p[-4:]) if p else ""
+
 
 @app.post("/api/lead")
-async def lead(payload: dict) -> dict:
-    """Capture a visitor lead (name + phone) from the verdict unlock gate.
+async def lead(payload: dict, request: Request) -> dict:
+    """Capture a visitor submission — unlock lead, project request, or inquiry.
 
-    Stored to data/leads.jsonl AND logged (so leads are visible in the Render
-    log stream even though the free-tier filesystem is ephemeral). For durable
-    storage, set HH_CONTACT_FORM_ENDPOINT so the frontend posts to Formspree
-    instead — see /api/config.
+    Stored to data/leads.jsonl AND logged (phone masked). NOTE: on Render's free
+    tier the filesystem is ephemeral, so for durable storage set
+    HH_CONTACT_FORM_ENDPOINT (frontend posts there) or wire a database.
     """
+    ip = (request.client.host if request.client else "?")
+    if not _rate_ok(ip):
+        raise HTTPException(status_code=429, detail="too many requests, please try again later")
+
+    kind = str(payload.get("type", "lead"))[:24].strip() or "lead"
     rec = {
+        "type": kind,
         "name": str(payload.get("name", ""))[:120].strip(),
         "phone": str(payload.get("phone", ""))[:40].strip(),
         "project": str(payload.get("project", ""))[:200].strip(),
         "project_id": str(payload.get("projectId", ""))[:40].strip(),
+        "message": str(payload.get("message", ""))[:2000].strip(),
         "ts": datetime.datetime.utcnow().isoformat(timespec="seconds") + "Z",
     }
     if not rec["name"] or not rec["phone"]:
@@ -111,9 +140,9 @@ async def lead(payload: dict) -> dict:
         LEADS_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(LEADS_FILE, "a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-    except Exception as e:  # never fail the user's unlock on a storage hiccup
+    except Exception as e:  # never fail the user's submission on a storage hiccup
         log.error("lead write failed: %s", e)
-    log.info("LEAD %s | %s | %s (%s)", rec["name"], rec["phone"], rec["project"], rec["project_id"])
+    log.info("SUBMIT[%s] %s | %s | %s", kind, rec["name"], _mask(rec["phone"]), rec["project"])
     return {"ok": True}
 
 
