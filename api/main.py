@@ -252,11 +252,12 @@ def hh_project(rera_id: str) -> dict:
 
 @app.get("/api/hh/doc/{rera_id}/{filename}")
 def hh_doc(rera_id: str, filename: str) -> FileResponse:
-    """Serve a captured Tier-2 document file (PDF/image) when present locally."""
+    """Serve a captured Tier-2 document file. Opens INLINE in the browser (PDF
+    viewer / image) so users can read it; they can download from there."""
     p = DETAIL.doc_path(rera_id, filename) if DETAIL.loaded else None
     if p is None:
         raise HTTPException(status_code=404, detail="document not available")
-    return FileResponse(p, filename=filename)
+    return FileResponse(p, content_disposition_type="inline")
 
 
 # --- static frontend ---------------------------------------------------------------

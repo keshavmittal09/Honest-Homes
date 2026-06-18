@@ -130,10 +130,10 @@ function DetailSection({ p }) {
                 h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.label] || "doc", size: 19 })),
                 h("div", { style: { minWidth: 0, flex: 1 } },
                   h("div", { className: "keydoc-label" }, o.label),
-                  h("div", { className: "keydoc-act" }, d.documentsAvailable ? "Download PDF" : "On MahaRERA record")));
+                  h("div", { className: "keydoc-act" }, d.documentsAvailable ? "Open document" : "On MahaRERA record")));
               return d.documentsAvailable
                 ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
-                    body, h(Icon_v, { name: "download", size: 16, className: "faint" }))
+                    body, h(Icon_v, { name: "link", size: 16, className: "faint" }))
                 : h("div", { key: i, className: "keydoc disabled" }, body);
             }))),
         // All documents, grouped
