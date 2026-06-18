@@ -19,6 +19,12 @@ from pathlib import Path
 
 import httpx
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except Exception:
+    pass
+
 from engine.detail import PARSED_ROOT, RAW_ROOT
 
 BUCKET = "project-docs"
