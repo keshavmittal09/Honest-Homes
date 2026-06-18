@@ -45,14 +45,16 @@ function DetailSection({ p }) {
   const keyDocs = [];
   const seenKey = new Set();
   docs.forEach(o => { if (o.important && !seenKey.has(o.label)) { seenKey.add(o.label); keyDocs.push(o); } });
-  const docHref = (o) => `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(o.file)}`;
+  const docHref = (o) => o.url || `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(o.file)}`;
+  const canOpen = (o) => !!o.url || d.documentsAvailable;
+  const anyOpen = d.documentsAvailable || docs.some(o => o.url);
   const docItem = (o, i) => {
     const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
       h(Icon_v, { name: "doc", size: 15, className: "doc-ic" }),
       h("span", { className: "doc-name" }, o.label));
-    return d.documentsAvailable
+    return canOpen(o)
       ? h("a", { key: i, className: "doc-item", href: docHref(o), target: "_blank", rel: "noopener" },
-          inner, h(Icon_v, { name: "download", size: 14, className: "faint" }))
+          inner, h(Icon_v, { name: "link", size: 14, className: "faint" }))
       : h("div", { key: i, className: "doc-item disabled" }, inner);
   };
 
@@ -130,8 +132,8 @@ function DetailSection({ p }) {
                 h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.label] || "doc", size: 19 })),
                 h("div", { style: { minWidth: 0, flex: 1 } },
                   h("div", { className: "keydoc-label" }, o.label),
-                  h("div", { className: "keydoc-act" }, d.documentsAvailable ? "Open document" : "On MahaRERA record")));
-              return d.documentsAvailable
+                  h("div", { className: "keydoc-act" }, canOpen(o) ? "Open document" : "On MahaRERA record")));
+              return canOpen(o)
                 ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
                     body, h(Icon_v, { name: "link", size: 16, className: "faint" }))
                 : h("div", { key: i, className: "keydoc disabled" }, body);
@@ -141,7 +143,7 @@ function DetailSection({ p }) {
         DOC_ORDER.filter(g => groups[g]).map(g => h("div", { key: g, className: "doc-group" },
           h("div", { className: "doc-subcat" }, g, h("span", { className: "faint" }, " · ", groups[g].length)),
           h("div", { className: "doc-grid" }, groups[g].map((o, i) => docItem(o, i))))),
-        !d.documentsAvailable && h("p", { className: "faint", style: { fontSize: 12, marginTop: 6 } },
+        !anyOpen && h("p", { className: "faint", style: { fontSize: 12, marginTop: 6 } },
           "Open any of these on the official MahaRERA portal via the button above.")))
   );
 }
