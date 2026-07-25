@@ -114,8 +114,15 @@ function LocationMap({ p }) {
     h("div", { className: "panel-b", style: { paddingTop: 12 } },
       h("div", { className: "kvbar" },
         h(KV, { k: "District", v: p.district }),
-        h(KV, { k: "Pincode", v: p.pincode || "—" }),
+        (p.plot && p.plot.village) && h(KV, { k: "Village", v: p.plot.village }),
+        h(KV, { k: "Pincode", v: (p.plot && p.plot.pincode) || p.pincode || "—" }),
         h(KV, { k: "Coordinates", v: `${(+lat).toFixed(5)}, ${(+lng).toFixed(5)}`, mono: true })),
+      // Plot identity as filed with MahaRERA — the CTS/survey number is what a
+      // Development Plan remarks lookup is keyed on.
+      p.plot && (p.plot.cts || p.plot.landArea) && h("div", { className: "kvbar", style: { marginTop: 10 } },
+        p.plot.cts && h(KV, { k: "CTS / Survey no.", v: p.plot.cts, mono: true }),
+        p.plot.landArea && h(KV, { k: "Plot area", v: `${p.plot.landArea.toLocaleString("en-IN")} sq.m` }),
+        p.plot.builtUpArea && h(KV, { k: "Permissible built-up", v: `${p.plot.builtUpArea.toLocaleString("en-IN")} sq.m` })),
       h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
         h(SourceTag, { source: "MahaRERA — registered project address", asOf: p.dataAsOf }))));
 }

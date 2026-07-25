@@ -182,9 +182,14 @@ def project_to_full(row: dict) -> dict:
         card["extensions"] = len(exts)
         card["units"] = sp.get("unitsTotal")
         card["statusNote"] = sp.get("status") or card["statusNote"]
+        # Plot identity (CTS/survey number, land area, boundaries) only exists in the
+        # HTML capture; it is what a DP-remarks lookup is keyed on.
+        card["plot"] = det.get("plot")
         rid = row.get("rera_id", "")
         docs = [_doc_with_href(rid, o) for o in det.get("documents", [])]
-        card["hasDetail"] = True
+        # An HTML-only capture has no specs, units or documents — flagging it as
+        # "hasDetail" would render a Project snapshot of nothing but em-dashes.
+        card["hasDetail"] = bool(sp) or bool(det.get("documents"))
         card["detail"] = {
             "specs": sp,
             "extensions": exts,

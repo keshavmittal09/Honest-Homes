@@ -379,45 +379,145 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
     }
 
 
-def build_parsed_snapshot() -> Path:
-    """Read the latest raw capture dir, write a small parsed records.json. Returns its dir."""
+def _kv(d: dict, *needles: str):
+    """First key_values entry whose key starts with any of `needles`."""
+    kv = d.get("key_values") or {}
+    for n in needles:
+        for k, v in kv.items():
+            if k.lower().startswith(n.lower()):
+                s = str(v).strip()
+                if s and s != ":":
+                    return s
+    return None
+
+
+def _num(s):
+    try:
+        return float(str(s).replace(",", ""))
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_html_record(d: dict) -> dict:
+    """Parse a capture made by the HTML collector (run_detail.py).
+
+    That page carries the plot's identity — CTS/survey number, land area,
+    boundaries, the declared-litigation flag — which the API capture does NOT.
+    It carries no complaints and no documents, so those stay unknown (None), not
+    zero: we have genuinely not looked at the project's complaint page.
+    """
+    lat, lng = _num(_kv(d, "Latitude")), _num(_kv(d, "Longitude"))
+    geo = None
+    if lat and lng and 15.5 <= lat <= 22.5 and 72.0 <= lng <= 81.0:
+        geo = {"lat": round(lat, 6), "lng": round(lng, 6)}
+    return {
+        "rera_id": d.get("rera_id"),
+        "project_name": d.get("project_name"),
+        "promoter_name": d.get("promoter_name"),
+        "source": "html",
+        "capturedAt": (d.get("captured_at") or "")[:10],
+        "geo": geo,
+        "plot": {
+            "cts": _kv(d, "Final Plot bearing", "CTS Number", "Survey"),
+            "landArea": _num(_kv(d, "Total Land Area")),
+            "builtUpArea": _num(_kv(d, "Permissible Built-up")),
+            "village": _kv(d, "Village"),
+            "taluka": _kv(d, "Taluka"),
+            "district": _kv(d, "District"),
+            "pincode": _kv(d, "Pin Code"),
+            "boundaries": {side: _kv(d, "Boundaries " + side)
+                           for side in ("North", "South", "East", "West")},
+        },
+        "litigationDeclared": _kv(d, "Is there any litigation"),
+        "specs": {}, "timeline": [], "extensions": [], "buildings": [],
+        "units": {"total": 0, "booked": 0, "mix": []},
+        "litigation": None,
+        "complaints": None,
+        "projectComplaints": {"count": None, "rows": [], "orders": [],
+                              "nonCompliance": [], "warrants": []},
+        "documents": [], "document_count": 0,
+    }
+
+
+def _merge(api_rec: dict, html_rec: dict) -> dict:
+    """API record wins (it is far richer); HTML fills in what only it knows."""
+    out = dict(api_rec)
+    out["source"] = "api+html"
+    out["plot"] = html_rec.get("plot")
+    out["litigationDeclared"] = html_rec.get("litigationDeclared")
+    if not out.get("geo"):
+        out["geo"] = html_rec.get("geo")
+    return out
+
+
+def build_parsed_snapshot(out_name: str | None = None) -> Path:
+    """Merge EVERY raw capture dir into one parsed records.json. Returns its dir.
+
+    This deliberately reads all capture dates and both capture formats rather than
+    only the newest directory. Taking just the newest meant a fresh collector run
+    silently replaced the live dataset — a run that captured 9 new projects would
+    have dropped the 10 already published, and an HTML-only run would have emitted
+    an empty file (it globbed *.api.json, which those captures do not produce).
+
+    Per project the richest capture wins: the API record carries complaints,
+    orders, litigation and documents; the HTML record contributes the plot's
+    CTS/survey number, land area and boundaries, which the API does not expose.
+    """
     raw_dirs = sorted(d for d in RAW_ROOT.glob("*") if d.is_dir() and d.name != ".assist")
     if not raw_dirs:
         raise SystemExit("No raw detail capture found.")
-    raw = raw_dirs[-1]
 
-    # Any hosting URLs written by collector.upload_docs live only in the parsed file.
+    # Hosting URLs written by collector.upload_docs live only in the parsed file.
     # Carry them across a rebuild, keyed by (rera_id, filename), so re-parsing does
     # not silently un-publish every document.
-    out_dir = PARSED_ROOT / raw.name
     prior: dict[tuple[str, str], str] = {}
-    prior_file = out_dir / "records.json"
-    if prior_file.exists():
+    for pf in PARSED_ROOT.glob("*/records.json"):
         try:
-            for rid, rec in json.loads(prior_file.read_text(encoding="utf-8")).items():
+            for rid, rec in json.loads(pf.read_text(encoding="utf-8")).items():
                 for d in rec.get("documents", []):
                     if d.get("url") and d.get("file"):
                         prior[(rid, d["file"])] = d["url"]
         except (json.JSONDecodeError, AttributeError):
-            pass
-
-    records = {}
-    for f in sorted(raw.glob("*.api.json")):
-        api = json.loads(f.read_text(encoding="utf-8"))
-        rid = api.get("rera_id")
-        if not rid:
             continue
-        ddir = raw / "docs" / rid
-        files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
-        if files:
-            files = dedupe_files(ddir, files)
-        rec = parse_record(api, files)
-        for d in rec["documents"]:
-            url = prior.get((rid, d.get("file", "")))
-            if url:
-                d["url"] = url
-        records[rid] = rec
 
+    api_recs: dict[str, dict] = {}
+    html_recs: dict[str, dict] = {}
+
+    for raw in raw_dirs:                      # oldest -> newest, newest wins
+        for f in sorted(raw.glob("*.api.json")):
+            api = json.loads(f.read_text(encoding="utf-8"))
+            rid = api.get("rera_id")
+            if not rid:
+                continue
+            ddir = raw / "docs" / rid
+            files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
+            if files:
+                files = dedupe_files(ddir, files)
+            rec = parse_record(api, files)
+            rec["source"] = "api"
+            rec["capturedAt"] = raw.name
+            for d in rec["documents"]:
+                url = prior.get((rid, d.get("file", "")))
+                if url:
+                    d["url"] = url
+            api_recs[rid] = rec
+
+        for f in sorted(raw.glob("*.json")):
+            if f.name.endswith(".api.json") or f.name in ("snapshot.json", "api_snapshot.json"):
+                continue
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                continue
+            if d.get("rera_id") and "key_values" in d:
+                html_recs[d["rera_id"]] = parse_html_record(d)
+
+    records: dict[str, dict] = {}
+    for rid in sorted(set(api_recs) | set(html_recs)):
+        a, h = api_recs.get(rid), html_recs.get(rid)
+        records[rid] = _merge(a, h) if (a and h) else (a or h)
+
+    out_dir = PARSED_ROOT / (out_name or raw_dirs[-1].name)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "records.json").write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
     return out_dir
