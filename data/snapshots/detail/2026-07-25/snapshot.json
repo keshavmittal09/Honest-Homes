@@ -1,0 +1,52 @@
+{
+  "captured_at": "2026-07-25",
+  "source": "maharerait.maharashtra.gov.in/public/project/view (human-in-the-loop)",
+  "count": 9,
+  "projects": [
+    {
+      "rera_id": "P51700000002",
+      "project_name": "UNNATHI WOODS PHASE VII A",
+      "summary": "headings=5 tables=20 fields=30 docs=0 text=10418 chars"
+    },
+    {
+      "rera_id": "P51700000001",
+      "project_name": "MAYFAIR VISHWARAJA",
+      "summary": "headings=0 tables=0 fields=1 docs=0 text=113 chars"
+    },
+    {
+      "rera_id": "P51700002065",
+      "project_name": "MERIDIAN MYSTIC",
+      "summary": "headings=5 tables=16 fields=32 docs=0 text=8196 chars"
+    },
+    {
+      "rera_id": "P51500011537",
+      "project_name": "SAINATHVILLA Phase II",
+      "summary": "headings=5 tables=20 fields=30 docs=0 text=10932 chars"
+    },
+    {
+      "rera_id": "P52100012200",
+      "project_name": "NANDHA RESIDENCY",
+      "summary": "headings=5 tables=15 fields=33 docs=0 text=7393 chars"
+    },
+    {
+      "rera_id": "P50500002280",
+      "project_name": "SHIVAM PARK",
+      "summary": "headings=5 tables=18 fields=30 docs=0 text=8944 chars"
+    },
+    {
+      "rera_id": "P51800002451",
+      "project_name": "VIKI HEIGHTS",
+      "summary": "headings=5 tables=16 fields=29 docs=0 text=7460 chars"
+    },
+    {
+      "rera_id": "P50500000348",
+      "project_name": "ROYAL RESIDENCY",
+      "summary": "headings=5 tables=16 fields=30 docs=0 text=8285 chars"
+    },
+    {
+      "rera_id": "P52300000176",
+      "project_name": "SHIVNERI APPARTMENT",
+      "summary": "headings=5 tables=16 fields=30 docs=0 text=7461 chars"
+    }
+  ]
+}

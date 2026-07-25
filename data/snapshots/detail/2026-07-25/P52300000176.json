@@ -1,0 +1,687 @@
+{
+  "rera_id": "P52300000176",
+  "source_url": "https://maharerait.maharashtra.gov.in/public/project/view/18",
+  "headings": [
+    "Document LibraryClick here to view",
+    "Parking DetailsClick here to view",
+    "Task Activities and Common FacilitiesClick here to view",
+    "Registered Agent(s)Click to see list",
+    "Project Details"
+  ],
+  "tables": [
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "CC/NA Order Issued to",
+          "CC/NA Order in the name of",
+          "Date of CC/NA Order",
+          "CC/NA Order Document",
+          "Is CC One Year Old",
+          "Supporting Document"
+        ],
+        [
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Name",
+          "Designation",
+          "View"
+        ],
+        [
+          "1",
+          "NILESH SHAMRAO SURWASE",
+          "Partner",
+          ""
+        ],
+        [
+          "2",
+          "KHANDU SOPAN JADHAV",
+          "Partner",
+          ""
+        ],
+        [
+          "3",
+          "KAILAS ANANTA KUMBHAR",
+          "Partner",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "File Name",
+          "Uploaded Date",
+          "View"
+        ],
+        [
+          "1",
+          "1 Copy of the legal title report",
+          "Search report.pdf",
+          "7/07/2017, 12:21 PM",
+          ""
+        ],
+        [
+          "2",
+          "1 Details of encumbrances",
+          "encrumbance certificate.pdf",
+          "7/07/2017, 12:26 PM",
+          ""
+        ],
+        [
+          "3",
+          "1 Copy of Layout Approval (in case of layout)",
+          "Layout.pdf",
+          "7/07/2017, 12:27 PM",
+          ""
+        ],
+        [
+          "4",
+          "1 Building Plan Approval (IOD)",
+          "Building plans.PDF",
+          "7/07/2017, 12:30 PM",
+          ""
+        ],
+        [
+          "5",
+          "1 Commencement Certificates / NA Order for plotted development",
+          "comencement certificate1.pdf",
+          "7/07/2017, 12:30 PM",
+          ""
+        ],
+        [
+          "6",
+          "1 Declaration in FORM B",
+          "Form-B.pdf",
+          "7/07/2017, 12:28 PM",
+          ""
+        ],
+        [
+          "7",
+          "1 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "FORM-1.pdf",
+          "7/07/2017, 12:28 PM",
+          ""
+        ],
+        [
+          "8",
+          "1 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)",
+          "Form-2.pdf",
+          "7/07/2017, 12:29 PM",
+          ""
+        ],
+        [
+          "9",
+          "1 Proforma of Allotment letter",
+          "Final Rera Agreement SHIVNERI.pdf",
+          "7/07/2017, 12:27 PM",
+          ""
+        ],
+        [
+          "10",
+          "1 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted development",
+          "Completion certificate.pdf",
+          "27/12/2019, 12:43 PM",
+          ""
+        ],
+        [
+          "11",
+          "1 Architect’s Certificate on Completion of Project (Form 4)",
+          "Form-4.pdf",
+          "27/12/2019, 12:43 PM",
+          ""
+        ],
+        [
+          "12",
+          "1 Other",
+          "Completion certificate.pdf",
+          "8/08/2019, 6:27 PM",
+          ""
+        ],
+        [
+          "13",
+          "2 Other",
+          "Completion certificate.pdf",
+          "8/08/2019, 6:28 PM",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Uploaded Documents (For Promoter)",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Legal Title report",
+          "7/07/2017, 12:21 PM",
+          "Search report.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Declaration Form B",
+          "7/07/2017, 12:28 PM",
+          "Form-B.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "Proforma Allotment Letter",
+          "Allotment Letter Deviation Report"
+        ],
+        [
+          "Final Rera Agreement SHIVNERI.pdf",
+          ""
+        ]
+      ],
+      "kv": {
+        "Proforma Allotment Letter": "Allotment Letter Deviation Report",
+        "Final Rera Agreement SHIVNERI.pdf": ""
+      }
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File",
+          "View"
+        ],
+        [
+          "1",
+          "Other",
+          "Completion certificate.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Other",
+          "Completion certificate.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Identification of Building/ Wing as per Sanctioned Plan",
+          "Identification of Wing as per Sanctioned Plan",
+          "Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)"
+        ],
+        [
+          "1",
+          "SHIVNERI APPARTMENT",
+          "NA",
+          "6"
+        ],
+        [
+          "Total",
+          "1",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Building Name",
+          "Apartment Type",
+          "Carpet Area (in Sqmts)",
+          "Number of Apartment"
+        ],
+        [
+          "1",
+          "SHIVNERI APPARTMENT",
+          "1BHK",
+          "34.78",
+          "1"
+        ],
+        [
+          "2",
+          "SHIVNERI APPARTMENT",
+          "1BHK",
+          "28.95",
+          "2"
+        ],
+        [
+          "3",
+          "SHIVNERI APPARTMENT",
+          "2BHK",
+          "41.72",
+          "4"
+        ],
+        [
+          "4",
+          "SHIVNERI APPARTMENT",
+          "1BHK",
+          "35.07",
+          "4"
+        ],
+        [
+          "5",
+          "SHIVNERI APPARTMENT",
+          "2BHK",
+          "42.31",
+          "1"
+        ],
+        [
+          "6",
+          "SHIVNERI APPARTMENT",
+          "2BHK",
+          "38.53",
+          "1"
+        ],
+        [
+          "7",
+          "SHIVNERI APPARTMENT",
+          "2BHK",
+          "41.56",
+          "2"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Layout Approval",
+          "Layout.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Building Plan Approval",
+          "Building plans.PDF",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "0"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "50"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "50"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "10"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "50"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "50"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage",
+          "Details"
+        ],
+        [
+          "1",
+          "Internal Roads & Footpaths",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "2",
+          "Water Supply",
+          "Yes",
+          "0",
+          "PROVIDED"
+        ],
+        [
+          "3",
+          "Sewerage (Chamber, Lines, Septic Tank , STP)",
+          "Yes",
+          "0",
+          "PROVIDED"
+        ],
+        [
+          "4",
+          "Storm Water Drains",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "5",
+          "Landscaping & Tree Planting",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "6",
+          "Street Lighting",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "7",
+          "Community Buildings",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "8",
+          "Treatment And Disposal Of Sewage And Sullage Water",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "9",
+          "Solid Waste Management And Disposal",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "10",
+          "Water conservation /Rain water harvesting",
+          "Yes",
+          "0",
+          "PROVIDED"
+        ],
+        [
+          "11",
+          "Energy managemcnt",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "12",
+          "Fire protection and fire safety requirements",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "13",
+          "Electrical meter room, sub-station, receiving station",
+          "Yes",
+          "0",
+          "PROVIDED"
+        ],
+        [
+          "14",
+          "Aggregate area of recreational Open Space",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "15",
+          "Open Parking",
+          "Yes",
+          "0",
+          "PROVIDED"
+        ],
+        [
+          "16",
+          "",
+          "No",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Complaint No.",
+          "Complaint Date",
+          "Complainant Name",
+          "Respondent Name",
+          "Complaint Status",
+          "View"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Appeal No.",
+          "Complaint No./ Reference No.",
+          "Appeal Date",
+          "Appeallant Name",
+          "Respondent Name",
+          "Appeal Status"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Professional Name",
+          "MahaRERA Certificate No.",
+          "Professional Type"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    }
+  ],
+  "key_values": {
+    "Final Plot bearing No/CTS Number/Survey Number": "48",
+    "Total Land Area of Approved Layout (Sq. Mts.)": "532",
+    "Permissible Built-up Area": "638.4",
+    "Address": "48",
+    "State/UT": "MAHARASHTRA",
+    "District": "Beed",
+    "Taluka": "Ashti",
+    "Village": "Ashti",
+    "Pin Code": "414203",
+    "Boundaries East": "PLOT NO 49 TO 54",
+    "Boundaries West": "OPEN SPACE",
+    "Boundaries South": "9 M RAOD",
+    "Boundaries North": "OPEN SPACE",
+    "Longitude ": "75.730914000000000",
+    "Latitude ": "18.991096000000000",
+    "Promoter Type": "Partnership",
+    "Name of Partnership": "SHIVNERI DEVELOPERS ASHTI",
+    "Unit Number": "SHOP NO 10",
+    "Building Name": "CHHATRAPATI SANKUL",
+    "Street Name": "NAGAR ROAD",
+    "Locality": "OPPOSITE REST HOUSE",
+    "Landmark": "NAGAR ROAD",
+    "Landowner types in the project": "Promoter",
+    "Is there any litigation against this proposed project ": "No",
+    "Bank Name": "SHRI CHHATRAPATI RAJASHRI SHAHU URBAN COOPERATIVE BANK LIMITED",
+    "IFSC Code": "CRUB0000016",
+    "Bank Address": "DR RAJENDRA JARANGE BUILDING MIDC ROAD ASHTI",
+    "Do you have Financial Encumberance ": "No",
+    "Registration Number": ":",
+    "Date of Registration": ":"
+  },
+  "document_links": [],
+  "text_excerpt": "Project DetailsRegistration Number : P52300000176Date of Registration : 10/07/2017Project StatusCompleted Certificate DownloadBasic Details Project Location Maharashtra Project Type Residential / Group Housing Project Name SHIVNERI APPARTMENT Proposed Completion Date (Original) 15/05/2019 Planning Authority Others Full Name of the Planning Authority Land Area & Address Details Final Plot bearing No/CTS Number/Survey Number 48 Total Land Area of Approved Layout (Sq. Mts.) 532 Land Area for Project Applied for this Registration (Sq. Mts) 532 Permissible Built-up Area 638.4 Sanctioned Built-up Area of the Project applied for Registration 638.4 Aggregate area(in sq. mts) of recreational open space as per Layout / DP Remarks Commencement Certificate / NA Order Documents Details # CC/NA Order Issued to CC/NA Order in the name ofDate of CC/NA OrderCC/NA Order Document Is CC One Year Old Supporting Document1 Project Address Details Address 48 State/UT MAHARASHTRA District Beed Taluka Ashti Village Ashti Pin Code 414203 Boundaries East PLOT NO 49 TO 54 Boundaries West OPEN SPACE Boundaries South 9 M RAOD Boundaries North OPEN SPACE Longitude : 75.730914000000000 Latitude : 18.991096000000000 Promoter Details Promoter Type Partnership Name of Partnership SHIVNERI DEVELOPERS ASHTI Promoter Official Communication Address Unit Number SHOP NO 10 Building Name CHHATRAPATI SANKUL Street Name NAGAR ROAD Locality OPPOSITE REST HOUSE Landmark NAGAR ROAD State/UT MAHARASHTRA District Beed Taluka Ashti Village Ashti Pin Code 414203 Partner Details Promoter Past Experience Details Authorised Signatory Single Point of Contact Allottee Grievance Redressal Officer Project Professionals SRO Details #NameDesignationView1NILESH SHAMRAO SURWASEPartner2KHANDU SOPAN JADHAVPartner3KAILAS ANANTA KUMBHARPartnerDocument LibraryClick here to view# Document Type File Name Uploaded Date View 11 Copy of the legal title reportSearch report.pdf7/07/2017, 12:21 PM 21 Details of encumbrancesencrumbance certificate.pdf7/07/2017, 12:26 PM 31 Copy of Layout Approval (in case of layout)Layout.pdf7/07/2017, 12:27 PM 41 Building Plan Approval (IOD)Building plans.PDF7/07/2017, 12:30 PM 51 Commencement Certificates / NA Order for plotted developmentcomencement certificate1.pdf7/07/2017, 12:30 PM 61 Declaration in FORM BForm-B.pdf7/07/2017, 12:28 PM 71 Certificates of Architect (Form 1)(Mandatory for only ongoing project)FORM-1.pdf7/07/2017, 12:28 PM 81 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)Form-2.pdf7/07/2017, 12:29 PM 91 Proforma of Allotment letterFinal Rera Agreement SHIVNERI.pdf7/07/2017, 12:27 PM 101 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted developmentCompletion certificate.pdf27/12/2019, 12:43 PM 111 Architect’s Certificate on Completion of Project (Form 4)Form-4.pdf27/12/2019, 12:43 PM 121 OtherCompletion certificate.pdf8/08/2019, 6:27 PM 132 OtherCompletion certificate.pdf8/08/2019, 6:28 PMPromoter Landowner Landowner types in the project Promoter Promoter Landowner(s) Promoter Documents#Uploaded Documents (For Promoter)Upload Date and TimeFile NameView1Legal Title report7/07/2017, 12:21 PMSearch report.pdf2Declaration Form B7/07/2017, 12:28 PMForm-B.pdfInvestor DetailsAre there any Investor other than the Promoter in the Project : NoLitigation DetailsIs there any litigation against this proposed project : NoProforma Allotment LetterProforma Allotment LetterAllotment Letter Deviation Report Final Rera Agreement SHIVNERI.pdf Other Legal Documents#Document TypeUploaded FileView1OtherCompletion certificate.pdf2OtherCompletion certificate.pdfBuilding Details#Identification of Building/ Wing as per Sanctioned Plan Identification of Wing as per Sanctioned Plan Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)1 SHIVNERI APPARTMENT NA 6 Total10Summary of Apartments/Units#Building Name Apartment Type Carpet Area (in Sqmts) Number of Apartmen",
+  "text_length": 7461,
+  "project_name": "SHIVNERI APPARTMENT",
+  "promoter_name": "SHIVNERI DEVELOPERS ASHTI",
+  "captured_at": "2026-07-25T14:53:01"
+}
