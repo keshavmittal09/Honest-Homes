@@ -56,11 +56,8 @@ def parse_complaints_page(html: str) -> list[dict]:
 
 
 def parse_revoked_page(html: str) -> list[dict]:
-    """Deregistered/revoked projects.
-
-    The page layout is stable: [Sr. No.] [Project Name] [Promoter Name]
-    [Registration No.] [Planning Authority] [View Order]. We prefer the fixed
-    registration-number column, then fall back to scanning the row if needed.
+    """Deregistered/revoked projects. Columns vary; we capture the RERA id + project
+    name + promoter by scanning each row's cells for a P-id and the longest text cells.
     """
     tree = HTMLParser(html)
     out: list[dict] = []
@@ -69,13 +66,13 @@ def parse_revoked_page(html: str) -> list[dict]:
         tds = [td.text(strip=True) for td in tr.css("td")]
         if not tds:
             continue
-        name = tds[1] if len(tds) > 1 else ""
-        promoter = tds[2] if len(tds) > 2 else ""
-        rera_id = tds[3] if len(tds) > 3 else ""
-        if not rera_id:
-            blob = " ".join(tds)
-            m = rera_re.search(blob)
-            rera_id = m.group(1) if m else ""
+        blob = " ".join(tds)
+        m = rera_re.search(blob)
+        rera_id = m.group(1) if m else ""
+        # project name = first longish non-numeric cell; promoter = next one
+        texts = [t for t in tds if t and not t.isdigit() and not rera_re.fullmatch(t)]
+        name = texts[0] if texts else ""
+        promoter = texts[1] if len(texts) > 1 else ""
         if rera_id or name:
             out.append({"rera_id": rera_id, "project_name": name, "promoter": promoter, "revoked": True})
     return out

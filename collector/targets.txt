@@ -1,7 +1,15 @@
-# MahaRERA detail collection targets — one RERA ID per line (max 10 used).
-# Lines starting with # are ignored. If this file has no IDs, the collector
-# just uses the first 10 projects from the latest index snapshot.
-#
-# Example:
-# P51700018145
-# P51900003617
+﻿P50500000005
+P51700000002
+P51700000001
+P51700002065
+P51500011537
+P52100012200
+P50500002280
+P51800002451
+P50500000348
+P52300000176
+P50500001314
+P51500001870
+P52100006356
+P51700001636
+P51600000394
