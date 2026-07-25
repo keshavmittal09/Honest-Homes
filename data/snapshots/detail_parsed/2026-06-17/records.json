@@ -221,6 +221,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 21.017065,
+      "lng": 79.058966
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -572,6 +576,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 21.101756,
+      "lng": 79.073969
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -888,6 +896,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 21.056573,
+      "lng": 79.071419
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -1160,6 +1172,10 @@
           "booked": 3
         }
       ]
+    },
+    "geo": {
+      "lat": 19.858827,
+      "lng": 75.442968
     },
     "litigation": {
       "present": false,
@@ -1750,6 +1766,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 19.300942,
+      "lng": 73.218582
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -2117,6 +2137,10 @@
           "booked": 67
         }
       ]
+    },
+    "geo": {
+      "lat": 19.268511,
+      "lng": 72.97367
     },
     "litigation": {
       "present": true,
@@ -2515,6 +2539,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 19.018934,
+      "lng": 73.024233
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -2847,6 +2875,10 @@
         }
       ]
     },
+    "geo": {
+      "lat": 19.078961,
+      "lng": 72.906927
+    },
     "litigation": {
       "present": false,
       "declared": false,
@@ -3075,6 +3107,10 @@
           "booked": 3
         }
       ]
+    },
+    "geo": {
+      "lat": 18.488378,
+      "lng": 74.102128
     },
     "litigation": {
       "present": false,
@@ -3318,6 +3354,10 @@
           "booked": 2
         }
       ]
+    },
+    "geo": {
+      "lat": 18.991096,
+      "lng": 75.730914
     },
     "litigation": {
       "present": false,

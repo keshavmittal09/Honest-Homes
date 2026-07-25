@@ -157,6 +157,37 @@ def _first(api: dict, ep: str) -> dict:
     return ro if isinstance(ro, dict) else {}
 
 
+def _geo(api: dict) -> dict | None:
+    """Latitude/longitude from the project's geo-tagging details.
+
+    The index snapshot's map_url is empty for all but one of 44,279 projects
+    ("...&query=,"), so Tier-2 is in practice the ONLY source of coordinates —
+    and it carries them for every project captured so far.
+    """
+    found: list[tuple] = []
+
+    def walk(x):
+        if isinstance(x, dict):
+            la, lo = x.get("latitude"), x.get("longitude")
+            if la not in (None, "", 0) and lo not in (None, "", 0):
+                try:
+                    found.append((float(la), float(lo)))
+                except (TypeError, ValueError):
+                    pass
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+
+    walk(api.get("endpoints", {}))
+    for lat, lng in found:
+        # Maharashtra's bounding box — rejects 0,0 and transposed pairs.
+        if 15.5 <= lat <= 22.5 and 72.0 <= lng <= 81.0:
+            return {"lat": round(lat, 6), "lng": round(lng, 6)}
+    return None
+
+
 def parse_record(api: dict, doc_files: list[str]) -> dict:
     g = _ro(api, "getProjectGeneralDetailsByProjectId") or {}
     if not isinstance(g, dict):
@@ -339,6 +370,7 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "extensions": extensions,
         "buildings": buildings,
         "units": units,
+        "geo": _geo(api),
         "litigation": litigation,
         "complaints": complaints,
         "projectComplaints": project_complaints,

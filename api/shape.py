@@ -196,6 +196,7 @@ def project_to_full(row: dict) -> dict:
             "documentsAvailable": any(o.get("href") for o in docs),
             "capturedAt": DETAIL.captured_at,
             "projectComplaints": det.get("projectComplaints") or {},
+            "geo": det.get("geo"),
         }
         # Project-level counts override the builder-level placeholders, because
         # they answer the question the buyer actually asked.

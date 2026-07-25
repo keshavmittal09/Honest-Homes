@@ -93,15 +93,20 @@ function ProjectComplaints({ p, asOf }) {
 
 // ---- Where the project actually is -----------------------------------------
 function LocationMap({ p }) {
-  const m = /query=(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/.exec(p.mapUrl || "");
-  if (!m) return null;
-  const lat = m[1], lng = m[2];
+  // Coordinates come from the Tier-2 record. The index's map_url is empty
+  // ("...&query=,") for all but one of 44,279 projects, so it is only a fallback.
+  const geo = (p.detail || {}).geo;
+  const m = geo ? null : /query=(-?\d+\.\d+),\s*(-?\d+\.\d+)/.exec(p.mapUrl || "");
+  if (!geo && !m) return null;
+  const lat = geo ? String(geo.lat) : m[1];
+  const lng = geo ? String(geo.lng) : m[2];
   // Google's keyless embed — no API key, no billing, no quota to manage.
   const src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
   return h("div", { className: "panel", style: { marginTop: 16 } },
     h("div", { className: "panel-h" },
       h("h2", { className: "row gap-8" }, h(Icon_v, { name: "pin", size: 17, className: "faint" }), "Location"),
-      h("a", { className: "btn btn-ghost btn-sm", href: p.mapUrl, target: "_blank", rel: "noopener" },
+      h("a", { className: "btn btn-ghost btn-sm", target: "_blank", rel: "noopener",
+          href: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` },
         h(Icon_v, { name: "link", size: 14 }), "Open in Google Maps")),
     h("div", { className: "panel-b", style: { padding: 0 } },
       h("iframe", { className: "map-embed", src, loading: "lazy", title: "Project location",
