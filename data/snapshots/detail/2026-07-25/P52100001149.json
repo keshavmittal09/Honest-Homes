@@ -1,0 +1,755 @@
+{
+  "rera_id": "P52100001149",
+  "source_url": "https://maharerait.maharashtra.gov.in/public/project/view/32",
+  "headings": [
+    "Document LibraryClick here to view",
+    "Parking DetailsClick here to view",
+    "Task Activities and Common FacilitiesClick here to view",
+    "Registered Agent(s)Click to see list",
+    "Project Details"
+  ],
+  "tables": [
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "CC/NA Order Issued to",
+          "CC/NA Order in the name of",
+          "Date of CC/NA Order",
+          "CC/NA Order Document",
+          "Is CC One Year Old",
+          "Supporting Document"
+        ],
+        [
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "File Name",
+          "Uploaded Date",
+          "View"
+        ],
+        [
+          "1",
+          "1 Copy of the legal title report",
+          "TITLE SEARCH.pdf",
+          "2/06/2017, 10:14 AM",
+          ""
+        ],
+        [
+          "2",
+          "1 Details of encumbrances",
+          "SELF DECLARATION REGARDING ENCUMBRANCE.pdf",
+          "2/06/2017, 10:56 AM",
+          ""
+        ],
+        [
+          "3",
+          "2 Details of encumbrances",
+          "ENCUMBARANCE CERTIFICATE.pdf",
+          "16/02/2018, 3:08 PM",
+          ""
+        ],
+        [
+          "4",
+          "1 Copy of Layout Approval (in case of layout)",
+          "Cosmopolis Sanction Plan1.pdf",
+          "14/06/2017, 11:19 AM",
+          ""
+        ],
+        [
+          "5",
+          "1 Building Plan Approval (IOD)",
+          "Cosmopolis Sanction Plan1.pdf",
+          "2/06/2017, 10:16 AM",
+          ""
+        ],
+        [
+          "6",
+          "2 Building Plan Approval (IOD)",
+          "Cosmopolis Sanction Plan2.pdf",
+          "2/06/2017, 10:16 AM",
+          ""
+        ],
+        [
+          "7",
+          "3 Building Plan Approval (IOD)",
+          "Cosmopolis Sanction Plan3.pdf",
+          "2/06/2017, 10:16 AM",
+          ""
+        ],
+        [
+          "8",
+          "1 Commencement Certificates / NA Order for plotted development",
+          "Commencement Certificate.pdf",
+          "2/06/2017, 10:15 AM",
+          ""
+        ],
+        [
+          "9",
+          "1 Declaration in FORM B",
+          "FORM B.pdf",
+          "21/07/2017, 11:05 AM",
+          ""
+        ],
+        [
+          "10",
+          "1 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "architect form 1.pdf",
+          "20/07/2017, 6:07 PM",
+          ""
+        ],
+        [
+          "11",
+          "1 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)",
+          "FORM 2.pdf",
+          "24/07/2017, 8:27 PM",
+          ""
+        ],
+        [
+          "12",
+          "1 Proforma of Allotment letter",
+          "sample agreement.pdf",
+          "24/07/2017, 3:27 PM",
+          ""
+        ],
+        [
+          "13",
+          "1 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted development",
+          "PART COMPLETITION CERTIFICATE.pdf",
+          "4/10/2019, 12:59 PM",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Uploaded Documents (For Promoter)",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Legal Title report",
+          "2/06/2017, 10:14 AM",
+          "TITLE SEARCH.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Declaration Form B",
+          "21/07/2017, 11:05 AM",
+          "FORM B.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "Proforma Allotment Letter",
+          "Allotment Letter Deviation Report"
+        ],
+        [
+          "sample agreement.pdf",
+          ""
+        ]
+      ],
+      "kv": {
+        "Proforma Allotment Letter": "Allotment Letter Deviation Report",
+        "sample agreement.pdf": ""
+      }
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File",
+          "View"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Identification of Building/ Wing as per Sanctioned Plan",
+          "Identification of Wing as per Sanctioned Plan",
+          "Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)"
+        ],
+        [
+          "1",
+          "THE COSMOPOLIS",
+          "NA",
+          "12"
+        ],
+        [
+          "Total",
+          "1",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Building Name",
+          "Apartment Type",
+          "Carpet Area (in Sqmts)",
+          "Number of Apartment"
+        ],
+        [
+          "1",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "66.86",
+          "6"
+        ],
+        [
+          "2",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "66.31",
+          "6"
+        ],
+        [
+          "3",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "54",
+          "4"
+        ],
+        [
+          "4",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "53.71",
+          "4"
+        ],
+        [
+          "5",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "53.12",
+          "3"
+        ],
+        [
+          "6",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "53.02",
+          "3"
+        ],
+        [
+          "7",
+          "THE COSMOPOLIS",
+          "OFFICE",
+          "89.13",
+          "1"
+        ],
+        [
+          "8",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "67.46",
+          "1"
+        ],
+        [
+          "9",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "54.25",
+          "1"
+        ],
+        [
+          "10",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "53.97",
+          "1"
+        ],
+        [
+          "11",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "51.46",
+          "1"
+        ],
+        [
+          "12",
+          "THE COSMOPOLIS",
+          "RESTAURANT",
+          "77",
+          "1"
+        ],
+        [
+          "13",
+          "THE COSMOPOLIS",
+          "SHOP",
+          "31.61",
+          "1"
+        ],
+        [
+          "14",
+          "THE COSMOPOLIS",
+          "SHOP",
+          "32.11",
+          "1"
+        ],
+        [
+          "15",
+          "THE COSMOPOLIS",
+          "SHOP",
+          "31.09",
+          "2"
+        ],
+        [
+          "16",
+          "THE COSMOPOLIS",
+          "OFFICE",
+          "55.47",
+          "1"
+        ],
+        [
+          "17",
+          "THE COSMOPOLIS",
+          "OFFICE",
+          "24.25",
+          "1"
+        ],
+        [
+          "18",
+          "THE COSMOPOLIS",
+          "OFFICE",
+          "59.04",
+          "1"
+        ],
+        [
+          "19",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "67.57",
+          "1"
+        ],
+        [
+          "20",
+          "THE COSMOPOLIS",
+          "2BHK",
+          "37.22",
+          "1"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "4",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "40",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "44",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Layout Approval",
+          "Cosmopolis Sanction Plan1.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Building Plan Approval",
+          "Cosmopolis Sanction Plan1.pdf",
+          ""
+        ],
+        [
+          "3",
+          "Building Plan Approval",
+          "Cosmopolis Sanction Plan2.pdf",
+          ""
+        ],
+        [
+          "4",
+          "Building Plan Approval",
+          "Cosmopolis Sanction Plan3.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "100"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "80"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "80"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "95"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "60"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage",
+          "Details"
+        ],
+        [
+          "1",
+          "Internal Roads & Footpaths",
+          "Yes",
+          "0",
+          "will be done during site development"
+        ],
+        [
+          "2",
+          "Water Supply",
+          "Yes",
+          "50",
+          "borewells completed pmc waterline not taken yet"
+        ],
+        [
+          "3",
+          "Sewerage (Chamber, Lines, Septic Tank , STP)",
+          "Yes",
+          "0",
+          "as per drawings obtained from consultant"
+        ],
+        [
+          "4",
+          "Storm Water Drains",
+          "Yes",
+          "0",
+          "as per drawings obtained from consultant"
+        ],
+        [
+          "5",
+          "Landscaping & Tree Planting",
+          "Yes",
+          "0",
+          "as per drawings obtained from consultant"
+        ],
+        [
+          "6",
+          "Street Lighting",
+          "Yes",
+          "0",
+          "after development of site work"
+        ],
+        [
+          "7",
+          "Community Buildings",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "8",
+          "Treatment And Disposal Of Sewage And Sullage Water",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "9",
+          "Solid Waste Management And Disposal",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "10",
+          "Water conservation /Rain water harvesting",
+          "Yes",
+          "0",
+          "after development of site work"
+        ],
+        [
+          "11",
+          "Energy managemcnt",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "12",
+          "Fire protection and fire safety requirements",
+          "Yes",
+          "0",
+          "as per drawings obtained from consultant"
+        ],
+        [
+          "13",
+          "Electrical meter room, sub-station, receiving station",
+          "Yes",
+          "0",
+          "as per drawings obtained from consultant"
+        ],
+        [
+          "14",
+          "Aggregate area of recreational Open Space",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "15",
+          "Open Parking",
+          "Yes",
+          "0",
+          "after development of site work"
+        ],
+        [
+          "16",
+          "",
+          "No",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Complaint No.",
+          "Complaint Date",
+          "Complainant Name",
+          "Respondent Name",
+          "Complaint Status",
+          "View"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Appeal No.",
+          "Complaint No./ Reference No.",
+          "Appeal Date",
+          "Appeallant Name",
+          "Respondent Name",
+          "Appeal Status"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Professional Name",
+          "MahaRERA Certificate No.",
+          "Professional Type"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    }
+  ],
+  "key_values": {
+    "Final Plot bearing No/CTS Number/Survey Number": "138/9,138/11",
+    "Total Land Area of Approved Layout (Sq. Mts.)": "1400",
+    "Permissible Built-up Area": "2510",
+    "Address": "138/9,138/11",
+    "State/UT": "MAHARASHTRA",
+    "District": "Pune",
+    "Taluka": "Haveli",
+    "Village": "Hadapsar",
+    "Pin Code": "411028",
+    "Boundaries East": "NALA",
+    "Boundaries West": "MAGARPATTA MUNDHWA ROAD",
+    "Boundaries South": "OPEN PLOT",
+    "Boundaries North": "NIRVANA BUILDING",
+    "Longitude ": "73.932921000000000",
+    "Latitude ": "18.520144000000000",
+    "First Name": "VISHAL",
+    "Middle Name": "SANJAY",
+    "Last Name": "GALANDE",
+    "Father Full Name": "SANJAY CHANDRAKANT GALANDE",
+    "Unit Number": "2",
+    "Building Name": "DNYANMALA BUNGALOW",
+    "Street Name": "SAINIK WADI",
+    "Locality": "VADGAON SHERI",
+    "Landmark": "VIDYAANKUR SCHOOL",
+    "Do you have any Past Experience": "No",
+    "Landowner types in the project": "Promoter",
+    "Is there any litigation against this proposed project ": "No",
+    "Bank Name": "JANATA SAHAKARI BANK LIMITED",
+    "IFSC Code": "JSBP0000067",
+    "Bank Address": "NEAR MANTRI MARKET , HADAPSAR, PUNE 411028",
+    "Do you have Financial Encumberance ": "No",
+    "Registration Number": ":",
+    "Date of Registration": ":"
+  },
+  "document_links": [],
+  "text_excerpt": "Project DetailsRegistration Number : P52100001149Date of Registration : 26/07/2017Project StatusLapsed Certificate DownloadBasic Details Project Location Maharashtra Project Type Others Project Name THE COSMOPOLIS Proposed Completion Date (Original) 15/09/2019 Proposed Completion Date (Revised) 30/04/2020 Planning Authority Others Full Name of the Planning Authority Land Area & Address Details Final Plot bearing No/CTS Number/Survey Number 138/9,138/11 Total Land Area of Approved Layout (Sq. Mts.) 1400 Land Area for Project Applied for this Registration (Sq. Mts) 1400 Permissible Built-up Area 2510 Sanctioned Built-up Area of the Project applied for Registration 2224.08 Aggregate area(in sq. mts) of recreational open space as per Layout / DP Remarks Commencement Certificate / NA Order Documents Details # CC/NA Order Issued to CC/NA Order in the name ofDate of CC/NA OrderCC/NA Order Document Is CC One Year Old Supporting Document1 Project Address Details Address 138/9,138/11 State/UT MAHARASHTRA District Pune Taluka Haveli Village Hadapsar Pin Code 411028 Boundaries East NALA Boundaries West MAGARPATTA MUNDHWA ROAD Boundaries South OPEN PLOT Boundaries North NIRVANA BUILDING Longitude : 73.932921000000000 Latitude : 18.520144000000000 Promoter Details First Name VISHAL Middle Name SANJAY Last Name GALANDE Father Full Name SANJAY CHANDRAKANT GALANDE Promoter Official Communication Address Unit Number 2 Building Name DNYANMALA BUNGALOW Street Name SAINIK WADI Locality VADGAON SHERI Landmark VIDYAANKUR SCHOOL State/UT MAHARASHTRA District Pune Taluka Haveli Village Pin Code 411014 Promoter Past Experience Details Authorised Signatory Single Point of Contact Allottee Grievance Redressal Officer Project Professionals SRO Details Do you have any Past Experience: NoDocument LibraryClick here to view# Document Type File Name Uploaded Date View 11 Copy of the legal title reportTITLE SEARCH.pdf2/06/2017, 10:14 AM 21 Details of encumbrancesSELF DECLARATION REGARDING ENCUMBRANCE.pdf2/06/2017, 10:56 AM 32 Details of encumbrancesENCUMBARANCE CERTIFICATE.pdf16/02/2018, 3:08 PM 41 Copy of Layout Approval (in case of layout)Cosmopolis Sanction Plan1.pdf14/06/2017, 11:19 AM 51 Building Plan Approval (IOD)Cosmopolis Sanction Plan1.pdf2/06/2017, 10:16 AM 62 Building Plan Approval (IOD)Cosmopolis Sanction Plan2.pdf2/06/2017, 10:16 AM 73 Building Plan Approval (IOD)Cosmopolis Sanction Plan3.pdf2/06/2017, 10:16 AM 81 Commencement Certificates / NA Order for plotted developmentCommencement Certificate.pdf2/06/2017, 10:15 AM 91 Declaration in FORM BFORM B.pdf21/07/2017, 11:05 AM 101 Certificates of Architect (Form 1)(Mandatory for only ongoing project)architect form 1.pdf20/07/2017, 6:07 PM 111 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)FORM 2.pdf24/07/2017, 8:27 PM 121 Proforma of Allotment lettersample agreement.pdf24/07/2017, 3:27 PM 131 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted developmentPART COMPLETITION CERTIFICATE.pdf4/10/2019, 12:59 PMPromoter Landowner Landowner types in the project Promoter Promoter Landowner(s) Promoter Documents#Uploaded Documents (For Promoter)Upload Date and TimeFile NameView1Legal Title report2/06/2017, 10:14 AMTITLE SEARCH.pdf2Declaration Form B21/07/2017, 11:05 AMFORM B.pdfInvestor DetailsAre there any Investor other than the Promoter in the Project : NoLitigation DetailsIs there any litigation against this proposed project : NoProforma Allotment LetterProforma Allotment LetterAllotment Letter Deviation Report sample agreement.pdf Other Legal Documents#Document TypeUploaded FileViewNo Record Found Building Details#Identification of Building/ Wing as per Sanctioned Plan Identification of Wing as per Sanctioned Plan Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)1 THE COSMOPOLIS NA 12 Total10Summary of Apartments/Units#Building Name Apartment Type Carpet Area (in Sqmts) Number of Apartme",
+  "text_length": 8234,
+  "project_name": "THE COSMOPOLIS",
+  "promoter_name": "VISHAL SANJAY GALANDE",
+  "captured_at": "2026-07-25T15:01:27"
+}
