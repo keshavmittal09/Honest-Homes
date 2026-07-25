@@ -94,11 +94,22 @@ def _load() -> None:
 
 @app.get("/api/health")
 def health() -> dict:
+    """Status + enough config diagnostics to tell, from outside, whether the
+    deployment is actually wired up. Reports only booleans and hostnames — never
+    a key. Without this there is no way to distinguish "leads are being stored"
+    from "leads are being silently dropped", because /api/lead answers the
+    visitor optimistically either way.
+    """
+    key = os.getenv("SUPABASE_KEY", "")
     return {
         "status": "ok",
         "projects_loaded": store.count(),
         "snapshot_date": store.snapshot_date,
         "total_in_rera": store.total_reported,
+        "detail_projects": len(DETAIL.records) if DETAIL.loaded else 0,
+        "lead_storage": "supabase" if key else "EPHEMERAL FILE — submissions are lost on restart",
+        "supabase_host": (os.getenv("SUPABASE_URL", "") or "").replace("https://", "").rstrip("/") or None,
+        "documents": "local" if DETAIL.docs_available else ("external" if DETAIL.external_ok else "unavailable"),
     }
 
 
@@ -186,8 +197,16 @@ async def lead(payload: dict, request: Request) -> dict:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     except Exception as e:  # never fail the user's submission on a storage hiccup
         log.error("lead write failed: %s", e)
-    log.info("SUBMIT[%s] %s | %s | %s (supabase=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
-    return {"ok": True}
+    if not stored:
+        # Loud, because the fallback file is on an ephemeral disk: on Render this
+        # submission is gone at the next restart. Silent success here is how leads
+        # disappear without anyone noticing.
+        log.error("LEAD NOT DURABLY STORED — SUPABASE_KEY missing or insert failed. "
+                  "Submission kept only in the ephemeral %s", LEADS_FILE.name)
+    log.info("SUBMIT[%s] %s | %s | %s (durable=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
+    # `stored` tells an operator whether this actually landed somewhere permanent.
+    # The visitor still sees success either way — their submission is not their problem.
+    return {"ok": True, "stored": stored}
 
 
 @app.get("/api/config")
