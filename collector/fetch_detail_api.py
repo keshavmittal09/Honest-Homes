@@ -34,7 +34,11 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT_ROOT = ROOT / "data" / "snapshots" / "detail"
 HOST = "https://maharerait.maharashtra.gov.in"
 DMS_URL = f"{HOST}/api/maha-rera-dms-service/batch-job/downloadDocumentForPublicView"
-UUID = re.compile(r"^[0-9a-fA-F-]{36}$")
+# DMS references are a UUID, optionally carrying a document version suffix
+# ("dafae48c-...-4507f3dd1cba;0.1"). The suffix form is used by exactly the
+# documents that matter most on a complaint — the signed order and the hearing
+# roznama — so a bare 36-char match silently skipped them.
+UUID = re.compile(r"^[0-9a-fA-F-]{36}(;[0-9.]+)?$")
 _VIEW = re.compile(r"/view/(\d+)")
 
 

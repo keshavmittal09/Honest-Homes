@@ -221,8 +221,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "10_Profileimage.jpeg",
@@ -560,8 +572,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "232db1c4-b298-48bf-bb82-4f1e924e7683.pdf",
@@ -864,8 +888,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "1_OCCUPANCY_CERTIFICATE.pdf",
@@ -1125,8 +1161,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "2_Profileimage.jpeg",
@@ -1702,8 +1750,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "00_OC_part_1.pdf",
@@ -2058,8 +2118,88 @@
         }
       ]
     },
-    "litigation": null,
+    "litigation": {
+      "present": true,
+      "declared": false,
+      "cases": [
+        {
+          "court": "CIVIL COURT THANE",
+          "caseNo": "257",
+          "year": null,
+          "status": null,
+          "remark": null
+        },
+        {
+          "court": "THANE CIVIL COURT",
+          "caseNo": "383/2016",
+          "year": null,
+          "status": null,
+          "remark": null
+        }
+      ],
+      "count": 2
+    },
     "complaints": 2,
+    "projectComplaints": {
+      "count": 2,
+      "rows": [
+        {
+          "complaintNo": "CC006000000530688",
+          "type": "Regular",
+          "filedOn": "2024-06-07",
+          "status": "Order Approved",
+          "complainant": "UNNATHI  ESTATES",
+          "respondent": "Girdhari Jha"
+        },
+        {
+          "complaintNo": "CC12501635",
+          "type": "Regular",
+          "filedOn": "2025-05-20",
+          "status": "Order Approved",
+          "complainant": "UNNATHI ESTATES",
+          "respondent": "VIKAS M KHAPNE"
+        }
+      ],
+      "orders": [
+        {
+          "complaintNo": "CC006000000530688",
+          "filedOn": "07/06/2024",
+          "orderFile": "Scanned Order CC006_530688.pdf",
+          "orderRef": "dafae48c-58bb-40b0-99a2-4507f3dd1cba;0.1",
+          "complainant": "UNNATHI  ESTATES",
+          "respondent": "Girdhari Jha"
+        },
+        {
+          "complaintNo": "CC12501635",
+          "filedOn": "20/05/2025",
+          "orderFile": "Sr 1 Order CC12501635 UNNATHI ESTATES  VS VIKAS M KHAPNE and ors.pdf",
+          "orderRef": "3e8e2a4e-32e8-4ceb-bc69-262049a04cb5;0.1",
+          "complainant": "UNNATHI ESTATES",
+          "respondent": "VIKAS M KHAPNE"
+        }
+      ],
+      "nonCompliance": [
+        {
+          "complaintNo": "CC006000000530688",
+          "appliedOn": "2024-11-08 11:40:43",
+          "roznamaFile": "530688.pdf",
+          "roznamaOn": "2026-05-26 17:34:51"
+        },
+        {
+          "complaintNo": "CC006000000530688",
+          "appliedOn": "2026-03-10 12:35:16",
+          "roznamaFile": "530688.pdf",
+          "roznamaOn": "2026-05-26 17:34:51"
+        },
+        {
+          "complaintNo": "CC12501635",
+          "appliedOn": "2026-05-26 16:19:27",
+          "roznamaFile": "Sr no 1 to 18 OP for sign.pdf",
+          "roznamaOn": "2026-02-26 15:53:29"
+        }
+      ],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "18422007-2cfd-439b-bf1a-a5df6e9038c4.pdf",
@@ -2375,8 +2515,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "1_Form_1.pdf",
@@ -2695,8 +2847,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "2243590_OC_signed.pdf",
@@ -2912,8 +3076,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "AMITDEVELOPERS_NA_ORDER_NEW.pdf",
@@ -3143,8 +3319,20 @@
         }
       ]
     },
-    "litigation": null,
-    "complaints": null,
+    "litigation": {
+      "present": false,
+      "declared": false,
+      "cases": [],
+      "count": 0
+    },
+    "complaints": 0,
+    "projectComplaints": {
+      "count": 0,
+      "rows": [],
+      "orders": [],
+      "nonCompliance": [],
+      "warrants": []
+    },
     "documents": [
       {
         "file": "2_Profileimage.jpeg",

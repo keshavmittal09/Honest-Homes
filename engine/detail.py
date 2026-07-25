@@ -231,17 +231,89 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         units["booked"] = g.get("totalNumberOfSoldUnits") or 0
     units["mix"] = [m for m in units["mix"] if m.get("count")]
 
-    # --- Litigation ---
+    # --- Litigation / court cases declared for THIS project ---
     lit_ro = _ro(api, "getProjectLitigationDetails")
     litigation = None
     if isinstance(lit_ro, dict):
-        lp = lit_ro.get("isLitigationPresent")
-        if lp not in (None, ""):
-            litigation = {"present": bool(lp), "declared": bool(lit_ro.get("isDeclared"))}
+        cases = []
+        for c in (lit_ro.get("projectLitigationDtlsResponse") or []):
+            cases.append({
+                "court": (c.get("courtName") or "").strip() or None,
+                "caseNo": c.get("caseNumber") or c.get("caseNo"),
+                "year": c.get("caseYear"),
+                "status": (c.get("caseStatus") or "").strip() or None,
+                "remark": (c.get("litigationRemark") or c.get("remark") or "").strip() or None,
+            })
+        present = lit_ro.get("isLitigationPresent")
+        litigation = {
+            "present": bool(present) or bool(cases),
+            "declared": bool(lit_ro.get("isDeclared")),
+            "cases": cases,
+            "count": len(cases),
+        }
 
-    # --- Complaints (from the project's own detail, if any) ---
-    comp = _ro(api, "getComplaintByProjectId") or _ro(api, "getComplaintDetailsByProjectId")
-    complaints = len(comp) if isinstance(comp, list) else None
+    # --- Complaints filed against THIS project -------------------------------
+    # Two endpoints carry different halves of the picture and BOTH have to be
+    # read: getComplaintByProjectId is a list of the complaints themselves, while
+    # getComplaintDetailsByProjectId is a *dict* holding the signed orders, the
+    # non-compliance applications and the recovery warrants. The previous version
+    # only counted a list, so whenever the first endpoint returned NO_RECORDS_FOUND
+    # the dict fell through and the count became None — reporting "unknown" for
+    # every project, including the ones with a genuinely clean record.
+    comp_list = _ro(api, "getComplaintByProjectId")
+    comp_list = comp_list if isinstance(comp_list, list) else []
+    det_ro = _ro(api, "getComplaintDetailsByProjectId")
+    det_ro = det_ro if isinstance(det_ro, dict) else {}
+
+    def _rows(key):
+        v = det_ro.get(key)
+        return v if isinstance(v, list) else []
+
+    orders = [{
+        "complaintNo": o.get("complaintRegistrationNo"),
+        "filedOn": o.get("complaintFilingDate"),
+        "orderFile": o.get("orderFileName"),
+        "orderRef": o.get("orderDmsRefNo"),
+        "complainant": (o.get("complainantName") or "").strip() or None,
+        "respondent": (o.get("respondentName") or "").strip() or None,
+    } for o in _rows("complaintDetails")]
+
+    noncompliance = [{
+        "complaintNo": m.get("complaintRegistrationNo"),
+        "appliedOn": m.get("nonComplianceAppliedDate"),
+        "roznamaFile": m.get("roznamaFileName"),
+        "roznamaOn": m.get("roznamaGenerationDate"),
+    } for m in _rows("miscComplaintDetails")]
+
+    warrants = [{
+        "complaintNo": w.get("complaintRegistrationNo"),
+        "amount": w.get("recoveryAmount") or w.get("amount"),
+        "issuedOn": w.get("warrantIssueDate") or w.get("issueDate"),
+        "status": (w.get("warrantStatus") or "").strip() or None,
+    } for w in _rows("warrentDetails")]
+
+    complaint_rows = [{
+        "complaintNo": c.get("complaintRegistrationNo"),
+        "type": c.get("complaintTypeName"),
+        "filedOn": (c.get("complaintRegistrationDate") or "")[:10] or None,
+        "status": (c.get("complaintStatus") or "").strip() or None,
+        "complainant": (c.get("profileNameComplainant") or "").strip() or None,
+        "respondent": (c.get("profileNameRespondent") or "").strip() or None,
+    } for c in comp_list]
+
+    # Complaint numbers seen anywhere, so a complaint that only appears in the
+    # orders table still counts toward the total.
+    seen_nos = {r["complaintNo"] for r in complaint_rows if r.get("complaintNo")}
+    seen_nos |= {o["complaintNo"] for o in orders if o.get("complaintNo")}
+    complaints = len(seen_nos) if (seen_nos or det_ro or comp_list) else None
+
+    project_complaints = {
+        "count": complaints,
+        "rows": complaint_rows,
+        "orders": orders,
+        "nonCompliance": noncompliance,
+        "warrants": warrants,
+    }
 
     specs = {
         "type": g.get("projectTypeName"),
@@ -269,6 +341,7 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "units": units,
         "litigation": litigation,
         "complaints": complaints,
+        "projectComplaints": project_complaints,
         "documents": label_documents(sorted(doc_files)),
         "document_count": len(doc_files),
     }

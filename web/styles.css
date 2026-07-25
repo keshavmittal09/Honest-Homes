@@ -683,6 +683,19 @@ a { color: inherit; text-decoration: none; }
 .spec-v { font-weight: 600; font-size: 14px; margin-top: 4px; }
 .spec-v.accent { color: var(--amber); }
 
+/* complaints against this project */
+/* 4-up on desktop, 2x2 on phones — four tiles across 320px leaves ~34px of
+   content width, which shreds a label like "Court cases". */
+.cmpl-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 560px) { .cmpl-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cmpl-row { padding: 12px 0; border-top: 1px solid var(--line); }
+.cmpl-row:first-of-type { border-top: none; padding-top: 2px; }
+.map-embed {
+  display: block; width: 100%; height: 320px; border: 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+@media (max-width: 560px) { .map-embed { height: 240px; } }
+
 .ext-row { padding: 13px 0; border-top: 1px solid var(--line); }
 .ext-row:first-child { padding-top: 2px; border-top: none; }
 .ext-dates { font-size: 13.5px; }

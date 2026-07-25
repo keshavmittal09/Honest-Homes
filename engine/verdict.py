@@ -105,9 +105,78 @@ def _year_of(date_str: str) -> int | None:
 
 _SRC_COMPLAINTS = "MahaRERA — promoter complaints register"
 _SRC_REVOKED = "MahaRERA — deregistered/revoked list"
+_SRC_PROJECT = "MahaRERA — this project's own complaint record"
 
 
-def build_verdict(project: dict, *, reputation=None, today: date | None = None) -> Verdict:
+def _project_signals(detail: dict, as_of: str) -> list[Signal]:
+    """Signals from the project's OWN MahaRERA record (Tier-2 detail).
+
+    A complaint against this project is far more relevant to a buyer than one
+    against the builder's other projects, so these are scored separately and more
+    heavily. Only emitted when we actually hold Tier-2 detail for the project —
+    silence here means "not collected", never "clean", and the coverage signal
+    says so explicitly.
+    """
+    out: list[Signal] = []
+    pc = (detail or {}).get("projectComplaints") or {}
+    n = pc.get("count")
+    if n is None:
+        return out
+
+    warrants = len(pc.get("warrants") or [])
+    orders = len(pc.get("orders") or [])
+    noncomp = len(pc.get("nonCompliance") or [])
+
+    if n == 0:
+        out.append(Signal(
+            key="project_no_complaints", points=1,
+            title="No complaints against this project",
+            reason=("No consumer complaints are recorded against this specific project on its "
+                    "own MahaRERA page."),
+            source=_SRC_PROJECT, as_of=as_of, kind="positive",
+        ))
+    else:
+        pts = -2 if n == 1 else -3 if n <= 3 else -5
+        bits = [f"{n} consumer complaint(s) filed against this project"]
+        if orders:
+            bits.append(f"{orders} order(s) issued")
+        if noncomp:
+            bits.append(f"{noncomp} non-compliance application(s)")
+        out.append(Signal(
+            key="project_complaints", points=pts,
+            title=f"{n} complaint(s) against this project",
+            reason=", ".join(bits) + " on the project's own MahaRERA record.",
+            source=_SRC_PROJECT, as_of=as_of,
+            kind="negative" if n > 1 else "caution",
+        ))
+
+    # A recovery warrant means an order went unpaid and MahaRERA moved to recover.
+    if warrants:
+        out.append(Signal(
+            key="recovery_warrant", points=-3,
+            title=f"{warrants} recovery warrant(s) issued",
+            reason=("MahaRERA has issued recovery warrant(s) against this project, which follow "
+                    "an order that was not complied with."),
+            source=_SRC_PROJECT, as_of=as_of, kind="negative",
+        ))
+
+    lit = (detail or {}).get("litigation") or {}
+    cases = lit.get("count") or 0
+    if cases:
+        courts = sorted({c.get("court") for c in (lit.get("cases") or []) if c.get("court")})
+        where = f" ({', '.join(courts[:2]).title()})" if courts else ""
+        out.append(Signal(
+            key="project_litigation", points=-1,
+            title=f"{cases} court case(s) declared on this project",
+            reason=(f"The promoter has declared {cases} pending legal case(s) for this project"
+                    f"{where} in its MahaRERA filing."),
+            source=_SRC_PROJECT, as_of=as_of, kind="caution",
+        ))
+    return out
+
+
+def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
+                  today: date | None = None) -> Verdict:
     """Build a verdict from one project index record, optionally enriched with the
     captcha-free reputation data (complaints + revoked status).
 
@@ -157,6 +226,12 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
         # builder is alarming; the same on an 80-project builder is ordinary. We
         # penalise on complaints-PER-PROJECT, with no upper cap so egregious
         # records keep scoring worse.
+        # When we hold this project's OWN complaint record, the builder-wide count
+        # becomes secondary evidence — the two overlap, and counting both at full
+        # weight drove genuinely bad projects straight to the 0.0 floor, which
+        # destroys the scale's ability to distinguish "bad" from "worst".
+        has_project_record = (detail or {}).get("projectComplaints", {}).get("count") is not None
+
         complaints = reputation.complaints_for(promoter)
         if complaints and complaints > 0:
             n_proj = max(1, reputation.projects_for(promoter))
@@ -172,12 +247,20 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
                 pts, kind = -7, "negative"  # >=1.5 complaints per project: severe
             proj_note = (f" across {n_proj} project(s) on record" if n_proj > 1
                          else " on its sole project on record")
+            scaled = ""
+            if has_project_record:
+                # Halve, but never to zero: a complaint that exists must always cost
+                # something, otherwise the score says "clean" while the band says
+                # "caution" and the two contradict each other.
+                pts = min(-1, -(-pts // 2))
+                scaled = (" Counted at half weight here because this project's own complaint "
+                          "record was checked directly and is scored separately.")
             signals.append(Signal(
                 key="complaints", points=pts,
                 title=(f"{complaints} consumer complaint(s) against this builder"),
                 reason=(f"{complaints} consumer complaint(s) filed against this builder "
                         f"with MahaRERA{proj_note} "
-                        f"(~{ratio:.1f} per project)."),
+                        f"(~{ratio:.1f} per project).{scaled}"),
                 source=_SRC_COMPLAINTS, as_of=rep_as_of, kind=kind,
             ))
         else:
@@ -191,12 +274,25 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
                 source=_SRC_COMPLAINTS, as_of=rep_as_of, kind="neutral",
             ))
 
-        # --- Honest coverage note (we have reputation, not yet delay history) ---
+        # --- Signals from the project's own record, when we hold Tier-2 detail ---
+        signals.extend(_project_signals(detail, rep_as_of))
+
+        # --- Honest coverage note. It MUST say whether the project's own record was
+        # checked: without Tier-2 detail we cannot see project-level complaints, and
+        # a quiet verdict would otherwise read as "clean" rather than "not checked".
+        has_project_record = bool((detail or {}).get("projectComplaints", {}).get("count") is not None)
         signals.append(Signal(
             key="coverage", points=0,
             title="What this verdict covers",
-            reason=("Based on registration, complaint and revocation records. Detailed "
-                    "delay/extension history is not yet included."),
+            reason=(
+                "Based on registration, complaint and revocation records, plus this project's "
+                "own MahaRERA complaint and litigation record. Detailed delay/extension history "
+                "is not yet included."
+                if has_project_record else
+                "Based on the builder's registration, complaint and revocation records. This "
+                "project's own complaint and litigation page has NOT been checked yet, so "
+                "project-specific complaints may exist that are not reflected here."
+            ),
             source=_SRC_INDEX, as_of=rep_as_of, kind="neutral",
         ))
 
@@ -231,11 +327,23 @@ def _band_and_headline_scored(score: int, signals: list[Signal], project: dict) 
 
     comp = next((s for s in signals if s.key == "complaints"), None)
     revoked_sib = any(s.key == "revoked_siblings" for s in signals)
+    proj = next((s for s in signals if s.key == "project_complaints"), None)
+    warrant = any(s.key == "recovery_warrant" for s in signals)
+    litig = next((s for s in signals if s.key == "project_litigation"), None)
+
+    # A complaint against THIS project outranks anything about the builder — it is
+    # the most directly relevant fact a buyer of this flat can be told.
+    if warrant:
+        return BAND_RED, (f"{name} has a MahaRERA recovery warrant against it — an order was "
+                          "not complied with. Treat with serious caution.")
+    if proj is not None and proj.points <= -4:
+        return BAND_RED, (f"{name} has multiple consumer complaints on its own MahaRERA record "
+                          "— look very closely before proceeding.")
 
     # GREEN is a positive claim, so it requires the ABSENCE of any negative signal
     # — not merely a high score from the registered baseline. A builder with
     # complaints or revoked siblings can never be green, even if the math is high.
-    if score >= 7 and comp is None and not revoked_sib:
+    if score >= 7 and comp is None and not revoked_sib and proj is None and litig is None:
         return BAND_GREEN, (f"{name} is RERA-registered with no complaints or revocations "
                             "on the public MahaRERA record — but this is a baseline check, "
                             "not a full clearance.")
@@ -249,7 +357,11 @@ def _band_and_headline_scored(score: int, signals: list[Signal], project: dict) 
 
     # Everything else is AMBER (caution / incomplete picture).
     msg = f"{name} is registered"
-    if comp is not None:
+    if proj is not None:
+        msg += " but has complaints on its own record"
+    elif litig is not None:
+        msg += " but has a declared court case"
+    elif comp is not None:
         msg += f", but {builder} has complaints on record"
     elif revoked_sib:
         msg += f", but {builder} has other revoked projects on record"

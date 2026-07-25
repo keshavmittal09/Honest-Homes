@@ -26,6 +26,95 @@ function SpecCell({ k, v, accent }) {
     h("div", { className: `spec-v ${accent ? "accent" : ""}` }, (v === null || v === undefined || v === "") ? "—" : v));
 }
 
+// ---- Complaints filed against THIS project (not the builder) ----------------
+// The distinction matters: a complaint against this project is directly relevant
+// to this flat, while a builder-level count is spread across every project they
+// have ever registered.
+function ProjectComplaints({ p, asOf }) {
+  const d = p.detail || {};
+  const pc = d.projectComplaints || {};
+  const lit = d.litigation || {};
+  if (pc.count == null) return null;             // no tier-2 record: say nothing
+
+  const rows = pc.rows || [], orders = pc.orders || [];
+  const misc = pc.nonCompliance || [], warrants = pc.warrants || [];
+  const cases = lit.cases || [];
+  const clean = pc.count === 0 && !cases.length;
+
+  const stat = (n, label, danger) => h("div", { className: "tr-stat" },
+    h("div", { className: "n", style: n && danger ? { color: `var(--${danger})` } : {} }, n),
+    h("div", { className: "l" }, label));
+
+  return h("div", { className: "panel", style: { marginTop: 16 } },
+    h("div", { className: "panel-h" },
+      h("h2", { className: "row gap-8" },
+        h(Icon_v, { name: clean ? "shield-check" : "file-warning", size: 17,
+          style: { color: clean ? "var(--green)" : "var(--red)" } }),
+        "Complaints against this project"),
+      h("span", { className: "faint", style: { fontSize: 12.5 } }, "This project only — not the builder")),
+    h("div", { className: "panel-b", style: { paddingTop: 16 } },
+      clean
+        ? h("p", { className: "muted", style: { fontSize: 14, lineHeight: 1.55 } },
+            "No consumer complaints and no declared court cases appear on this project's own ",
+            "MahaRERA record. That is a fact about this project specifically — the builder may ",
+            "still have complaints on its other projects (see Builder track record).")
+        : h(React.Fragment, null,
+            h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
+              stat(pc.count, "Complaints", "red"),
+              stat(orders.length, "Orders", "amber"),
+              stat(warrants.length, "Warrants", "red"),
+              stat(cases.length, "Court cases", "amber")),
+            rows.map((c, i) => h("div", { key: i, className: "cmpl-row" },
+              h("div", { className: "row", style: { justifyContent: "space-between", gap: 10, flexWrap: "wrap" } },
+                h("span", { className: "mono", style: { fontSize: 13, fontWeight: 700 } }, c.complaintNo || "Complaint"),
+                c.status && h("span", { className: "badge amber", style: { fontSize: 11 } }, c.status)),
+              h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 4 } },
+                c.type ? c.type + " · " : "", c.filedOn ? "filed " + c.filedOn : "",
+                c.complainant ? " · by " + c.complainant : ""))),
+            misc.length > 0 && h("p", { className: "muted", style: { fontSize: 13, marginTop: 12 } },
+              h("b", null, misc.length, " non-compliance application(s)"),
+              " filed — meaning an order was passed and the complainant reported it was not followed."),
+            // Order/roznama PDFs are referenced by MahaRERA but were not captured in
+            // this snapshot, so we name them rather than offer a link that 404s.
+            orders.some(o => o.orderFile) && h("p", { className: "faint", style: { fontSize: 12, marginTop: 10, lineHeight: 1.6 } },
+              h("b", null, "Orders on record: "),
+              orders.filter(o => o.orderFile).map(o => o.orderFile).join(" · "),
+              " — read these on the MahaRERA portal."),
+            cases.length > 0 && h("div", { style: { marginTop: 14 } },
+              h("div", { className: "doc-group-h" }, "Court cases declared by the promoter"),
+              cases.map((c, i) => h("div", { key: i, className: "cmpl-row" },
+                h("b", { style: { fontSize: 13.5 } }, (c.court || "Court").replace(/\b\w/g, m => m.toUpperCase())),
+                c.caseNo && h("span", { className: "faint mono", style: { fontSize: 12, marginLeft: 8 } }, "case ", c.caseNo),
+                c.remark && h("div", { className: "muted", style: { fontSize: 12.5, marginTop: 3 } }, c.remark))))
+          ),
+      h("div", { className: "src-row", style: { marginTop: 14, display: "flex" } },
+        h(SourceTag, { source: "MahaRERA — this project's complaint record", asOf: d.capturedAt || asOf }))));
+}
+
+// ---- Where the project actually is -----------------------------------------
+function LocationMap({ p }) {
+  const m = /query=(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/.exec(p.mapUrl || "");
+  if (!m) return null;
+  const lat = m[1], lng = m[2];
+  // Google's keyless embed — no API key, no billing, no quota to manage.
+  const src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+  return h("div", { className: "panel", style: { marginTop: 16 } },
+    h("div", { className: "panel-h" },
+      h("h2", { className: "row gap-8" }, h(Icon_v, { name: "pin", size: 17, className: "faint" }), "Location"),
+      h("a", { className: "btn btn-ghost btn-sm", href: p.mapUrl, target: "_blank", rel: "noopener" },
+        h(Icon_v, { name: "link", size: 14 }), "Open in Google Maps")),
+    h("div", { className: "panel-b", style: { padding: 0 } },
+      h("iframe", { className: "map-embed", src, loading: "lazy", title: "Project location",
+        referrerPolicy: "no-referrer-when-downgrade", allowFullScreen: true })),
+    h("div", { className: "panel-b", style: { paddingTop: 12 } },
+      h("div", { className: "kvbar" },
+        h(KV, { k: "District", v: p.district }),
+        h(KV, { k: "Pincode", v: p.pincode || "—" }),
+        h(KV, { k: "Coordinates", v: `${(+lat).toFixed(5)}, ${(+lng).toFixed(5)}`, mono: true })),
+      h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
+        h(SourceTag, { source: "MahaRERA — registered project address", asOf: p.dataAsOf }))));
+}
+
 // The Tier-2 detail block: specs, sales/inventory, delays, documents.
 function DetailSection({ p }) {
   const d = p.detail || {};
@@ -287,7 +376,7 @@ function Verdict({ id, go }) {
         h("span", { className: "row gap-8" },
           h("span", { className: "faint", style: { fontSize: 13 } }, "Final verdict"),
           h(ScoreChip, { score: p.score, band: p.band })))
-    )),
+    ),
 
     // ---------- TWO COLUMN: track record + timeline ----------
     h("div", { className: "grid grid-2up", style: { gap: 16, marginTop: 16 } },
@@ -340,10 +429,20 @@ function Verdict({ id, go }) {
       )
     ),
 
-    // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
-    p.hasDetail && h(DetailSection, { p }),
+    // ---------- COMPLAINTS AGAINST THIS PROJECT ----------
+    p.hasDetail && h(ProjectComplaints, { p, asOf }),
 
-    // ---------- DISCLAIMER ----------
+    // ---------- LOCATION ----------
+    h(LocationMap, { p }),
+
+    // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
+    p.hasDetail && h(DetailSection, { p })),
+    // ^ the lead gate closes HERE, not after the score panel. Everything of value
+    //   — track record, timeline, snapshot, sales, and every document link — must
+    //   sit inside it, otherwise a visitor just scrolls past the blur and reads it
+    //   all without ever entering a name.
+
+    // ---------- DISCLAIMER (deliberately outside the gate: it's boilerplate) ----------
     h("div", { className: "disclaimer", style: { marginTop: 18 } },
       h("div", { className: "dico" }, h(Icon_v, { name: "info", size: 19 })),
       h("div", null,

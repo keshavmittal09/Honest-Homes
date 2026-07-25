@@ -42,11 +42,20 @@ _ICON = {
     "revoked_siblings": "ban",
     "complaints": "file-warning",
     "no_complaints": "shield-check",
+    "project_complaints": "file-warning",
+    "project_no_complaints": "shield-check",
+    "recovery_warrant": "gavel",
+    "project_litigation": "scale",
     "coverage": "info",
     "long_on_record": "calendar-clock",
     "recent_record": "calendar-check",
     "depth_pending": "hourglass",
 }
+
+
+def _detail_for(row: dict) -> dict | None:
+    """The Tier-2 record for this project, if we hold one."""
+    return DETAIL.get(row.get("rera_id", "")) if DETAIL.loaded else None
 
 
 def _as_of(row: dict) -> str:
@@ -84,7 +93,7 @@ def _score_to_band(v) -> tuple[str, float | None]:
 
 def project_to_card(row: dict) -> dict:
     """The lightweight shape used by landing/results cards."""
-    v = build_verdict(row, reputation=REPUTATION)
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
     band, score = _score_to_band(v)
     return {
         "id": row.get("rera_id", ""),
@@ -102,7 +111,7 @@ def project_to_card(row: dict) -> dict:
 
 def project_to_full(row: dict) -> dict:
     """The rich shape used by the Verdict screen."""
-    v = build_verdict(row, reputation=REPUTATION)
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
     band, score = _score_to_band(v)
     complete = score is not None
     as_of = v.data_as_of or _as_of(row)
@@ -186,7 +195,14 @@ def project_to_full(row: dict) -> dict:
             "documentCount": det.get("document_count", 0),
             "documentsAvailable": any(o.get("href") for o in docs),
             "capturedAt": DETAIL.captured_at,
+            "projectComplaints": det.get("projectComplaints") or {},
         }
+        # Project-level counts override the builder-level placeholders, because
+        # they answer the question the buyer actually asked.
+        pc = det.get("projectComplaints") or {}
+        card["projectComplaints"] = pc.get("count")
+        card["orders"] = len(pc.get("orders") or []) if pc.get("count") is not None else None
+        card["courtCases"] = (det.get("litigation") or {}).get("count")
     else:
         card["hasDetail"] = False
 
