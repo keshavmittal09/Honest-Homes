@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>Maharashtra Real Estate Regulatory Authority</title><script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.7/runtime.min.js"></script><link href="https://maharerait.maharashtra.gov.in/content/assets/css/style.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet"><link href="https://maharerait.maharashtra.gov.in/content/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"><link href="https://maharerait.maharashtra.gov.in/content/assets/vendor/simple-datatables/style.css" rel="stylesheet"><link href="https://maharerait.maharashtra.gov.in/content/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"><link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans"><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script async="" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBODKQJRZF8Es5yjpj0uhADgssqUlRkBd8"></script><link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"><script src="https://code.jquery.com/jquery-3.6.0.js"></script><script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script><script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.7/runtime.min.js"></script><link href="https://unpkg.com/angular-calendar@0.26.6/css/angular-calendar.css" rel="stylesheet"><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script><script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js"></script><script type="systemjs-importmap">{
+      "imports": {
+        "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js",
+        "login":"//maharerait.maharashtra.gov.in/loginpage/main.js",
+        "register":"//maharerait.maharashtra.gov.in/registerpage/main.js",
+        "admin":"//maharerait.maharashtra.gov.in/adminpage/main.js",
+        "dashboard":"//maharerait.maharashtra.gov.in/dashboardpage/main.js",
+        "promoter":"//maharerait.maharashtra.gov.in/promoterpage/main.js",
+        "workflow":"//maharerait.maharashtra.gov.in/workflowpage/main.js",
+        "header":"//maharerait.maharashtra.gov.in/headerpage/main.js",
+        "agent":"//maharerait.maharashtra.gov.in/agentpage/main.js",
+        "project":"//maharerait.maharashtra.gov.in/projectpage/main.js",
+        "inbox":"//maharerait.maharashtra.gov.in/inboxpage/main.js",
+        "complaint":"//maharerait.maharashtra.gov.in/complaintpage/main.js",
+        "appeal":"//maharerait.maharashtra.gov.in/appealpage/main.js",
+        "appeal-login":"//maharerait.maharashtra.gov.in/appealloginpage/main.js",
+        "public":"//maharerait.maharashtra.gov.in/publicpage/main.js"
+
+
+      }
+    }</script><link rel="preload" href="https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js" as="script" crossorigin="anonymous"><script type="systemjs-importmap">{
+          "imports": {
+            "@single-spa/welcome": "https://unpkg.com/single-spa-welcome/dist/single-spa-welcome.js",
+            "@maha-rera/root-config": "https://maharerait.maharashtra.gov.in/maha-rera-root-config.js",
+            "@maha-rera/login":"https://maharerait.maharashtra.gov.in/loginpage/main.js",
+            "@maha-rera/register":"https://maharerait.maharashtra.gov.in/registerpage/main.js",
+            "@maha-rera/admin":"https://maharerait.maharashtra.gov.in/adminpage/main.js",
+            "@maha-rera/dashboard":"https://maharerait.maharashtra.gov.in/dashboardpage/main.js",
+            "@maha-rera/promoter":"https://maharerait.maharashtra.gov.in/promoterpage/main.js",
+            "@maha-rera/workflow":"https://maharerait.maharashtra.gov.in/workflowpage/main.js",
+            "@maha-rera/header":"https://maharerait.maharashtra.gov.in/headerpage/main.js",
+            "@maha-rera/agent":"https://maharerait.maharashtra.gov.in/agentpage/main.js",
+            "@maha-rera/project":"https://maharerait.maharashtra.gov.in/projectpage/main.js",
+            "@maha-rera/inbox":"https://maharerait.maharashtra.gov.in/inboxpage/main.js",
+            "@maha-rera/complaint":"https://maharerait.maharashtra.gov.in/complaintpage/main.js",
+            "@maha-rera/appeal":"https://maharerait.maharashtra.gov.in/appealpage/main.js",
+            "@maha-rera/appeal-login":"https://maharerait.maharashtra.gov.in/appealloginpage/main.js",
+            "@maha-rera/public":"https://maharerait.maharashtra.gov.in/publicpage/main.js"
+
+          }
+        }</script><script src="https://cdn.jsdelivr.net/npm/zone.js@0.11.3/dist/zone.min.js"></script><script src="https://cdn.jsdelivr.net/npm/import-map-overrides@2.2.0/dist/import-map-overrides.js"></script><style type="text/css">.imo-unstyled {
+  border: none;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  cursor: pointer;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+}
+
+.imo-unstyled::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.imo-trigger {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: navajowhite;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-family: sans-serif;
+  z-index: 10500;
+}
+
+.imo-popup {
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  z-index: 10000;
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.imo-popup a:visited,
+imo-popup a {
+  color: white;
+}
+
+.imo-popup .imo-module-dialog {
+  left: calc(50% - 200px);
+}
+
+.imo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.imo-list {
+  margin-left: 16px;
+}
+
+.imo-list > *:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.imo-list-container *,
+.imo-modal-container * {
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+.imo-module-dialog {
+  position: fixed;
+  z-index: 30000000;
+  top: 30%;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 4px solid navajowhite;
+  background-color: white;
+  padding: 1em;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.imo-module-dialog input {
+  width: 100%;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding-right: 20px;
+}
+
+.imo-module-dialog table {
+  margin-bottom: 16px;
+}
+
+.imo-module-dialog table td:first-child {
+  text-align: right;
+  padding-right: 16px;
+  word-break: keep-all;
+}
+
+.imo-module-dialog table td {
+  word-break: break-all;
+}
+
+.imo-module-dialog.imo-overridden {
+  border: 4px solid salmon;
+}
+
+.imo-table-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.imo-overrides-table {
+  border-collapse: collapse;
+  margin-top: 32px;
+}
+
+.imo-overrides-table tr td:first-child {
+  display: flex;
+  align-items: center;
+  padding-right: 32px;
+  position: relative;
+}
+
+.imo-needs-refresh {
+  position: absolute;
+  right: 8px;
+  font-size: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.imo-needs-refresh::before {
+  content: "\27F2";
+}
+
+.imo-status {
+  height: 16px;
+  width: 16px;
+  border-radius: 8px;
+  border: 1px solid white;
+  margin-right: 8px;
+}
+
+.imo-disabled-override {
+  background-color: lightblue;
+}
+
+.imo-next-override {
+  background-color: darkred;
+}
+
+.imo-current-override {
+  background-color: salmon;
+}
+
+.imo-default-module {
+  background-color: lightgoldenrodyellow;
+}
+
+.imo-external-override {
+  background-color: orange;
+}
+
+.imo-next-default {
+  background-color: darkgoldenrod;
+}
+
+.imo-dev-lib-override {
+  background-color: lightpink;
+}
+
+.imo-overrides-table tbody tr:hover {
+  cursor: pointer;
+  background-color: #404040;
+}
+
+.imo-overrides-table td,
+.imo-overrides-table th {
+  line-height: 18px;
+  padding: 16px;
+  border: 1px solid white;
+}
+
+.imo-add-new {
+  margin-left: 16px;
+}
+
+.imo-clear-input {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.imo-modal-container {
+  font-family: sans-serif;
+}
+
+.imo-modal {
+  background-color: rgba(61, 70, 77, 0.6);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 20000000;
+}
+
+.imo-list-search,
+.imo-list-container button,
+.imo-modal-container button {
+  font-size: 14px;
+  height: 27px;
+  line-height: 27px;
+}
+
+.imo-list-search {
+  line-height: 22px;
+  border: none;
+  padding: 5px;
+}
+</style><script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.min.js"></script><script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.min.js"></script><style>.mrera-text[_ngcontent-qst-c1]{color:#fff;font-weight:600;font-size:22px}@media (max-width: 1200px){.mrera-text[_ngcontent-qst-c1]{font-size:20px}}@media (max-width: 768px){.mrera-text[_ngcontent-qst-c1]{font-size:18px}}@media (max-width: 480px){.mrera-text[_ngcontent-qst-c1]{font-size:18px}}</style><style>.main[_ngcontent-abd-c18]{margin-left:0!important}.tdClass[_ngcontent-abd-c18]{text-align:center;font-weight:700;font-size:12px}label.form-label.f-weight-800[_ngcontent-abd-c18], label.form-label.f-weight-400[_ngcontent-abd-c18]{color:#2f6e99}#downloadReceipt[_ngcontent-abd-c18]{font-size:12px;font-weight:600;margin-bottom:0;color:#000;line-height:24px;margin-top:5px;color:#00f}.form-control[_ngcontent-abd-c18]{height:36px!important;font-size:12px!important;letter-spacing:1px!important;display:inline-block!important;padding:5px 8px!important}.form-control[_ngcontent-abd-c18]{font-size:12px!important}.form-card[_ngcontent-abd-c18]{padding:0!important}label.form-label[_ngcontent-abd-c18], label.form-check-label[_ngcontent-abd-c18]{font-size:15px!important;font-weight:400}.col-6.col-sm-12.col-md-6.col-lg-6.wh[_ngcontent-abd-c18]{padding-right:3px!important;padding-left:3px!important}.input-wrapper[_ngcontent-abd-c18]{display:flex;align-items:center;position:relative}.form-control[_ngcontent-abd-c18]{padding-right:30px}.trash-icon[_ngcontent-abd-c18]{position:absolute;right:5px;top:50%;transform:translateY(-50%);cursor:pointer;color:red}input[type=radio][_ngcontent-abd-c18]{margin-right:20px}.disabled-select[_ngcontent-abd-c18]{pointer-events:none;background-color:#eee;color:#888}label.form-label[_ngcontent-abd-c18]   .badge[_ngcontent-abd-c18]   i[data-title][_ngcontent-abd-c18], label.form-check-label[_ngcontent-abd-c18]   .badge[_ngcontent-abd-c18]   i[data-title][_ngcontent-abd-c18]{position:relative}label.form-label[_ngcontent-abd-c18]   .badge[_ngcontent-abd-c18]   i[data-title][_ngcontent-abd-c18]:hover:after{font-size:14px;font-weight:400;display:block;position:absolute;left:50%;transform:translate(-50%);bottom:1.5em;content:attr(data-title);background-color:#979797;width:auto;text-align:center;color:#fff;border-radius:6px;padding:10px;font-family:Poppins,sans-serif;z-index:1;box-shadow:0 2px 4px #0003}label.form-check-label[_ngcontent-abd-c18]   .badge[_ngcontent-abd-c18]   i[data-title][_ngcontent-abd-c18]:hover:after, label.form-check-label[_ngcontent-abd-c18]   .badge[_ngcontent-abd-c18]   i.tooltip-visible[_ngcontent-abd-c18]:after{font-size:12px;font-weight:400;display:block;position:absolute;left:50%;transform:translate(-50%);bottom:1.5em;content:attr(data-title);background-color:#979797;width:250px;white-space:normal;word-wrap:break-word;text-align:center;color:#fff;border-radius:6px;padding:10px;font-family:Poppins,sans-serif;z-index:1;box-shadow:0 2px 4px #0003}.conveyance-tooltip[_ngcontent-abd-c18]{position:relative}.conveyance-tooltip[_ngcontent-abd-c18]:hover:after, .conveyance-tooltip.tooltip-visible[_ngcontent-abd-c18]:after{font-size:12px;font-weight:400;display:block;position:absolute;left:50%;transform:translate(-50%);bottom:1.5em;content:attr(data-title);background-color:#979797;width:250px;white-space:normal;word-wrap:break-word;text-align:center;color:#fff;border-radius:6px;padding:10px;font-family:Poppins,sans-serif;z-index:1;box-shadow:0 2px 4px #0003}.badge[_ngcontent-abd-c18]{min-width:9px;padding:1px 2px;font-size:10px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:middle;background-color:#a9a7a7;border-radius:8px;position:relative}.table-wrapper[_ngcontent-abd-c18]{overflow-x:auto;width:100%;max-width:100%}.table-wrapper[_ngcontent-abd-c18]   table[_ngcontent-abd-c18]{width:200%;table-layout:fixed}.m-t-0[_ngcontent-abd-c18]{margin-top:0}.serial-no[_ngcontent-abd-c18]{text-align:center;padding-right:0!important;padding-left:0!important}.p-b-0[_ngcontent-abd-c18]{padding-bottom:0}.m-b-0[_ngcontent-abd-c18]{margin-bottom:0}.m-t-15[_ngcontent-abd-c18]{margin-top:15px}.table-width-200[_ngcontent-abd-c18]{width:200%!important}.col-12.text-font[_ngcontent-abd-c18]{padding:6px 0;font-size:14px}table[_ngcontent-abd-c18]{width:100%!important}table.table[_ngcontent-abd-c18]   tr[_ngcontent-abd-c18]   td[_ngcontent-abd-c18]{font-size:14px!important;font-weight:500;padding:10px!important}thead[_ngcontent-abd-c18]   tr[_ngcontent-abd-c18]   th[_ngcontent-abd-c18]{font-size:14px!important;width:16px!important;border:1px solid #6ca1c4!important;color:#fff!important;padding:10px!important}tbody[_ngcontent-abd-c18]   tr[_ngcontent-abd-c18]   td[_ngcontent-abd-c18]{border:1px solid #f0f0f0;color:#000!important;padding:10px!important}thead[_ngcontent-abd-c18]{background-color:#2f6e99!important;color:#fff!important}label.form-label[_ngcontent-abd-c18]{font-size:15px!important;font-weight:400!important}.white-box[_ngcontent-abd-c18]{background-color:#fff;border:1px solid #d1d1d1;margin:6px 2px;padding:5px 13px;border-radius:4px}a#download[_ngcontent-abd-c18]{background:#2F6E99;color:#fff;padding:5px 10px;border-radius:4px}.tabs[_ngcontent-abd-c18]{display:flex;gap:5px;margin-bottom:10px}.tabs[_ngcontent-abd-c18]   button[_ngcontent-abd-c18]{padding:8px 12px;border:none;background-color:#f1f1f1;cursor:pointer;border-radius:4px}.tabs[_ngcontent-abd-c18]   button.active[_ngcontent-abd-c18]{background-color:#2f6e99;color:#fff}.partner-table[_ngcontent-abd-c18]{width:100%;border-collapse:collapse}.partner-table[_ngcontent-abd-c18]   th[_ngcontent-abd-c18], .partner-table[_ngcontent-abd-c18]   td[_ngcontent-abd-c18]{border:1px solid #ccc;padding:8px}.partner-table[_ngcontent-abd-c18]   th[_ngcontent-abd-c18]{background-color:#0d6efd;color:#fff}.view-btn[_ngcontent-abd-c18]{background-color:#d32f2f;color:#fff;padding:6px 10px;border:none;border-radius:4px;cursor:pointer}.text-red[_ngcontent-abd-c18]{background-color:#d32f2f}@media screen and (min-device-width: 280px) and (max-device-width: 768px){button.accordion-button[_ngcontent-abd-c18], button.accordion-button.collapsed[_ngcontent-abd-c18]{font-size:12px!important;--bs-accordion-btn-icon-width: .8rem}.col-sm-12.col-md-7.col-lg-7.adj[_ngcontent-abd-c18]{font-size:13px;width:60%}.col-sm-12.col-md-4.col-lg-4.adj[_ngcontent-abd-c18]{font-size:13px;--bs-accordion-btn-icon-width: .8rem;width:auto}}button.accordion-button[_ngcontent-abd-c18]{padding:12px 4px!important}.accordion-button[_ngcontent-abd-c18]:not(.collapsed):after{right:0;position:absolute}.orange-background[_ngcontent-abd-c18]{background:#2f6e99;border-radius:4px;margin:5px 0;color:#fff!important;padding:19px 10px 8px;height:98%}.white-box2[_ngcontent-abd-c18]{background-color:#eaf0f4!important;border-right:1px solid #d1d1d1;margin:6px 2px;padding:5px 13px;border-radius:4px}.border-right[_ngcontent-abd-c18]{border:none}@media all and (min-width: 280px) and (max-width: 600px){.col-4.col-sm-12.col-lg-5.col-md-5[_ngcontent-abd-c18], .col-8.col-sm-12.col-lg-7.col-md-7[_ngcontent-abd-c18], .col-12[_ngcontent-abd-c18], .col-6[_ngcontent-abd-c18], .col-4[_ngcontent-abd-c18], .col-3[_ngcontent-abd-c18], .col-9.col-sm-12.col-lg-9.col-md-9[_ngcontent-abd-c18]{width:100%!important}}tbody[_ngcontent-abd-c18], td[_ngcontent-abd-c18]{border-color:inherit;border-style:solid;border-width:0;font-size:14px;font-weight:700;text-transform:none}.bg-blue[_ngcontent-abd-c18]{color:#2f6e99}.bg-black[_ngcontent-abd-c18]{color:#000}.p-r-l-0[_ngcontent-abd-c18]{padding-left:0;padding-right:0}.p-l-0[_ngcontent-abd-c18]{padding-left:0}.p-r-0[_ngcontent-abd-c18]{padding-right:0}.abeyance-msg[_ngcontent-abd-c18]{color:#cd5c5c;padding:20px}.f-w-700[_ngcontent-abd-c18]{font-weight:700!important}.f-w-400[_ngcontent-abd-c18]{font-weight:400!important}.f-s-15[_ngcontent-abd-c18]{font-size:15px!important}.investor-container[_ngcontent-abd-c18]{padding:0 5px 5px}.no-hover-btn[_ngcontent-abd-c18]{background-color:#2f6e99!important;color:#fff;border:none;font-size:16px}.no-hover-btn[_ngcontent-abd-c18]:hover, .no-hover-btn[_ngcontent-abd-c18]:focus, .no-hover-btn[_ngcontent-abd-c18]:active{background-color:#2f6e99!important;color:#fff!important;box-shadow:none!important}</style><style>.captcha-container[_ngcontent-abd-c17]{padding:30px;width:100%}.captcha-actions[_ngcontent-abd-c17]   input[type=text][_ngcontent-abd-c17]{padding:5px;border:1px solid #ccc;border-radius:10px 0 0 10px;outline:none}.captcha-actions[_ngcontent-abd-c17]   input[type=button][_ngcontent-abd-c17]{outline:none;padding:6px;border:none;background:#ccc;border-radius:0 10px 10px 0}.captcha-actions[_ngcontent-abd-c17]   a[_ngcontent-abd-c17]{padding:10px;cursor:pointer;font-size:15px;font-weight:700;text-decoration:none;color:#222}.recaptcha-input[_ngcontent-abd-c17]   .captcha-actions[_ngcontent-abd-c17]   input[_ngcontent-abd-c17]{border-radius:4px}.recaptcha-input[_ngcontent-abd-c17]   canvas[_ngcontent-abd-c17]{width:50%}.recaptcha-input[_ngcontent-abd-c17]   .cpt-btn[_ngcontent-abd-c17]{width:7%;font-size:25px;text-align:center}.toast-top-center[_ngcontent-abd-c17]{top:12px;left:50%;margin:0 auto 0 -150px}</style><script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/65/10a/common.js"></script><script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/65/10a/util.js"></script></head><body><!--
+
+    This is the single-spa Layout Definition for your microfrontends.
+    See https://single-spa.js.org/docs/layout-definition/ for more information.
+
+  --><!-- Example layouts you might find helpful:
+
+  <nav>
+    <application name="@org/navbar"></application>
+  </nav>
+  <route path="settings">
+    <application name="@org/settings"></application>
+  </route>
+
+  --><main><div id="single-spa-application:@maha-rera/header"><header-root _nghost-qst-c3="" ng-version="15.2.9"><header-component _ngcontent-qst-c3="" _nghost-qst-c1=""><header _ngcontent-qst-c1="" id="header" class="row header fixed-top d-flex align-items-center"><div _ngcontent-qst-c1="" class="d-flex align-items-center px-3 col-9 col-md-9 col-lg-10"><a _ngcontent-qst-c1="" href="javascript:void(0)" class="logo d-flex align-items-center"><img _ngcontent-qst-c1="" alt="" style="width: 83px;" src="https://maharerait.maharashtra.gov.in/content/assets/img/maharera-logo-bg-blue.png"></a><span _ngcontent-qst-c1="" class="mrera-text">Maharashtra Real Estate Regulatory Authority</span></div><!----><!----><div _ngcontent-qst-c1="" class="col-3 col-md-3 col-lg-2 d-flex justify-content-end"><!----></div></header></header-component><app-alert-box _ngcontent-qst-c3="" _nghost-qst-c2=""><!----></app-alert-box><!----><router-outlet _ngcontent-qst-c3=""></router-outlet><!----><!----></header-root></div><div id="single-spa-application:@maha-rera/public"><project-root _nghost-abd-c5="" ng-version="15.2.9"><router-outlet _ngcontent-abd-c5=""></router-outlet><project-project-preview-app _nghost-abd-c19=""><router-outlet _ngcontent-abd-c19=""></router-outlet><new-project-preview _nghost-abd-c18=""><main _ngcontent-abd-c18="" id="main" class="main"><i _ngcontent-abd-c18="" class="bi bi-list toggle-sidebar-btn"></i><div _ngcontent-abd-c18="" class="card info-card sales-card container" style="background-color: white !important;"><section _ngcontent-abd-c18="" class="section dashboard"><div _ngcontent-abd-c18="" class="row"><div _ngcontent-abd-c18="" class="col-lg-12"><div _ngcontent-abd-c18="" class="row"><!----><!----><!----><!----><!----><!----><!----><!----><div _ngcontent-abd-c18="" id="validateCaptcha" tabindex="-1" class="modal fade show" style="display: block; padding-left: 0px; background: rgba(0, 0, 0, 0.5);"><div _ngcontent-abd-c18="" class="modal-dialog modal-dialog-centered custom-modal-dialog"><div _ngcontent-abd-c18="" class="modal-content" style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);"><project-captcha-validation _ngcontent-abd-c18="" _nghost-abd-c17=""><div _ngcontent-abd-c17="" class="captcha-container custom"><div _ngcontent-abd-c17="" class="d-flex flex-wrap recaptcha-input" style="align-items: center;"><div _ngcontent-abd-c17="" class="captcha-actions col-sm-12 col-md-6 col-lg-6 mb-3"><input _ngcontent-abd-c17="" type="text" name="captcha" placeholder="Enter the CAPTCHA" class="ng-untouched ng-pristine ng-valid"></div><div _ngcontent-abd-c17="" class="col-sm-12 col-md-6 col-lg-6 mb-3"><canvas _ngcontent-abd-c17="" id="captcahCanvas" width="450" height="80" style="letter-spacing: 15px;"></canvas><a _ngcontent-abd-c17="" class="cpt-btn">↻</a></div></div><div _ngcontent-abd-c17="" class="d-flex flex-wrap" style="align-items: center; margin-top: 20px;"><p _ngcontent-abd-c17="" class="text-small" style="color: #2f6e99;"><b _ngcontent-abd-c17="">Note:</b> Please note that this is the beta version of the public view, launched for improved user experience.</p></div><div _ngcontent-abd-c17="" class="d-flex flex-wrap" style="align-items: center; margin-top: 20px;"><button _ngcontent-abd-c17="" type="button" class="btn btn-primary next">Submit</button></div></div></project-captcha-validation></div></div></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></div></div></div></section></div></main></new-project-preview><!----></project-project-preview-app><!----><app-alert-box _ngcontent-abd-c5="" _nghost-abd-c1=""><!----></app-alert-box><!----><project-confirm-box _ngcontent-abd-c5="" _nghost-abd-c2=""><!----></project-confirm-box><!----><!----><!----><!----><project-global-pdf-viewer _ngcontent-abd-c5="" _nghost-abd-c4=""><!----></project-global-pdf-viewer><app-login-loader _ngcontent-abd-c5="" _nghost-abd-c3=""><!----></app-login-loader></project-root></div></main><noscript>You need to enable JavaScript to run this app.</noscript><script>System.import('@maha-rera/root-config');</script><import-map-overrides-full show-when-local-storage="devtools" dev-libs=""></import-map-overrides-full><script>/* 
+window.apmrum = (window.apmrum || {});
+window.apmrum.serviceName='main-app-uat';
+window.apmrum.webApplication='main-app-uat';
+window.apmrum.ociDataUploadEndpoint='https://aaaadc7v4pjuqaaaaaaaaabs7e.apm-agt.ap-mumbai-1.oci.oraclecloud.com';
+window.apmrum.OracleAPMPublicDataKey='A6O63NFNBOAPIWSQWDLT3RC3WZVE25LN';
+*/</script><script>(function () {
+        "use strict";
+
+        /**
+         * Easy selector helper function
+         */
+        const select = (el, all = false) => {
+            el = el.trim();
+            if (all) {
+                return [...document.querySelectorAll(el)];
+            } else {
+                return document.querySelector(el);
+            }
+        };
+
+        /**
+         * Easy event listener function
+         */
+        const on = (type, el, listener, all = false) => {
+            if (all) {
+                select(el, all).forEach((e) => e.addEventListener(type, listener));
+            } else {
+                select(el, all).addEventListener(type, listener);
+            }
+        };
+
+        /**
+         * Easy on scroll event listener
+         */
+        const onscroll = (el, listener) => {
+            el.addEventListener("scroll", listener);
+        };
+
+        /**
+         * Sidebar toggle
+         */
+        if (select(".toggle-sidebar-btn")) {
+            on("click", ".toggle-sidebar-btn", function (e) {
+                select("body").classList.toggle("toggle-sidebar");
+            });
+        }
+
+        /**
+         * Search bar toggle
+         */
+        if (select(".search-bar-toggle")) {
+            on("click", ".search-bar-toggle", function (e) {
+                select(".search-bar").classList.toggle("search-bar-show");
+            });
+        }
+
+        /**
+         * Navbar links active state on scroll
+         */
+        let navbarlinks = select("#navbar .scrollto", true);
+        const navbarlinksActive = () => {
+            let position = window.scrollY + 200;
+            navbarlinks.forEach((navbarlink) => {
+                if (!navbarlink.hash) return;
+                let section = select(navbarlink.hash);
+                if (!section) return;
+                if (position >= section.offsetTop && position <= section.offsetTop + section.offsetHeight) {
+                    navbarlink.classList.add("active");
+                } else {
+                    navbarlink.classList.remove("active");
+                }
+            });
+        };
+        window.addEventListener("load", navbarlinksActive);
+        onscroll(document, navbarlinksActive);
+
+        /**
+         * Toggle .header-scrolled class to #header when page is scrolled
+         */
+        let selectHeader = select("#header");
+        if (selectHeader) {
+            const headerScrolled = () => {
+                if (window.scrollY > 100) {
+                    selectHeader.classList.add("header-scrolled");
+                } else {
+                    selectHeader.classList.remove("header-scrolled");
+                }
+            };
+            window.addEventListener("load", headerScrolled);
+            onscroll(document, headerScrolled);
+        }
+
+        /**
+         * Initiate Datatables
+         */
+        const datatables = select(".datatable", true);
+        datatables.forEach((datatable) => {
+            new simpleDatatables.DataTable(datatable);
+        });
+    })();
+
+   function scrollTabs(param) {
+     
+                let hidWidth;
+                let scrollBarWidths = 40;
+
+                let widthOfList = function () {
+                    let itemsWidth = 0;
+                    $(`#${param} li`).each(function () {
+                        let itemWidth = $(this).outerWidth();
+                        itemsWidth += itemWidth;
+                    });
+                    return itemsWidth;
+                };
+
+                var widthOfHidden = function () {
+                    return $(`#${param}-wrapper ` + ".wrapper").outerWidth() - widthOfList() - getLeftPosi() - scrollBarWidths;
+                };
+
+                let getLeftPosi = function () {
+                    return $(`#${param}`).position().left;
+                };
+
+                var reAdjust = function () {
+                    if ($(`#${param}-wrapper ` + ".wrapper").outerWidth() < widthOfList()) {
+                        $(`#${param}-wrapper ` + ".scroller-right").show();
+                    } else {
+                        $(`#${param}-wrapper ` + ".scroller-right").hide();
+                    }
+
+                    if (getLeftPosi() < 0) {
+                        $(`#${param}-wrapper ` + ".scroller-left").show();
+                    } else {
+                        $(`#${param}-wrapper ` + ".item").animate({ left: "-=" + getLeftPosi() + "px" }, "slow");
+                        $(`#${param}-wrapper ` + ".scroller-left").hide();
+                    }
+                };
+
+                reAdjust();
+
+                $(window).on("resize", function (e) {
+                    reAdjust();
+                });
+                let ScrollPosArray = [];
+                rDisabled=false;
+                $(`#${param}-wrapper ` + ".scroller-right").click(function () {
+                    if(rDisabled)
+                    {
+                        return;
+                    }
+                    rDisabled=true;
+                    $(`#${param}-wrapper ` + ".scroller-right").fadeIn("slow");
+                   
+                    var getAlreadyScrolledWidth = function () {
+                    if(ScrollPosArray && ScrollPosArray.length>0)
+                    {
+                    var itemsWidthHidden=0;
+                        ScrollPosArray.map(item=> {
+                            itemsWidthHidden += item;
+                    });
+                    }
+                    return itemsWidthHidden;
+                };
+                    //let widthOfHidden1 = -widthOfHidden() < $(".wrapper").outerWidth() ? widthOfHidden() : -$(".wrapper").outerWidth();
+                   // widthOfHidden1=-(widthOfList()-(-widthOfHidden())>$(`#${param}-wrapper ` + ".wrapper").outerWidth()?$(`#${param}-wrapper ` + ".wrapper").outerWidth():-widthOfHidden());
+                    widthOfHidden1=-155;
+                    ScrollPosArray.push(widthOfHidden1);
+                    console.log(ScrollPosArray);
+                    $(`#${param}`).animate({ left: "+=" + widthOfHidden1 + "px" }, "slow", function () {
+                        // console.log(widthOfHidden())
+                        if (-widthOfHidden()/2 < 1) {
+                            $(`#${param}-wrapper ` + ".scroller-right").fadeOut("slow");
+                        }
+                        else
+                        {
+                            $(`#${param}-wrapper ` + ".scroller-left").fadeIn("slow");
+                        }
+                    });                    
+                   setTimeout(() => {
+                    rDisabled=false;
+                   }, 1000);
+                });
+                 lDisabled=false;
+                $(`#${param}-wrapper ` + ".scroller-left").click(function () {
+                    if (ScrollPosArray.length !== 0) {
+                       if(lDisabled)
+                       {
+                        return;
+                       }
+                       lDisabled=true;
+                        $(`#${param}`).animate({ left: "-=" + ScrollPosArray[ScrollPosArray.length - 1] + "px" }, "slow", function () {
+                            ScrollPosArray.pop();
+                            if (ScrollPosArray.length == 0) {
+                                $(`#${param}-wrapper ` + ".scroller-left").fadeOut("slow");
+                            }
+                            else
+                            {
+                                $(`#${param}-wrapper ` + ".scroller-right").fadeIn("slow");
+                            }
+                        });
+                        setTimeout(() => {
+                            lDisabled=false;
+                        }, 1000);
+                    }
+                    console.log(ScrollPosArray);
+                });
+            }
+
+
+
+
+
+function initializeDatatable(id)
+{
+   if($.fn.dataTable.isDataTable("#"+id))
+   {
+    $("#"+id).DataTable().destroy();
+   }
+    if($("#"+id+">thead>tr:first>th:first").hasClass('sorting'))
+    {
+
+        $("#"+id).DataTable().destroy();
+               
+        setTimeout(() => {
+            new DataTable('#'+id,{
+        autoWidth:false,
+        lengthMenu: [
+        [10, 25, 50, -1],
+        [10, 25, 50, 'All']
+    ]
+    // ,
+    // order: [[0, 'desc']]
+    });
+        }, 500);
+        // // $("#"+id).DataTable().destroy();
+        // // $("#"+id).DataTable().draw();
+        // $("#"+id+">thead>tr:first>th:first").click()
+        // $("#"+id+">thead>tr:first>th:first").click()  
+        return;
+    }
+    new DataTable('#'+id,{
+        autoWidth:false,
+        lengthMenu: [
+        [10, 25, 50, -1],
+        [10, 25, 50, 'All']
+    ]
+    // ,
+    // order: [[0, 'desc']]
+    });
+}
+
+function deinitializeDatatable(id)
+{
+    if($.fn.dataTable.isDataTable("#"+id))
+   {
+    $("#"+id).DataTable().destroy();
+   }
+    if($("#"+id+">thead>tr:first>th:first").hasClass('sorting'))
+    {
+
+        $("#"+id).DataTable().destroy();
+        // // $("#"+id).DataTable().destroy();
+        // // $("#"+id).DataTable().draw();
+        // $("#"+id+">thead>tr:first>th:first").click()
+        // $("#"+id+">thead>tr:first>th:first").click()  
+        return;
+    }
+}
+
+function initializedTooltip()
+{
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+function showPDF(pdfname,divname)
+{
+    PDFObject.embed(pdfname, "#"+divname);
+}</script></body></html>
