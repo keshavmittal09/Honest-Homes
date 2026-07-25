@@ -1,0 +1,52 @@
+{
+  "captured_at": "2026-07-25",
+  "source": "maharerait.maharashtra.gov.in/public/project/view (human-in-the-loop)",
+  "count": 9,
+  "projects": [
+    {
+      "rera_id": "P51800001311",
+      "project_name": "Shri Krishna Kunj CHS Ltd",
+      "summary": "headings=5 tables=17 fields=29 docs=0 text=10297 chars"
+    },
+    {
+      "rera_id": "P52100001149",
+      "project_name": "THE COSMOPOLIS",
+      "summary": "headings=5 tables=15 fields=33 docs=0 text=8234 chars"
+    },
+    {
+      "rera_id": "P50500006086",
+      "project_name": "PLATINUM GREEN",
+      "summary": "headings=5 tables=18 fields=30 docs=0 text=8877 chars"
+    },
+    {
+      "rera_id": "P50000001993",
+      "project_name": "saiprakash appartment",
+      "summary": "headings=5 tables=15 fields=33 docs=0 text=7787 chars"
+    },
+    {
+      "rera_id": "P52200000566",
+      "project_name": "ANURON SEVEN",
+      "summary": "headings=5 tables=16 fields=30 docs=0 text=8825 chars"
+    },
+    {
+      "rera_id": "P52700000048",
+      "project_name": "Rambaug",
+      "summary": "headings=5 tables=19 fields=30 docs=0 text=10252 chars"
+    },
+    {
+      "rera_id": "P52100002664",
+      "project_name": "NAVALAKHA RITZ",
+      "summary": "headings=5 tables=16 fields=30 docs=0 text=7934 chars"
+    },
+    {
+      "rera_id": "P50500009639",
+      "project_name": "Shiv Elite Phase I",
+      "summary": "headings=5 tables=30 fields=30 docs=0 text=21868 chars"
+    },
+    {
+      "rera_id": "P51100015354",
+      "project_name": "RAGHUNATH NAGAR",
+      "summary": "headings=5 tables=18 fields=30 docs=0 text=12842 chars"
+    }
+  ]
+}

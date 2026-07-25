@@ -1,0 +1,820 @@
+{
+  "rera_id": "P50500002280",
+  "source_url": "https://maharerait.maharashtra.gov.in/public/project/view/13",
+  "headings": [
+    "Document LibraryClick here to view",
+    "Parking DetailsClick here to view",
+    "Task Activities and Common FacilitiesClick here to view",
+    "Registered Agent(s)Click to see list",
+    "Project Details"
+  ],
+  "tables": [
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "CC/NA Order Issued to",
+          "CC/NA Order in the name of",
+          "Date of CC/NA Order",
+          "CC/NA Order Document",
+          "Is CC One Year Old",
+          "Supporting Document"
+        ],
+        [
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Name",
+          "Designation",
+          "View"
+        ],
+        [
+          "1",
+          "VIJAY TILOKCHAND BORUNDIYA",
+          "Partner",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "File Name",
+          "Uploaded Date",
+          "View"
+        ],
+        [
+          "1",
+          "1 Copy of the legal title report",
+          "legal report.pdf",
+          "18/07/2017, 1:53 PM",
+          ""
+        ],
+        [
+          "2",
+          "1 Details of encumbrances",
+          "encumbrance certificate.pdf",
+          "27/07/2017, 12:59 PM",
+          ""
+        ],
+        [
+          "3",
+          "1 Copy of Layout Approval (in case of layout)",
+          "LAYOUT PLAN.pdf",
+          "25/07/2017, 5:51 PM",
+          ""
+        ],
+        [
+          "4",
+          "1 Building Plan Approval (IOD)",
+          "Building Plan.pdf",
+          "18/07/2017, 1:57 PM",
+          ""
+        ],
+        [
+          "5",
+          "1 Commencement Certificates / NA Order for plotted development",
+          "BUILDING PERMIT.pdf",
+          "11/07/2017, 5:25 PM",
+          ""
+        ],
+        [
+          "6",
+          "1 Declaration in FORM B",
+          "form B (2).pdf",
+          "31/07/2017, 1:56 PM",
+          ""
+        ],
+        [
+          "7",
+          "1 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "Architect Certificate-ilovepdf-compressed.pdf",
+          "28/07/2017, 12:08 PM",
+          ""
+        ],
+        [
+          "8",
+          "1 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)",
+          "Engineers Certificate-ilovepdf-compressed.pdf",
+          "28/07/2017, 12:11 PM",
+          ""
+        ],
+        [
+          "9",
+          "1 Proforma of Allotment letter",
+          "Blank Draft for Rera.pdf",
+          "21/07/2017, 2:25 PM",
+          ""
+        ],
+        [
+          "10",
+          "1 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted development",
+          "OCCUPANCY CERTIFICATE.pdf",
+          "14/05/2021, 1:59 PM",
+          ""
+        ],
+        [
+          "11",
+          "1 Certificates of Architect (Form 4)",
+          "FORM 4.pdf",
+          "26/12/2018, 5:56 PM",
+          ""
+        ],
+        [
+          "12",
+          "1 Status of Formation of Legal Entity (Society/Co Op etc.)",
+          "Society Handover Letter.pdf",
+          "4/01/2022, 12:43 PM",
+          ""
+        ],
+        [
+          "13",
+          "2 Status of Formation of Legal Entity (Society/Co Op etc.)",
+          "SOCIETY.pdf",
+          "4/01/2022, 12:53 PM",
+          ""
+        ],
+        [
+          "14",
+          "1 Other",
+          "allotement letter.pdf",
+          "25/07/2017, 5:46 PM",
+          ""
+        ],
+        [
+          "15",
+          "2 Other",
+          "OCCUPANCY CERTIFICATE.pdf",
+          "26/12/2018, 5:58 PM",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Uploaded Documents (For Promoter)",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Legal Title report",
+          "18/07/2017, 1:53 PM",
+          "legal report.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Declaration Form B",
+          "31/07/2017, 1:56 PM",
+          "form B (2).pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "Proforma Allotment Letter",
+          "Allotment Letter Deviation Report"
+        ],
+        [
+          "Blank Draft for Rera.pdf",
+          ""
+        ]
+      ],
+      "kv": {
+        "Proforma Allotment Letter": "Allotment Letter Deviation Report",
+        "Blank Draft for Rera.pdf": ""
+      }
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File",
+          "View"
+        ],
+        [
+          "1",
+          "Other",
+          "OCCUPANCY CERTIFICATE.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Other",
+          "allotement letter.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Identification of Building/ Wing as per Sanctioned Plan",
+          "Identification of Wing as per Sanctioned Plan",
+          "Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)"
+        ],
+        [
+          "1",
+          "JASMINE",
+          "NA",
+          "6"
+        ],
+        [
+          "2",
+          "TWIN UNIT",
+          "NA",
+          "3"
+        ],
+        [
+          "Total",
+          "2",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Building Name",
+          "Apartment Type",
+          "Carpet Area (in Sqmts)",
+          "Number of Apartment"
+        ],
+        [
+          "1",
+          "JASMINE",
+          "2BHK",
+          "43.52",
+          "6"
+        ],
+        [
+          "2",
+          "JASMINE",
+          "2BHK",
+          "43.66",
+          "14"
+        ],
+        [
+          "3",
+          "JASMINE",
+          "2BHK",
+          "43.58",
+          "9"
+        ],
+        [
+          "4",
+          "JASMINE",
+          "2BHK",
+          "42.04",
+          "1"
+        ],
+        [
+          "5",
+          "JASMINE",
+          "2BHK",
+          "43.6",
+          "3"
+        ],
+        [
+          "6",
+          "TWIN UNIT",
+          "2BHK",
+          "50.32",
+          "2"
+        ],
+        [
+          "7",
+          "TWIN UNIT",
+          "2BHK",
+          "50.43",
+          "2"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "3",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "2",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Building Plan Approval",
+          "Building Plan.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Layout Approval",
+          "LAYOUT PLAN.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "0"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "100"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "100"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "100"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "100"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "0"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "0"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "100"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "100"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "100"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage",
+          "Details"
+        ],
+        [
+          "1",
+          "Internal Roads & Footpaths",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "2",
+          "Water Supply",
+          "Yes",
+          "100",
+          "UNDERGROUND PIPELINE LAID FROM GOVT WATER TANK"
+        ],
+        [
+          "3",
+          "Sewerage (Chamber, Lines, Septic Tank , STP)",
+          "Yes",
+          "100",
+          "INTERNAL CHAMBERS and INTERNAL LINES ONLY"
+        ],
+        [
+          "4",
+          "Storm Water Drains",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "5",
+          "Landscaping & Tree Planting",
+          "Yes",
+          "0",
+          "PLANTATION AS PER PLAN"
+        ],
+        [
+          "6",
+          "Street Lighting",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "7",
+          "Community Buildings",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "8",
+          "Treatment And Disposal Of Sewage And Sullage Water",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "9",
+          "Solid Waste Management And Disposal",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "10",
+          "Water conservation /Rain water harvesting",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "11",
+          "Energy managemcnt",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "12",
+          "Fire protection and fire safety requirements",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "13",
+          "Electrical meter room, sub-station, receiving station",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "14",
+          "Aggregate area of recreational Open Space",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "15",
+          "Open Parking",
+          "Yes",
+          "100",
+          "COMPLETED AS PER SANCTIONED PLAN"
+        ],
+        [
+          "16",
+          "SOCIETY OFFICE",
+          "Yes",
+          "100",
+          "LETTER BOX ROOM"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Complaint No.",
+          "Complaint Date",
+          "Complainant Name",
+          "Respondent Name",
+          "Complaint Status",
+          "View"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Appeal No.",
+          "Complaint No./ Reference No.",
+          "Appeal Date",
+          "Appeallant Name",
+          "Respondent Name",
+          "Appeal Status"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Professional Name",
+          "MahaRERA Certificate No.",
+          "Professional Type"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    }
+  ],
+  "key_values": {
+    "Final Plot bearing No/CTS Number/Survey Number": "7/74",
+    "Total Land Area of Approved Layout (Sq. Mts.)": "1502.45",
+    "Permissible Built-up Area": "2553.56",
+    "Address": "7/74",
+    "State/UT": "MAHARASHTRA",
+    "District": "Nagpur",
+    "Taluka": "Nagpur (Rural)",
+    "Village": "Shankarpur",
+    "Pin Code": "441108",
+    "Boundaries East": "PLOT NO 6",
+    "Boundaries West": "PUBLIC UTILITY",
+    "Boundaries South": "SURVEY NO 72",
+    "Boundaries North": "9M WIDE ROAD",
+    "Longitude ": "79.071419000000000",
+    "Latitude ": "21.056573000000000",
+    "Promoter Type": "Partnership",
+    "Name of Partnership": "SAMBHAV INFRA",
+    "Unit Number": "202",
+    "Building Name": "YASHODHAM ENCLAVE",
+    "Street Name": "WARDHA ROAD",
+    "Locality": "AJNI SQUARE",
+    "Landmark": "HALDIRAM",
+    "Landowner types in the project": "Promoter",
+    "Is there any litigation against this proposed project ": "No",
+    "Bank Name": "HDFC BANK",
+    "IFSC Code": "HDFC0002818",
+    "Bank Address": "HINDUSTAN COLONY WARDHA ROAD NAGPUR-440015",
+    "Do you have Financial Encumberance ": "No",
+    "Registration Number": ":",
+    "Date of Registration": ":"
+  },
+  "document_links": [],
+  "text_excerpt": "Project DetailsRegistration Number : P50500002280Date of Registration : 31/07/2017Project StatusCompleted Certificate DownloadBasic Details Project Location Maharashtra Project Type Residential / Group Housing Project Name SHIVAM PARK Proposed Completion Date (Original) 31/01/2019 Planning Authority Others Full Name of the Planning Authority Land Area & Address Details Final Plot bearing No/CTS Number/Survey Number 7/74 Total Land Area of Approved Layout (Sq. Mts.) 1502.45 Land Area for Project Applied for this Registration (Sq. Mts) 1502.45 Permissible Built-up Area 2553.56 Sanctioned Built-up Area of the Project applied for Registration 1802.34 Aggregate area(in sq. mts) of recreational open space as per Layout / DP Remarks Commencement Certificate / NA Order Documents Details # CC/NA Order Issued to CC/NA Order in the name ofDate of CC/NA OrderCC/NA Order Document Is CC One Year Old Supporting Document1 Project Address Details Address 7/74 State/UT MAHARASHTRA District Nagpur Taluka Nagpur (Rural) Village Shankarpur Pin Code 441108 Boundaries East PLOT NO 6 Boundaries West PUBLIC UTILITY Boundaries South SURVEY NO 72 Boundaries North 9M WIDE ROAD Longitude : 79.071419000000000 Latitude : 21.056573000000000 Promoter Details Promoter Type Partnership Name of Partnership SAMBHAV INFRA Promoter Official Communication Address Unit Number 202 Building Name YASHODHAM ENCLAVE Street Name WARDHA ROAD Locality AJNI SQUARE Landmark HALDIRAM State/UT MAHARASHTRA District Nagpur Taluka Nagpur (Urban) Village Nagpur (M Corp.) Pin Code 440015 Partner Details Promoter Past Experience Details Authorised Signatory Single Point of Contact Allottee Grievance Redressal Officer Project Professionals SRO Details #NameDesignationView1VIJAY TILOKCHAND BORUNDIYAPartnerDocument LibraryClick here to view# Document Type File Name Uploaded Date View 11 Copy of the legal title reportlegal report.pdf18/07/2017, 1:53 PM 21 Details of encumbrancesencumbrance certificate.pdf27/07/2017, 12:59 PM 31 Copy of Layout Approval (in case of layout)LAYOUT PLAN.pdf25/07/2017, 5:51 PM 41 Building Plan Approval (IOD)Building Plan.pdf18/07/2017, 1:57 PM 51 Commencement Certificates / NA Order for plotted developmentBUILDING PERMIT.pdf11/07/2017, 5:25 PM 61 Declaration in FORM Bform B (2).pdf31/07/2017, 1:56 PM 71 Certificates of Architect (Form 1)(Mandatory for only ongoing project)Architect Certificate-ilovepdf-compressed.pdf28/07/2017, 12:08 PM 81 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)Engineers Certificate-ilovepdf-compressed.pdf28/07/2017, 12:11 PM 91 Proforma of Allotment letterBlank Draft for Rera.pdf21/07/2017, 2:25 PM 101 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted developmentOCCUPANCY CERTIFICATE.pdf14/05/2021, 1:59 PM 111 Certificates of Architect (Form 4)FORM 4.pdf26/12/2018, 5:56 PM 121 Status of Formation of Legal Entity (Society/Co Op etc.)Society Handover Letter.pdf4/01/2022, 12:43 PM 132 Status of Formation of Legal Entity (Society/Co Op etc.)SOCIETY.pdf4/01/2022, 12:53 PM 141 Otherallotement letter.pdf25/07/2017, 5:46 PM 152 OtherOCCUPANCY CERTIFICATE.pdf26/12/2018, 5:58 PMPromoter Landowner Landowner types in the project Promoter Promoter Landowner(s) Promoter Documents#Uploaded Documents (For Promoter)Upload Date and TimeFile NameView1Legal Title report18/07/2017, 1:53 PMlegal report.pdf2Declaration Form B31/07/2017, 1:56 PMform B (2).pdfInvestor DetailsAre there any Investor other than the Promoter in the Project : NoLitigation DetailsIs there any litigation against this proposed project : NoProforma Allotment LetterProforma Allotment LetterAllotment Letter Deviation Report Blank Draft for Rera.pdf Other Legal Documents#Document TypeUploaded FileView1OtherOCCUPANCY CERTIFICATE.pdf2Otherallotement letter.pdfBuilding Details#Identification of Building/ Wing as per Sanctioned Plan Identification of Wing as per Sanctioned Plan Number of Sanctioned Floors (Including Basement",
+  "text_length": 8944,
+  "project_name": "SHIVAM PARK",
+  "promoter_name": "SAMBHAV INFRA",
+  "captured_at": "2026-07-25T14:52:11"
+}

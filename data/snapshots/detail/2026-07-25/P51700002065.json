@@ -1,0 +1,718 @@
+{
+  "rera_id": "P51700002065",
+  "source_url": "https://maharerait.maharashtra.gov.in/public/project/view/5",
+  "headings": [
+    "Document LibraryClick here to view",
+    "Parking DetailsClick here to view",
+    "Task Activities and Common FacilitiesClick here to view",
+    "Registered Agent(s)Click to see list",
+    "Project Details"
+  ],
+  "tables": [
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "CC/NA Order Issued to",
+          "CC/NA Order in the name of",
+          "Date of CC/NA Order",
+          "CC/NA Order Document",
+          "Is CC One Year Old",
+          "Supporting Document"
+        ],
+        [
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Project Name",
+          "Project Address",
+          "Project Area",
+          "Project Status",
+          "Litigation Status",
+          "Litigation",
+          "View"
+        ],
+        [
+          "1",
+          "Meridian Meadows",
+          "Plot No 75 Sector 50 Nerul Navi Mumbai",
+          "850",
+          "Completed",
+          "No",
+          "NA",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "File Name",
+          "Uploaded Date",
+          "View"
+        ],
+        [
+          "1",
+          "1 Copy of the legal title report",
+          "Title Report.pdf",
+          "8/06/2017, 4:10 PM",
+          ""
+        ],
+        [
+          "2",
+          "1 Details of encumbrances",
+          "Encumbrances.pdf",
+          "21/07/2017, 7:52 PM",
+          ""
+        ],
+        [
+          "3",
+          "1 Copy of Layout Approval (in case of layout)",
+          "Layot Aprooval Plan.pdf",
+          "4/07/2017, 5:40 PM",
+          ""
+        ],
+        [
+          "4",
+          "2 Copy of Layout Approval (in case of layout)",
+          "Layot Aprooval Plan Besment.pdf",
+          "4/07/2017, 5:43 PM",
+          ""
+        ],
+        [
+          "5",
+          "1 Building Plan Approval (IOD)",
+          "Building Aprooval IOD 1.pdf",
+          "4/07/2017, 5:46 PM",
+          ""
+        ],
+        [
+          "6",
+          "2 Building Plan Approval (IOD)",
+          "Building Aprooval IOD 2.pdf",
+          "4/07/2017, 5:47 PM",
+          ""
+        ],
+        [
+          "7",
+          "3 Building Plan Approval (IOD)",
+          "Building Aprooval IOD 3.pdf",
+          "4/07/2017, 5:48 PM",
+          ""
+        ],
+        [
+          "8",
+          "1 Commencement Certificates / NA Order for plotted development",
+          "CC Compressed.pdf",
+          "8/06/2017, 4:15 PM",
+          ""
+        ],
+        [
+          "9",
+          "1 Declaration in FORM B",
+          "Form B.pdf",
+          "22/07/2017, 3:47 PM",
+          ""
+        ],
+        [
+          "10",
+          "1 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "FORM 1.pdf",
+          "25/07/2017, 8:43 PM",
+          ""
+        ],
+        [
+          "11",
+          "2 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "Form 1.pdf",
+          "21/08/2017, 5:12 PM",
+          ""
+        ],
+        [
+          "12",
+          "1 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)",
+          "FORM 2.pdf",
+          "24/07/2017, 6:59 PM",
+          ""
+        ],
+        [
+          "13",
+          "1 Certificates of CA (Form 5)",
+          "Form 5 Scanned.pdf",
+          "1/10/2018, 2:02 PM",
+          ""
+        ],
+        [
+          "14",
+          "1 Proforma of Allotment letter",
+          "AGREEMENT FOR SALE (RERA) - Meridian Fountainhead Mystic - Final - 25-7-2017.pdf",
+          "25/07/2017, 6:26 PM",
+          ""
+        ],
+        [
+          "15",
+          "1 Architect’s Certificate on Completion of Project (Form 4)",
+          "RERA FORM 4.pdf",
+          "7/07/2020, 4:34 PM",
+          ""
+        ],
+        [
+          "16",
+          "1 Status of Formation of Legal Entity (Society/Co Op etc.)",
+          "Image (30).pdf",
+          "13/10/2020, 6:29 PM",
+          ""
+        ],
+        [
+          "17",
+          "1 Status of Conveyance",
+          "Image (29).pdf",
+          "13/10/2020, 6:29 PM",
+          ""
+        ],
+        [
+          "18",
+          "1 Other",
+          "OC Copy.pdf",
+          "2/06/2018, 7:55 PM",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Uploaded Documents (For Promoter)",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Legal Title report",
+          "8/06/2017, 4:10 PM",
+          "Title Report.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Declaration Form B",
+          "22/07/2017, 3:47 PM",
+          "Form B.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "Proforma Allotment Letter",
+          "Allotment Letter Deviation Report"
+        ],
+        [
+          "AGREEMENT FOR SALE (RERA) - Meridian Fountainhead Mystic - Final - 25-7-2017.pdf",
+          ""
+        ]
+      ],
+      "kv": {
+        "Proforma Allotment Letter": "Allotment Letter Deviation Report",
+        "AGREEMENT FOR SALE (RERA) - Meridian Fountainhead Mystic - Final - 25-7-2017.pdf": ""
+      }
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File",
+          "View"
+        ],
+        [
+          "1",
+          "Other",
+          "OC Copy.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Identification of Building/ Wing as per Sanctioned Plan",
+          "Identification of Wing as per Sanctioned Plan",
+          "Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)"
+        ],
+        [
+          "1",
+          "MERIDIAN MYSTIC",
+          "NA",
+          "20"
+        ],
+        [
+          "Total",
+          "1",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Building Name",
+          "Apartment Type",
+          "Carpet Area (in Sqmts)",
+          "Number of Apartment"
+        ],
+        [
+          "1",
+          "MERIDIAN MYSTIC",
+          "3BHK",
+          "63.74",
+          "2"
+        ],
+        [
+          "2",
+          "MERIDIAN MYSTIC",
+          "2BHK",
+          "45.84",
+          "14"
+        ],
+        [
+          "3",
+          "MERIDIAN MYSTIC",
+          "3BHK",
+          "75.17",
+          "14"
+        ],
+        [
+          "4",
+          "MERIDIAN MYSTIC",
+          "2BHK",
+          "57.61",
+          "2"
+        ],
+        [
+          "5",
+          "MERIDIAN MYSTIC",
+          "2BHK",
+          "42.12",
+          "16"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "14",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "57",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "71",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Layout Approval",
+          "Layot Aprooval Plan.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Layout Approval",
+          "Layot Aprooval Plan Besment.pdf",
+          ""
+        ],
+        [
+          "3",
+          "Building Plan Approval",
+          "Building Aprooval IOD 1.pdf",
+          ""
+        ],
+        [
+          "4",
+          "Building Plan Approval",
+          "Building Aprooval IOD 2.pdf",
+          ""
+        ],
+        [
+          "5",
+          "Building Plan Approval",
+          "Building Aprooval IOD 3.pdf",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "100"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "100"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "100"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "100"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage",
+          "Details"
+        ],
+        [
+          "1",
+          "Internal Roads & Footpaths",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "2",
+          "Water Supply",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "3",
+          "Sewerage (Chamber, Lines, Septic Tank , STP)",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "4",
+          "Storm Water Drains",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "5",
+          "Landscaping & Tree Planting",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "6",
+          "Street Lighting",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "7",
+          "Community Buildings",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "8",
+          "Treatment And Disposal Of Sewage And Sullage Water",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "9",
+          "Solid Waste Management And Disposal",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "10",
+          "Water conservation /Rain water harvesting",
+          "Yes",
+          "0",
+          "COMPLETED"
+        ],
+        [
+          "11",
+          "Energy managemcnt",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "12",
+          "Fire protection and fire safety requirements",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "13",
+          "Electrical meter room, sub-station, receiving station",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "14",
+          "Aggregate area of recreational Open Space",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "15",
+          "Open Parking",
+          "Yes",
+          "100",
+          "COMPLETED"
+        ],
+        [
+          "16",
+          "",
+          "No",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Complaint No.",
+          "Complaint Date",
+          "Complainant Name",
+          "Respondent Name",
+          "Complaint Status",
+          "View"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Appeal No.",
+          "Complaint No./ Reference No.",
+          "Appeal Date",
+          "Appeallant Name",
+          "Respondent Name",
+          "Appeal Status"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Professional Name",
+          "MahaRERA Certificate No.",
+          "Professional Type"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    }
+  ],
+  "key_values": {
+    "Final Plot bearing No/CTS Number/Survey Number": "78/78A",
+    "Total Land Area of Approved Layout (Sq. Mts.)": "1849.64",
+    "Permissible Built-up Area": "2774.45",
+    "Address": "78/78A",
+    "Street Name": "Plot No 78/78A",
+    "Locality": "Nerul Navi Mumbai",
+    "State/UT": "MAHARASHTRA",
+    "District": "Thane",
+    "Taluka": "Thane",
+    "Village": "Navi Mumbai (M Corp.)",
+    "Pin Code": "400706",
+    "Boundaries East": "PLOT NO-77",
+    "Boundaries West": "PLOT NO-67A TO 69",
+    "Boundaries South": "15 MTRS WIDE ROAD",
+    "Boundaries North": "PLOT NO-68",
+    "Longitude ": "73.024233258895490",
+    "Latitude ": "19.018934039474460",
+    "First Name": "MANOJ",
+    "Last Name": "AWASTHI",
+    "Father Full Name": "LATE SHRI LALMAN AWASTHI",
+    "Unit Number": "20, GR FLOOR",
+    "Building Name": "NIRMAN VYAPAR KENDRA",
+    "Landmark": "NAVRATNA HOTEL",
+    "Do you have any Past Experience": "Yes",
+    "Landowner types in the project": "Promoter",
+    "Is there any litigation against this proposed project ": "No",
+    "Bank Name": "IDBI BANK",
+    "IFSC Code": "IBKL0000123",
+    "Bank Address": "HEREMES CENTER, SECTOR-17, VASHI",
+    "Do you have Financial Encumberance ": "No",
+    "Registration Number": ":",
+    "Date of Registration": ":"
+  },
+  "document_links": [],
+  "text_excerpt": "Project DetailsRegistration Number : P51700002065Date of Registration : 31/07/2017Project StatusCompleted Certificate DownloadBasic Details Project Location Maharashtra Project Type Residential / Group Housing Project Name MERIDIAN MYSTIC Proposed Completion Date (Original) 31/12/2018 Proposed Completion Date (Revised) 31/12/2019 Planning Authority Others Full Name of the Planning Authority Land Area & Address Details Final Plot bearing No/CTS Number/Survey Number 78/78A Total Land Area of Approved Layout (Sq. Mts.) 1849.64 Land Area for Project Applied for this Registration (Sq. Mts) 1849.64 Permissible Built-up Area 2774.45 Sanctioned Built-up Area of the Project applied for Registration 2773.95 Aggregate area(in sq. mts) of recreational open space as per Layout / DP Remarks 180 Commencement Certificate / NA Order Documents Details # CC/NA Order Issued to CC/NA Order in the name ofDate of CC/NA OrderCC/NA Order Document Is CC One Year Old Supporting Document1 Project Address Details Address 78/78A Street Name Plot No 78/78A Locality Nerul Navi Mumbai State/UT MAHARASHTRA District Thane Taluka Thane Village Navi Mumbai (M Corp.) Pin Code 400706 Boundaries East PLOT NO-77 Boundaries West PLOT NO-67A TO 69 Boundaries South 15 MTRS WIDE ROAD Boundaries North PLOT NO-68 Longitude : 73.024233258895490 Latitude : 19.018934039474460 Promoter Details First Name MANOJ Last Name AWASTHI Father Full Name LATE SHRI LALMAN AWASTHI Promoter Official Communication Address Unit Number 20, GR FLOOR Building Name NIRMAN VYAPAR KENDRA Street Name PLOT NO-10, SECTOR-17 Locality VASHI NAVI MUMBAI Landmark NAVRATNA HOTEL State/UT MAHARASHTRA District Thane Taluka Thane Village Navi Mumbai (M Corp.) Pin Code 400703 Promoter Past Experience Details Authorised Signatory Single Point of Contact Allottee Grievance Redressal Officer Project Professionals SRO Details Do you have any Past Experience: Yes#Project NameProject AddressProject AreaProject StatusLitigation StatusLitigationView1Meridian MeadowsPlot No 75 Sector 50 Nerul Navi Mumbai850CompletedNo NA Document LibraryClick here to view# Document Type File Name Uploaded Date View 11 Copy of the legal title reportTitle Report.pdf8/06/2017, 4:10 PM 21 Details of encumbrancesEncumbrances.pdf21/07/2017, 7:52 PM 31 Copy of Layout Approval (in case of layout)Layot Aprooval Plan.pdf4/07/2017, 5:40 PM 42 Copy of Layout Approval (in case of layout)Layot Aprooval Plan Besment.pdf4/07/2017, 5:43 PM 51 Building Plan Approval (IOD)Building Aprooval IOD 1.pdf4/07/2017, 5:46 PM 62 Building Plan Approval (IOD)Building Aprooval IOD 2.pdf4/07/2017, 5:47 PM 73 Building Plan Approval (IOD)Building Aprooval IOD 3.pdf4/07/2017, 5:48 PM 81 Commencement Certificates / NA Order for plotted developmentCC Compressed.pdf8/06/2017, 4:15 PM 91 Declaration in FORM BForm B.pdf22/07/2017, 3:47 PM 101 Certificates of Architect (Form 1)(Mandatory for only ongoing project)FORM 1.pdf25/07/2017, 8:43 PM 112 Certificates of Architect (Form 1)(Mandatory for only ongoing project)Form 1.pdf21/08/2017, 5:12 PM 121 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)FORM 2.pdf24/07/2017, 6:59 PM 131 Certificates of CA (Form 5)Form 5 Scanned.pdf1/10/2018, 2:02 PM 141 Proforma of Allotment letterAGREEMENT FOR SALE (RERA) - Meridian Fountainhead Mystic - Final - 25-7-2017.pdf25/07/2017, 6:26 PM 151 Architect’s Certificate on Completion of Project (Form 4)RERA FORM 4.pdf7/07/2020, 4:34 PM 161 Status of Formation of Legal Entity (Society/Co Op etc.)Image (30).pdf13/10/2020, 6:29 PM 171 Status of ConveyanceImage (29).pdf13/10/2020, 6:29 PM 181 OtherOC Copy.pdf2/06/2018, 7:55 PMPromoter Landowner Landowner types in the project Promoter Promoter Landowner(s) Promoter Documents#Uploaded Documents (For Promoter)Upload Date and TimeFile NameView1Legal Title report8/06/2017, 4:10 PMTitle Report.pdf2Declaration Form B22/07/2017, 3:47 PMForm B.pdfInvestor DetailsAre there any Investor other than the Promoter in the Project : NoLitigation D",
+  "text_length": 8196,
+  "project_name": "MERIDIAN MYSTIC",
+  "promoter_name": "MANOJ  AWASTHI",
+  "captured_at": "2026-07-25T14:51:10"
+}

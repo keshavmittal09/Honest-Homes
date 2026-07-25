@@ -1,0 +1,685 @@
+{
+  "rera_id": "P51800002451",
+  "source_url": "https://maharerait.maharashtra.gov.in/public/project/view/15",
+  "headings": [
+    "Document LibraryClick here to view",
+    "Parking DetailsClick here to view",
+    "Task Activities and Common FacilitiesClick here to view",
+    "Registered Agent(s)Click to see list",
+    "Project Details"
+  ],
+  "tables": [
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "CC/NA Order Issued to",
+          "CC/NA Order in the name of",
+          "Date of CC/NA Order",
+          "CC/NA Order Document",
+          "Is CC One Year Old",
+          "Supporting Document"
+        ],
+        [
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Name",
+          "Designation",
+          "View"
+        ],
+        [
+          "1",
+          "Dhaval Vijay karia",
+          "Chairperson",
+          ""
+        ],
+        [
+          "2",
+          "Dhaval Karia",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "File Name",
+          "Uploaded Date",
+          "View"
+        ],
+        [
+          "1",
+          "1 Copy of the legal title report",
+          "Title Report.pdf",
+          "25/07/2017, 12:51 PM",
+          ""
+        ],
+        [
+          "2",
+          "1 Details of encumbrances",
+          "FORM B AFFIDAVIT.PDF",
+          "26/07/2017, 3:47 PM",
+          ""
+        ],
+        [
+          "3",
+          "1 Copy of Layout Approval (in case of layout)",
+          "Decleration_Layout.PDF",
+          "25/07/2017, 1:01 PM",
+          ""
+        ],
+        [
+          "4",
+          "1 Building Plan Approval (IOD)",
+          "iod first page.PDF",
+          "25/07/2017, 1:24 PM",
+          ""
+        ],
+        [
+          "5",
+          "1 Commencement Certificates / NA Order for plotted development",
+          "commencement certificate_20180326183306.pdf",
+          "26/03/2018, 6:36 PM",
+          ""
+        ],
+        [
+          "6",
+          "1 Declaration in FORM B",
+          "FORM B AFFIDAVIT.PDF",
+          "26/07/2017, 3:46 PM",
+          ""
+        ],
+        [
+          "7",
+          "1 Certificates of Architect (Form 1)(Mandatory for only ongoing project)",
+          "Arch Certificate.PDF",
+          "26/07/2017, 4:00 PM",
+          ""
+        ],
+        [
+          "8",
+          "1 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)",
+          "Form2.PDF",
+          "25/07/2017, 1:50 PM",
+          ""
+        ],
+        [
+          "9",
+          "1 Certificates of CA (Form 5)",
+          "RERA CA CERTIFICATE.PDF",
+          "4/01/2019, 4:51 PM",
+          ""
+        ],
+        [
+          "10",
+          "1 Proforma of Allotment letter",
+          "Allotment letter.PDF",
+          "25/07/2017, 1:51 PM",
+          ""
+        ],
+        [
+          "11",
+          "1 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted development",
+          "2243590_OC_signed.pdf",
+          "17/03/2020, 9:31 AM",
+          ""
+        ],
+        [
+          "12",
+          "1 Architect’s Certificate on Completion of Project (Form 4)",
+          "FORM 4.pdf",
+          "29/11/2019, 3:08 PM",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Uploaded Documents (For Promoter)",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Legal Title report",
+          "25/07/2017, 12:51 PM",
+          "Title Report.pdf",
+          ""
+        ],
+        [
+          "2",
+          "Declaration Form B",
+          "26/07/2017, 3:46 PM",
+          "FORM B AFFIDAVIT.PDF",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "Proforma Allotment Letter",
+          "Allotment Letter Deviation Report"
+        ],
+        [
+          "Allotment letter.PDF",
+          ""
+        ]
+      ],
+      "kv": {
+        "Proforma Allotment Letter": "Allotment Letter Deviation Report",
+        "Allotment letter.PDF": ""
+      }
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File",
+          "View"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Identification of Building/ Wing as per Sanctioned Plan",
+          "Identification of Wing as per Sanctioned Plan",
+          "Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)"
+        ],
+        [
+          "1",
+          "Viki Heights",
+          "NA",
+          "33"
+        ],
+        [
+          "Total",
+          "1",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Building Name",
+          "Apartment Type",
+          "Carpet Area (in Sqmts)",
+          "Number of Apartment"
+        ],
+        [
+          "1",
+          "Viki Heights",
+          "FLAT",
+          "62.8",
+          "10"
+        ],
+        [
+          "2",
+          "Viki Heights",
+          "SHOP",
+          "34.3",
+          "1"
+        ],
+        [
+          "3",
+          "Viki Heights",
+          "FLAT",
+          "18.92",
+          "1"
+        ],
+        [
+          "4",
+          "Viki Heights",
+          "FLAT",
+          "57.27",
+          "2"
+        ],
+        [
+          "5",
+          "Viki Heights",
+          "FLAT",
+          "43.67",
+          "2"
+        ],
+        [
+          "6",
+          "Viki Heights",
+          "FLAT",
+          "85",
+          "2"
+        ],
+        [
+          "7",
+          "Viki Heights",
+          "FLAT",
+          "99.59",
+          "1"
+        ],
+        [
+          "8",
+          "Viki Heights",
+          "FLAT",
+          "31.03",
+          "2"
+        ],
+        [
+          "9",
+          "Viki Heights",
+          "FLAT",
+          "37.35",
+          "2"
+        ],
+        [
+          "10",
+          "Viki Heights",
+          "FLAT",
+          "91.05",
+          "4"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Parking Type",
+          "Total No Of Parking 2 Wheelers",
+          "Total No Of Parking 4 Wheelers",
+          "Total No Of Parking Vehicle Bus",
+          "Total No Of Parking Visitors",
+          "Total No Of Parking",
+          "Allotted Parking 2 Wheelers",
+          "Allotted Parking 4 Wheelers"
+        ],
+        [
+          "1",
+          "Open Space",
+          "0",
+          "0",
+          "0",
+          "0",
+          "10",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "Closed/Covered",
+          "0",
+          "0",
+          "0",
+          "0",
+          "21",
+          "0",
+          "0"
+        ],
+        [
+          "Total",
+          "0",
+          "0",
+          "0",
+          "0",
+          "31",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Uploaded File Name",
+          "View"
+        ],
+        [
+          "1",
+          "Layout Approval",
+          "Decleration_Layout.PDF",
+          ""
+        ],
+        [
+          "2",
+          "Building Plan Approval",
+          "iod first page.PDF",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage"
+        ],
+        [
+          "1",
+          "Excavation",
+          "Yes",
+          "100"
+        ],
+        [
+          "2",
+          "Basement (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "3",
+          "Podiums (if any)",
+          "Yes",
+          "100"
+        ],
+        [
+          "4",
+          "Plinth",
+          "Yes",
+          "100"
+        ],
+        [
+          "5",
+          "Stilt Floor",
+          "Yes",
+          "100"
+        ],
+        [
+          "6",
+          "Slabs of Super Structure",
+          "Yes",
+          "100"
+        ],
+        [
+          "7",
+          "Internal walls, Intemal Plaster, Floorings, Floors and windows within Flats/Premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "8",
+          "Sanitary Fittings within the flats / premises",
+          "Yes",
+          "100"
+        ],
+        [
+          "9",
+          "Staircases, Lifts Wells and Lobbies at each Floor level Overhead and Underground Water Tanks",
+          "Yes",
+          "100"
+        ],
+        [
+          "10",
+          "External plumbing and external plaster, elevation, completion of terraces with waterproofing of the Building / wing.",
+          "Yes",
+          "100"
+        ],
+        [
+          "11",
+          "Installation of Lifts, water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings, mechanical equipment, compliance to conditions ofenvironment/CRZ NOC, Finishing to entrance lobby/s, plinth protection. paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to complete project as per specifications in agreement of Sale.",
+          "Yes",
+          "100"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Tasks / Activity",
+          "Is Available",
+          "Completion Percentage",
+          "Details"
+        ],
+        [
+          "1",
+          "Internal Roads & Footpaths",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "2",
+          "Water Supply",
+          "Yes",
+          "80",
+          "Mcgm connection"
+        ],
+        [
+          "3",
+          "Sewerage (Chamber, Lines, Septic Tank , STP)",
+          "Yes",
+          "100",
+          "Mcgm connection upto the plot"
+        ],
+        [
+          "4",
+          "Storm Water Drains",
+          "Yes",
+          "100",
+          "To be completed"
+        ],
+        [
+          "5",
+          "Landscaping & Tree Planting",
+          "Yes",
+          "0",
+          "To be completed"
+        ],
+        [
+          "6",
+          "Street Lighting",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "7",
+          "Community Buildings",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "8",
+          "Treatment And Disposal Of Sewage And Sullage Water",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "9",
+          "Solid Waste Management And Disposal",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "10",
+          "Water conservation /Rain water harvesting",
+          "Yes",
+          "100",
+          "completed"
+        ],
+        [
+          "11",
+          "Energy managemcnt",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "12",
+          "Fire protection and fire safety requirements",
+          "Yes",
+          "100",
+          "work in progress"
+        ],
+        [
+          "13",
+          "Electrical meter room, sub-station, receiving station",
+          "Yes",
+          "100",
+          "All Ready"
+        ],
+        [
+          "14",
+          "Aggregate area of recreational Open Space",
+          "No",
+          "0",
+          "NA"
+        ],
+        [
+          "15",
+          "Open Parking",
+          "Yes",
+          "100",
+          "As per approved plans"
+        ],
+        [
+          "16",
+          "",
+          "No",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Document Type",
+          "Upload Date and Time",
+          "File Name",
+          "View"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Complaint No.",
+          "Complaint Date",
+          "Complainant Name",
+          "Respondent Name",
+          "Complaint Status",
+          "View"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Appeal No.",
+          "Complaint No./ Reference No.",
+          "Appeal Date",
+          "Appeallant Name",
+          "Respondent Name",
+          "Appeal Status"
+        ],
+        [
+          "No Records Found"
+        ]
+      ]
+    },
+    {
+      "caption": "",
+      "rows": [
+        [
+          "#",
+          "Professional Name",
+          "MahaRERA Certificate No.",
+          "Professional Type"
+        ],
+        [
+          "No Record Found"
+        ]
+      ]
+    }
+  ],
+  "key_values": {
+    "Final Plot bearing No/CTS Number/Survey Number": "5867",
+    "Total Land Area of Approved Layout (Sq. Mts.)": "652.2",
+    "Permissible Built-up Area": "1895.49",
+    "Address": "5867",
+    "State/UT": "MAHARASHTRA",
+    "District": "Mumbai Suburban",
+    "Taluka": "Kurla",
+    "Village": "Kurla",
+    "Pin Code": "400077",
+    "Boundaries East": "Hem kunj",
+    "Boundaries West": "Shreenathji bhuvan",
+    "Boundaries South": "Vallabhbaug lane",
+    "Boundaries North": "New construction",
+    "Longitude ": "72.906927000000000",
+    "Latitude ": "19.078961000000000",
+    "Name": "Divij Developers",
+    "Unit Number": "205",
+    "Building Name": "So Lucky Corner",
+    "Street Name": "M G Road",
+    "Locality": "Vile parle east",
+    "Landmark": "Sunder Hotel",
+    "Landowner types in the project": "Promoter",
+    "Is there any litigation against this proposed project ": "No",
+    "Bank Name": "UNION BANK OF INDIA",
+    "IFSC Code": "UBIN0531979",
+    "Bank Address": "MG Road vile parle east, Mumbai 400057",
+    "Do you have Financial Encumberance ": "No",
+    "Registration Number": ":",
+    "Date of Registration": ":"
+  },
+  "document_links": [],
+  "text_excerpt": "Project DetailsRegistration Number : P51800002451Date of Registration : 01/08/2017Project StatusCompleted Certificate DownloadBasic Details Project Location Maharashtra Project Type Residential / Group Housing Project Name VIKI HEIGHTS Proposed Completion Date (Original) 30/11/2018 Proposed Completion Date (Revised) 30/11/2019 Planning Authority Others Full Name of the Planning Authority Land Area & Address Details Final Plot bearing No/CTS Number/Survey Number 5867 Total Land Area of Approved Layout (Sq. Mts.) 652.2 Land Area for Project Applied for this Registration (Sq. Mts) 652.2 Permissible Built-up Area 1895.49 Sanctioned Built-up Area of the Project applied for Registration 1694 Aggregate area(in sq. mts) of recreational open space as per Layout / DP Remarks Commencement Certificate / NA Order Documents Details # CC/NA Order Issued to CC/NA Order in the name ofDate of CC/NA OrderCC/NA Order Document Is CC One Year Old Supporting Document1 Project Address Details Address 5867 State/UT MAHARASHTRA District Mumbai Suburban Taluka Kurla Village Kurla Pin Code 400077 Boundaries East Hem kunj Boundaries West Shreenathji bhuvan Boundaries South Vallabhbaug lane Boundaries North New construction Longitude : 72.906927000000000 Latitude : 19.078961000000000 Promoter Details Name Divij Developers Promoter Official Communication Address Unit Number 205 Building Name So Lucky Corner Street Name M G Road Locality Vile parle east Landmark Sunder Hotel State/UT MAHARASHTRA District Mumbai Suburban Taluka Andheri Village Andheri Pin Code 400057 Member Details Promoter Past Experience Details Authorised Signatory Single Point of Contact Allottee Grievance Redressal Officer Project Professionals SRO Details #NameDesignationView1Dhaval Vijay kariaChairperson2Dhaval Karia Document LibraryClick here to view# Document Type File Name Uploaded Date View 11 Copy of the legal title reportTitle Report.pdf25/07/2017, 12:51 PM 21 Details of encumbrancesFORM B AFFIDAVIT.PDF26/07/2017, 3:47 PM 31 Copy of Layout Approval (in case of layout)Decleration_Layout.PDF25/07/2017, 1:01 PM 41 Building Plan Approval (IOD)iod first page.PDF25/07/2017, 1:24 PM 51 Commencement Certificates / NA Order for plotted developmentcommencement certificate_20180326183306.pdf26/03/2018, 6:36 PM 61 Declaration in FORM BFORM B AFFIDAVIT.PDF26/07/2017, 3:46 PM 71 Certificates of Architect (Form 1)(Mandatory for only ongoing project)Arch Certificate.PDF26/07/2017, 4:00 PM 81 Certificates of Engineer (Form 2)(Mandatory for only ongoing project)Form2.PDF25/07/2017, 1:50 PM 91 Certificates of CA (Form 5)RERA CA CERTIFICATE.PDF4/01/2019, 4:51 PM 101 Proforma of Allotment letterAllotment letter.PDF25/07/2017, 1:51 PM 111 Occupancy Certificate/ Completion Certificate/ Architect's certificate of completion for plotted development2243590_OC_signed.pdf17/03/2020, 9:31 AM 121 Architect’s Certificate on Completion of Project (Form 4)FORM 4.pdf29/11/2019, 3:08 PMPromoter Landowner Landowner types in the project Promoter Promoter Landowner(s) Promoter Documents#Uploaded Documents (For Promoter)Upload Date and TimeFile NameView1Legal Title report25/07/2017, 12:51 PMTitle Report.pdf2Declaration Form B26/07/2017, 3:46 PMFORM B AFFIDAVIT.PDFInvestor DetailsAre there any Investor other than the Promoter in the Project : NoLitigation DetailsIs there any litigation against this proposed project : NoProforma Allotment LetterProforma Allotment LetterAllotment Letter Deviation Report Allotment letter.PDF Other Legal Documents#Document TypeUploaded FileViewNo Record Found Building Details#Identification of Building/ Wing as per Sanctioned Plan Identification of Wing as per Sanctioned Plan Number of Sanctioned Floors (Including Basement+ Stilt+ Podium+ Service+ Habitable excluding terrace)1 Viki Heights NA 33 Total10Summary of Apartments/Units#Building Name Apartment Type Carpet Area (in Sqmts) Number of Apartment1Viki Heights FLAT 62.8 102Viki Heights SHOP 34.3 13Viki Heights FLAT 18.92 14Viki Heights ",
+  "text_length": 7460,
+  "project_name": "VIKI HEIGHTS",
+  "promoter_name": "Divij Developers",
+  "captured_at": "2026-07-25T14:52:28"
+}
