@@ -8,6 +8,20 @@ function prettyDocR(name) {
   return (name || "").replace(/\.[a-z0-9]+$/i, "").replace(/[_]+/g, " ").replace(/\s+/g, " ").trim() || name;
 }
 
+// MahaRERA reports fees to two decimals (82072.1); a report reads better in whole rupees.
+function rupeesR(v) {
+  return v == null || v === "" ? "—" : "₹" + Math.round(Number(v)).toLocaleString("en-IN");
+}
+
+// A 3-up fact grid that reflows to 2-up on phones. Borders come from CSS so the
+// cells stay aligned however many columns the browser lands on.
+function RGrid({ rows }) {
+  return h("div", { className: "rgrid" },
+    rows.map(([k, v], i) => h("div", { key: i },
+      h("div", { className: "rk" }, k),
+      h("div", { className: "rv" }, (v == null || v === "") ? "—" : v))));
+}
+
 function RptRow({ s }) {
   const sign = s.impact == null ? "—" : s.impact === 0 ? "0" : (s.impact > 0 ? "+" : "") + s.impact.toFixed(1);
   const col = s.impact == null || s.impact === 0 ? "var(--ink-3)" : s.impact > 0 ? "var(--green)" : "var(--red)";
@@ -91,8 +105,8 @@ function Report({ id, go, print }) {
       ),
 
       // title block
-      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 20, marginTop: 26 } },
-        h("div", null,
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 20, marginTop: 26, flexWrap: "wrap" } },
+        h("div", { style: { minWidth: 0 } },
           h("div", { className: "eyebrow" }, "Trust assessment for"),
           h("h1", { className: "serif", style: { fontSize: 30, fontWeight: 600, letterSpacing: "-.02em", marginTop: 6 } }, p.name),
           h("div", { className: "muted", style: { fontSize: 14, marginTop: 2 } }, "by ", p.builder, " · ", p.district, " · ", p.pincode),
@@ -112,18 +126,14 @@ function Report({ id, go, print }) {
 
       // record snapshot
       h("div", { className: "rsection-h" }, "Official record snapshot"),
-      h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0, border: "1px solid var(--line)", borderRadius: 8, overflow: "hidden" } },
-        [["Registration status", p.statusNote || "Registered"], ["Registered on", p.registered || "—"], ["Record last modified", p.lastModified || "—"],
-         ["Promised completion", p.promisedCompletion || "—"], ["Latest revision", p.revisedCompletion || "—"],
-         ["Complaints on record", p.complaints == null ? "Not yet ingested" : String(p.complaints)],
-         ["RERA orders", p.orders == null ? "Not yet ingested" : String(p.orders)],
-         ["Extension certificates", p.extensions == null ? "Not yet ingested" : String(p.extensions)],
-         ["Units", p.units == null ? "—" : String(p.units)]
-        ].map(([k, v], i) =>
-          h("div", { key: i, style: { padding: "11px 14px", borderRight: i % 3 !== 2 ? "1px solid var(--line)" : "none", borderTop: i > 2 ? "1px solid var(--line)" : "none" } },
-            h("div", { className: "mono", style: { fontSize: 9.5, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--ink-3)" } }, k),
-            h("div", { style: { fontWeight: 600, fontSize: 13.5, marginTop: 3 } }, v)))
-      ),
+      h(RGrid, { rows: [
+        ["Registration status", p.statusNote || "Registered"], ["Registered on", p.registered || "—"], ["Record last modified", p.lastModified || "—"],
+        ["Promised completion", p.promisedCompletion || "—"], ["Latest revision", p.revisedCompletion || "—"],
+        ["Complaints on record", p.complaints == null ? "Not yet ingested" : String(p.complaints)],
+        ["RERA orders", p.orders == null ? "Not yet ingested" : String(p.orders)],
+        ["Extension certificates", p.extensions == null ? "Not yet ingested" : String(p.extensions)],
+        ["Units", p.units == null ? "—" : String(p.units)],
+      ] }),
 
       // why this verdict
       h("div", { className: "rsection-h" }, "Why this verdict — every signal, sourced"),
@@ -132,24 +142,19 @@ function Report({ id, go, print }) {
       // builder
       h("div", { className: "rsection-h" }, "Builder track record"),
       h("div", { className: "muted", style: { fontSize: 13, lineHeight: 1.55 } },
-        h("b", { style: { color: "var(--ink)" } }, b.name), " — active since ", b.since, ". ",
-        `Of ${b.totalProjects} projects on record, ${b.delivered} delivered`,
-        b.delayed != null ? `, ${b.delayed} delayed` : "", b.revoked ? `, ${b.revoked} revoked` : "", ". ", b.note),
+        h("b", { style: { color: "var(--ink)" } }, b.name), " — ", b.note),
 
       // ---- Tier-2 detail (specs, delays, documents) ----
       p.hasDetail && p.detail && h("div", null,
         h("div", { className: "rsection-h" }, "Project details — official MahaRERA registration"),
-        h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0, border: "1px solid var(--line)", borderRadius: 8, overflow: "hidden" } },
-          [["Type", p.detail.specs.type], ["Status", p.detail.specs.status], ["Current stage", p.detail.specs.stage],
-           ["Registered on", p.detail.specs.registeredOn], ["Promised completion", p.detail.specs.originalCompletion],
-           ["Revised completion", p.detail.specs.revisedCompletion],
-           ["Units (booked / total)", `${p.detail.specs.unitsSold == null ? "—" : p.detail.specs.unitsSold} / ${p.detail.specs.unitsTotal == null ? "—" : p.detail.specs.unitsTotal}`],
-           ["RERA fee", p.detail.specs.feesPayable ? "₹" + Number(p.detail.specs.feesPayable).toLocaleString("en-IN") : "—"],
-           ["Documents on record", String(p.detail.documentCount)]
-          ].map(([k, v], i) =>
-            h("div", { key: i, style: { padding: "11px 14px", borderRight: i % 3 !== 2 ? "1px solid var(--line)" : "none", borderTop: i > 2 ? "1px solid var(--line)" : "none" } },
-              h("div", { className: "mono", style: { fontSize: 9.5, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--ink-3)" } }, k),
-              h("div", { style: { fontWeight: 600, fontSize: 13.5, marginTop: 3 } }, (v == null || v === "") ? "—" : v)))),
+        h(RGrid, { rows: [
+          ["Type", p.detail.specs.type], ["Status", p.detail.specs.status], ["Current stage", p.detail.specs.stage],
+          ["Registered on", p.detail.specs.registeredOn], ["Promised completion", p.detail.specs.originalCompletion],
+          ["Revised completion", p.detail.specs.revisedCompletion],
+          ["Units (booked / total)", `${p.detail.specs.unitsSold == null ? "—" : p.detail.specs.unitsSold} / ${p.detail.specs.unitsTotal == null ? "—" : p.detail.specs.unitsTotal}`],
+          ["RERA fee", rupeesR(p.detail.specs.feesPayable)],
+          ["Documents on record", String(p.detail.documentCount)],
+        ] }),
         (p.detail.extensions || []).length > 0 && h("div", { style: { marginTop: 12, padding: "12px 16px", borderLeft: "4px solid var(--amber)", background: "var(--surface-2)", borderRadius: 8 } },
           h("div", { style: { fontWeight: 700, fontSize: 13.5 } }, `Completion revised ${p.detail.extensions.length} time(s)`),
           p.detail.extensions.map((e, i) => h("div", { key: i, className: "muted", style: { fontSize: 12, marginTop: 4, lineHeight: 1.5 } },
@@ -157,11 +162,11 @@ function Report({ id, go, print }) {
             e.reason ? ` — “${e.reason}”` : ""))),
         p.detail.documents && p.detail.documents.length > 0 && h("div", { style: { marginTop: 10, fontSize: 11.5, color: "var(--ink-2)", lineHeight: 1.7 } },
           h("b", null, "On record: "),
-          Array.from(new Set(p.detail.documents.map(o => o.label))).join(" · "))
+          Array.from(new Set(p.detail.documents.map(o => o.kind || o.label))).join(" · "))
       ),
 
       // footer disclaimer
-      h("div", { style: { marginTop: 30, paddingTop: 16, borderTop: "2px solid var(--ink)", display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-end" } },
+      h("div", { style: { marginTop: 30, paddingTop: 16, borderTop: "2px solid var(--ink)", display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-end", flexWrap: "wrap" } },
         h("div", { className: "faint", style: { fontSize: 10.5, lineHeight: 1.5, maxWidth: "62ch" } },
           h("b", null, "Disclaimer. "),
           "This report summarises publicly available MahaRERA records as of ", AS_OF, ". It is information, not legal or financial advice. Records may change after this date. Verify the live status at maharera.maharashtra.gov.in and consult a qualified advisor before any transaction."),

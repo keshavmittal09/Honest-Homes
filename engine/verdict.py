@@ -31,9 +31,14 @@ class Signal:
     """One scored factor in the verdict.
 
     points:   contribution to the score (+ good, - bad), already weighted.
+    title:    short headline for the signal row (a few words, no trailing period).
     reason:   plain-language fact, phrased as a fact not an accusation.
     source:   where it came from (e.g. 'MahaRERA project index').
     as_of:    the date the underlying data was captured.
+
+    The UI shows `title` above `reason`. Deriving the title by chopping `reason`
+    (as the front end used to) breaks on decimals and mid-word — hence an explicit
+    field owned here, where the wording is written.
     """
 
     key: str
@@ -42,11 +47,13 @@ class Signal:
     source: str
     as_of: str
     kind: str = "neutral"  # 'positive' | 'caution' | 'negative' | 'neutral'
+    title: str = ""
 
     def to_dict(self) -> dict:
         return {
             "key": self.key,
             "points": self.points,
+            "title": self.title or self.reason.rstrip("."),
             "reason": self.reason,
             "source": self.source,
             "as_of": self.as_of,
@@ -118,6 +125,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
     if rera_id:
         signals.append(Signal(
             key="rera_registered", points=2,
+            title="Registered with MahaRERA",
             reason=f"Project is RERA-registered (ID {rera_id}).",
             source=_SRC_INDEX, as_of=as_of, kind="positive",
         ))
@@ -130,6 +138,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
         if reputation.is_revoked(rera_id, promoter):
             signals.append(Signal(
                 key="revoked", points=-8,
+                title="Registration revoked",
                 reason="This project's MahaRERA registration has been REVOKED / deregistered.",
                 source=_SRC_REVOKED, as_of=rep_as_of, kind="negative",
             ))
@@ -137,6 +146,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
         if revoked_siblings and not reputation.is_revoked(rera_id, promoter):
             signals.append(Signal(
                 key="revoked_siblings", points=-2,
+                title=f"{revoked_siblings} other project(s) by this builder revoked",
                 reason=(f"This builder has {revoked_siblings} other project(s) with revoked "
                         "registrations on record."),
                 source=_SRC_REVOKED, as_of=rep_as_of, kind="caution",
@@ -164,6 +174,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
                          else " on its sole project on record")
             signals.append(Signal(
                 key="complaints", points=pts,
+                title=(f"{complaints} consumer complaint(s) against this builder"),
                 reason=(f"{complaints} consumer complaint(s) filed against this builder "
                         f"with MahaRERA{proj_note} "
                         f"(~{ratio:.1f} per project)."),
@@ -175,6 +186,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
             # never a positive bonus, and say "on record" not "clean".
             signals.append(Signal(
                 key="no_complaints", points=0,
+                title="No complaints found on record",
                 reason="No consumer complaints found on record against this builder in the MahaRERA register.",
                 source=_SRC_COMPLAINTS, as_of=rep_as_of, kind="neutral",
             ))
@@ -182,6 +194,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
         # --- Honest coverage note (we have reputation, not yet delay history) ---
         signals.append(Signal(
             key="coverage", points=0,
+            title="What this verdict covers",
             reason=("Based on registration, complaint and revocation records. Detailed "
                     "delay/extension history is not yet included."),
             source=_SRC_INDEX, as_of=rep_as_of, kind="neutral",
@@ -196,6 +209,7 @@ def build_verdict(project: dict, *, reputation=None, today: date | None = None) 
     # --- No reputation data loaded: honest N/A (incomplete) ---------------------
     signals.append(Signal(
         key="depth_pending", points=0,
+        title="Deeper records not yet ingested",
         reason=("Detailed delay history, complaints and financials are not yet included in "
                 "this summary. This is a preliminary check based on the public project list."),
         source=_SRC_INDEX, as_of=as_of, kind="neutral",

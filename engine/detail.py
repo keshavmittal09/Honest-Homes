@@ -15,6 +15,7 @@ actual document files are present locally (so download links only show when real
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import os
 import re
@@ -34,26 +35,36 @@ def _ro(api: dict, ep: str):
 # Order matters: first match wins.
 _DOC_RULES = [
     (r"commencement|cc[ _\-]?compress|\bcc[ _\-]\d", "Commencement Certificate", "Approvals & certificates", True),
-    (r"occupanc|\boc[ _\-]", "Occupancy Certificate", "Approvals & certificates", True),
+    (r"occupanc|\boc\b", "Occupancy Certificate", "Approvals & certificates", True),
     (r"completion", "Completion Certificate", "Approvals & certificates", True),
     (r"registration", "RERA Registration Certificate", "Approvals & certificates", True),
-    (r"agreement.*sale|agreement_for_sale|sale.*agreement|allotment", "Agreement for Sale", "Agreements & legal", True),
-    (r"\biod\b|building.?aproov|building.?approv|sanction|approved.?plan|intimation of disapproval", "Building Approval (IOD)", "Approvals & certificates", True),
-    (r"title", "Title Report", "Agreements & legal", True),
+    (r"agreement.*(sale|sell)|(sale|sell).*agreement|allot", "Agreement for Sale", "Agreements & legal", True),
+    (r"\biod\b|building.?aproov|building.?approv|building.?permit|sanction|approved.?plan|intimation of disapproval",
+     "Building Approval (IOD)", "Approvals & certificates", True),
+    (r"title|search report|legal report", "Title & Search Report", "Agreements & legal", True),
     (r"layout", "Layout Plan", "Plans", False),
     (r"floor.?plan|\bplan\b|drawing", "Building Plan", "Plans", False),
     (r"encumbr", "Encumbrance Certificate", "Agreements & legal", False),
-    (r"form.?1|architect", "Form 1 — Architect's Certificate", "Professional certificates", False),
-    (r"form.?2|engineer", "Form 2 — Engineer's Certificate", "Professional certificates", False),
-    (r"form.?3|chartered|\bca[ _\-]", "Form 3 — CA Certificate", "Professional certificates", False),
-    (r"\bpan\b", "PAN Card", "KYC & financial", False),
+    # MahaRERA's statutory forms. Form 1 = architect, 2 = engineer, 3 = CA,
+    # 4 = architect's project-completion certificate, 5 = annual CA report,
+    # B = promoter's declaration.
+    (r"for[mn].?1\b|architec|arch.?cert", "Form 1 — Architect's Certificate", "Professional certificates", False),
+    (r"for[mn].?2\b|engineer|\bengg\b", "Form 2 — Engineer's Certificate", "Professional certificates", False),
+    (r"for[mn].?3\b|chartered|\bca\b", "Form 3 — CA Certificate", "Professional certificates", False),
+    (r"for[mn].?4\b", "Form 4 — Completion Certificate (Architect)", "Professional certificates", False),
+    (r"for[mn].?5\b", "Form 5 — Annual CA Report", "Professional certificates", False),
+    (r"for[mn].?b\b", "Form B — Promoter's Declaration", "Agreements & legal", False),
+    (r"pan ?card|\bpan\b", "PAN Card", "KYC & financial", False),
     (r"aadha", "Aadhaar", "KYC & financial", False),
     (r"\bgst", "GST Certificate", "KYC & financial", False),
     (r"7.?12|extract", "7/12 Extract", "Agreements & legal", False),
+    (r"index.?(2|ii)\b", "Index II", "Agreements & legal", False),
     (r"deed", "Deed", "Agreements & legal", False),
     (r"\bnoc\b", "NOC", "Approvals & certificates", False),
     (r"receipt|payment", "Payment Receipt", "KYC & financial", False),
     (r"declarat|affidav", "Declaration / Affidavit", "Agreements & legal", False),
+    (r"sold.?unsold|unsold", "Sold / Unsold Units List", "Other", False),
+    (r"society", "Society Handover", "Agreements & legal", False),
     (r"brochure|advertis", "Brochure", "Other", False),
     (r"profileimage|photo", "Photograph", "Other", False),
     (r"apartment|association", "Apartment Association", "Other", False),
@@ -62,15 +73,81 @@ _DOC_COMPILED = [(re.compile(rx, re.I), lab, cat, imp) for rx, lab, cat, imp in 
 DOC_CATEGORY_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
                       "Professional certificates", "KYC & financial", "Other"]
 
+# Captured filenames are underscore-joined and often carry a numeric de-duplication
+# prefix ("1_OC.pdf", "3_Title_report.pdf"). Underscore is a WORD character to the
+# regex engine, so "\bpan\b" never matched "1_PAN.pdf" and "\boc[ _-]" never matched
+# "1_OC.pdf" — which is why most documents fell through to "Other". Normalise the
+# name to spaced words first, so the rules above see real word boundaries.
+_EXT = re.compile(r"\.[a-z0-9]+$", re.I)
+_DEDUP_PREFIX = re.compile(r"^\d+[ _-]+")
+
+
+def _match_text(filename: str) -> str:
+    s = _EXT.sub("", filename or "")
+    s = s.replace("_", " ").replace("-", " ")
+    s = _DEDUP_PREFIX.sub("", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+_BARE_UUID = re.compile(r"^[0-9a-f]{8}[ ][0-9a-f]{4}[ ][0-9a-f]{4}[ ][0-9a-f]{4}[ ][0-9a-f]{12}$", re.I)
+
 
 def label_document(filename: str) -> dict:
+    text = _match_text(filename)
     for rx, label, cat, imp in _DOC_COMPILED:
-        if rx.search(filename or ""):
+        if rx.search(text):
             return {"file": filename, "label": label, "category": cat, "important": imp}
-    base = re.sub(r"\.[a-z0-9]+$", "", filename or "").replace("_", " ").strip()
-    base = re.sub(r"\s+", " ", base)
-    base = base[:1].upper() + base[1:] if base else (filename or "Document")
+    # A filename that is just the storage UUID tells the reader nothing; say so
+    # rather than printing the raw hex as if it were a title.
+    if not text or _BARE_UUID.match(text):
+        return {"file": filename, "label": "Unnamed document", "category": "Other", "important": False}
+    base = text[:1].upper() + text[1:]
     return {"file": filename, "label": base[:54], "category": "Other", "important": False}
+
+
+def dedupe_files(doc_dir: Path, files: list[str]) -> list[str]:
+    """Drop byte-identical copies of the same document.
+
+    The same PDF is often filed under several DMS references, and the downloader
+    keeps both by prefixing a counter ("Commencement_cert.pdf" and
+    "1_Commencement_cert.pdf"). About a fifth of every capture is such duplicates,
+    which is what turned the documents list into six identical rows. Keep one copy
+    per content hash, preferring the filename without the counter prefix.
+    """
+    by_hash: dict[str, str] = {}
+    for f in files:
+        p = doc_dir / f
+        try:
+            digest = hashlib.sha256(p.read_bytes()).hexdigest()
+        except OSError:
+            by_hash.setdefault(f, f)   # unreadable: keep it, keyed by name
+            continue
+        kept = by_hash.get(digest)
+        if kept is None or (_DEDUP_PREFIX.match(kept) and not _DEDUP_PREFIX.match(f)):
+            by_hash[digest] = f
+    return sorted(by_hash.values())
+
+
+def label_documents(files: list[str]) -> list[dict]:
+    """Label a project's documents, numbering repeats so they can be told apart.
+
+    A project routinely files the same kind of document several times (one
+    commencement certificate per building, a CA certificate per year). Rendering
+    five identical "Commencement Certificate" rows gives the reader no way to pick
+    one, so repeats get a 1-based suffix.
+    """
+    docs = [label_document(f) for f in files]
+    counts: dict[str, int] = {}
+    for d in docs:
+        d["kind"] = d["label"]          # stable, un-numbered label for grouping/icons
+        counts[d["kind"]] = counts.get(d["kind"], 0) + 1
+    seen: dict[str, int] = {}
+    for d in docs:
+        kind = d["kind"]
+        if counts[kind] > 1:
+            seen[kind] = seen.get(kind, 0) + 1
+            d["label"] = f"{kind} ({seen[kind]} of {counts[kind]})"
+    return docs
 
 
 def _first(api: dict, ep: str) -> dict:
@@ -192,7 +269,7 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "units": units,
         "litigation": litigation,
         "complaints": complaints,
-        "documents": [label_document(f) for f in sorted(doc_files)],
+        "documents": label_documents(sorted(doc_files)),
         "document_count": len(doc_files),
     }
 
@@ -203,6 +280,22 @@ def build_parsed_snapshot() -> Path:
     if not raw_dirs:
         raise SystemExit("No raw detail capture found.")
     raw = raw_dirs[-1]
+
+    # Any hosting URLs written by collector.upload_docs live only in the parsed file.
+    # Carry them across a rebuild, keyed by (rera_id, filename), so re-parsing does
+    # not silently un-publish every document.
+    out_dir = PARSED_ROOT / raw.name
+    prior: dict[tuple[str, str], str] = {}
+    prior_file = out_dir / "records.json"
+    if prior_file.exists():
+        try:
+            for rid, rec in json.loads(prior_file.read_text(encoding="utf-8")).items():
+                for d in rec.get("documents", []):
+                    if d.get("url") and d.get("file"):
+                        prior[(rid, d["file"])] = d["url"]
+        except (json.JSONDecodeError, AttributeError):
+            pass
+
     records = {}
     for f in sorted(raw.glob("*.api.json")):
         api = json.loads(f.read_text(encoding="utf-8"))
@@ -211,8 +304,15 @@ def build_parsed_snapshot() -> Path:
             continue
         ddir = raw / "docs" / rid
         files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
-        records[rid] = parse_record(api, files)
-    out_dir = PARSED_ROOT / raw.name
+        if files:
+            files = dedupe_files(ddir, files)
+        rec = parse_record(api, files)
+        for d in rec["documents"]:
+            url = prior.get((rid, d.get("file", "")))
+            if url:
+                d["url"] = url
+        records[rid] = rec
+
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "records.json").write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
     return out_dir
@@ -224,6 +324,9 @@ class DetailStore:
         self.captured_at = ""
         self.docs_dir: Path | None = None   # local raw docs dir, if present
         self.loaded = False
+        # Whether the external host recorded in records.json still answers. Probed
+        # once at startup; until then we assume it does.
+        self.external_ok = True
 
     def load_latest(self) -> bool:
         dirs = sorted(d for d in PARSED_ROOT.glob("*") if d.is_dir())
@@ -240,6 +343,34 @@ class DetailStore:
         self.docs_dir = raw_docs if raw_docs.is_dir() else None
         self.loaded = True
         return True
+
+    def sample_external_url(self) -> str | None:
+        """Any one document URL recorded at capture time, for the reachability probe."""
+        for rec in self.records.values():
+            for d in rec.get("documents", []):
+                if d.get("url"):
+                    return d["url"]
+        return None
+
+    def probe_external(self, timeout: float = 6.0) -> bool:
+        """Check once whether externally hosted documents are still reachable.
+
+        Storage buckets get deleted and their hostnames stop resolving. Rather than
+        render links that 404 for every visitor, we probe a single URL at startup
+        and, if it fails, stop offering external hrefs — the UI then says the
+        document is on the MahaRERA record instead of pretending to serve it.
+        """
+        url = self.sample_external_url()
+        if not url:
+            self.external_ok = False
+            return False
+        try:
+            import httpx
+            r = httpx.head(url, timeout=timeout, follow_redirects=True)
+            self.external_ok = r.status_code < 400
+        except Exception:
+            self.external_ok = False
+        return self.external_ok
 
     def get(self, rera_id: str) -> dict | None:
         return self.records.get(rera_id)

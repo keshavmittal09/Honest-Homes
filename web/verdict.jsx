@@ -42,12 +42,20 @@ function DetailSection({ p }) {
   // group documents by category + collect the key (important) ones, deduped by label
   const groups = {};
   docs.forEach(o => { (groups[o.category] = groups[o.category] || []).push(o); });
+  // Feature one of each important kind. Dedupe on `kind` (the un-numbered label),
+  // not `label` — repeats are numbered "(2 of 5)" and would each look unique.
   const keyDocs = [];
   const seenKey = new Set();
-  docs.forEach(o => { if (o.important && !seenKey.has(o.label)) { seenKey.add(o.label); keyDocs.push(o); } });
-  const docHref = (o) => o.url || `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(o.file)}`;
-  const canOpen = (o) => !!o.url || d.documentsAvailable;
-  const anyOpen = d.documentsAvailable || docs.some(o => o.url);
+  docs.forEach(o => {
+    const k = o.kind || o.label;
+    if (o.important && !seenKey.has(k)) { seenKey.add(k); keyDocs.push(o); }
+  });
+  // The backend resolves each document to a href it has actually verified (our own
+  // /api/hh/doc route when the file ships with the app, otherwise an external URL).
+  // It is null when nothing can serve the file, so a link is never shown dead.
+  const docHref = (o) => o.href;
+  const canOpen = (o) => !!o.href;
+  const anyOpen = docs.some(o => o.href);
   const docItem = (o, i) => {
     const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
       h(Icon_v, { name: "doc", size: 15, className: "doc-ic" }),
@@ -129,9 +137,9 @@ function DetailSection({ p }) {
           h("div", { className: "keydoc-grid" },
             keyDocs.map((o, i) => {
               const body = h(React.Fragment, null,
-                h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.label] || "doc", size: 19 })),
+                h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.kind || o.label] || "doc", size: 19 })),
                 h("div", { style: { minWidth: 0, flex: 1 } },
-                  h("div", { className: "keydoc-label" }, o.label),
+                  h("div", { className: "keydoc-label" }, o.kind || o.label),
                   h("div", { className: "keydoc-act" }, canOpen(o) ? "Open document" : "On MahaRERA record")));
               return canOpen(o)
                 ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
@@ -194,7 +202,7 @@ function Verdict({ id, go }) {
     h("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 18, flexWrap: "wrap", gap: 12 } },
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back },
         h(Icon_v, { name: "back", size: 15 }), "Back to results"),
-      h("div", { className: "row gap-8" },
+      h("div", { className: "row gap-8", style: { flexWrap: "wrap", justifyContent: "flex-end" } },
         h(InquiryButton, { project: p, label: "Ask a question", variant: "btn-ghost", size: "sm" }),
         unlocked
           ? h(React.Fragment, null,
@@ -221,7 +229,7 @@ function Verdict({ id, go }) {
           h("div", { className: "eyebrow", style: { marginBottom: 10 } }, "Verdict · ", p.id),
           h("h1", { className: "verdict-headline" }, p.headline)
         ),
-        h("p", { className: "muted", style: { fontSize: 15, lineHeight: 1.6, marginTop: -6 } }, p.summary),
+        h("p", { className: "verdict-summary" }, p.summary),
         h("div", { className: "kvbar" },
           h(KV, { k: "Project", v: p.name }),
           h(KV, { k: "Builder", v: p.builder }),
@@ -252,7 +260,7 @@ function Verdict({ id, go }) {
 
     // ---------- RED FLAG callouts ----------
     !incomplete && flags.length > 0 && h("div", { style: { marginTop: 22 } },
-      h("div", { className: "grid", style: { gridTemplateColumns: flags.length > 1 ? "1fr 1fr" : "1fr", gap: 14 } },
+      h("div", { className: `grid ${flags.length > 1 ? "grid-2up" : ""}`, style: { gap: 14 } },
         flags.slice(0, 4).map((f, i) =>
           h("div", { key: i, className: `flag ${f.kind === "severe" ? "" : "amber"}` },
             h("div", { className: "fico" }, h(Icon_v, { name: f.kind === "severe" ? "ban" : "info", size: 20 })),
@@ -282,20 +290,23 @@ function Verdict({ id, go }) {
     )),
 
     // ---------- TWO COLUMN: track record + timeline ----------
-    h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 } },
+    h("div", { className: "grid grid-2up", style: { gap: 16, marginTop: 16 } },
       // builder track record
       h("div", { className: "panel" },
         h("div", { className: "panel-h" }, h("h2", null, "Builder track record"),
           h("span", { className: "row gap-8" }, h(Icon_v, { name: "building", size: 15, className: "faint" }))),
         h("div", { className: "panel-b", style: { paddingTop: 16 } },
           h("div", { className: "row gap-8", style: { marginBottom: 14 } },
-            h("div", null,
-              h("div", { style: { fontWeight: 700, fontSize: 16 } }, b.name),
-              h("div", { className: "faint", style: { fontSize: 12.5 } }, `Active since ${b.since} · ${b.totalProjects} projects on record`))),
+            h("div", { style: { minWidth: 0 } },
+              h("div", { style: { fontWeight: 700, fontSize: 16, overflowWrap: "anywhere" } }, b.name),
+              h("div", { className: "faint", style: { fontSize: 12.5 } },
+                b.totalProjects ? `${b.totalProjects} project(s) in the MahaRERA index` : "Project count not available"))),
+          // Only counts the public record actually supports. "Delivered"/"Delayed"
+          // are not in the index, so we don't show tiles for them.
           h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 6 } },
-            h("div", { className: "tr-stat" }, h("div", { className: "n" }, b.delivered), h("div", { className: "l" }, "Delivered")),
-            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.delayed ? { color: "var(--amber)" } : {} }, b.delayed == null ? "—" : b.delayed), h("div", { className: "l" }, "Delayed")),
-            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.revoked ? { color: "var(--red)" } : {} }, b.revoked), h("div", { className: "l" }, "Revoked"))),
+            h("div", { className: "tr-stat" }, h("div", { className: "n" }, b.totalProjects == null ? "—" : b.totalProjects), h("div", { className: "l" }, "Projects")),
+            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.complaints ? { color: "var(--amber)" } : {} }, b.complaints == null ? "—" : b.complaints), h("div", { className: "l" }, "Complaints")),
+            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.revoked ? { color: "var(--red)" } : {} }, b.revoked == null ? "—" : b.revoked), h("div", { className: "l" }, "Revoked"))),
           h("p", { className: "muted", style: { fontSize: 13, margin: "12px 2px", lineHeight: 1.5 } }, b.note),
           (b.others && b.others.length > 0) && h("div", { style: { marginTop: 4 } },
             b.others.map((o, i) =>

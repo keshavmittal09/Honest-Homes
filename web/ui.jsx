@@ -95,8 +95,11 @@ function TrustGauge({ score, band, size = 250, animate = true }) {
   const cx = w / 2, cy = size * 0.56, r = size * 0.42, sw = size * 0.078;
   const colorVar = incomplete ? "var(--ink-3)" : `var(--${band})`;
 
-  // needle angle
+  // Needle: an OUTER pointer only. A full-length needle from the hub was drawn
+  // straight through the score numeral (which sits inside the arc), so the digits
+  // and the needle overlapped at every size.
   const ndeg = 180 - (val / 10) * 180;
+  const [nx0, ny0] = polar(cx, cy, r * 0.66, ndeg);
   const [nx, ny] = polar(cx, cy, r - sw * 0.3, ndeg);
 
   return h("div", { className: "gauge-wrap" },
@@ -113,9 +116,8 @@ function TrustGauge({ score, band, size = 250, animate = true }) {
         strokeWidth: sw, strokeLinecap: "round", opacity: band === "green" ? 1 : .16 }),
       incomplete && h("path", { d: arcPath(cx, cy, r, 0, 10), fill: "none", stroke: "var(--ink-3)",
         strokeWidth: sw, strokeLinecap: "round", strokeDasharray: "2 7", opacity: .5 }),
-      // needle
-      !incomplete && h("line", { x1: cx, y1: cy, x2: nx, y2: ny, stroke: colorVar, strokeWidth: 3, strokeLinecap: "round" }),
-      !incomplete && h("circle", { cx, cy, r: 6, fill: "var(--surface)", stroke: colorVar, strokeWidth: 3 }),
+      // needle (outer pointer — never crosses the numeral)
+      !incomplete && h("line", { x1: nx0, y1: ny0, x2: nx, y2: ny, stroke: colorVar, strokeWidth: 3, strokeLinecap: "round" }),
     ),
     h("div", { style: { marginTop: -size * 0.30, textAlign: "center" } },
       incomplete
@@ -153,21 +155,26 @@ function SignalRow({ s }) {
 
 // ---------- Timeline ----------
 function Timeline({ items, band }) {
-  const n = items.length;
-  const fillColor = band === "red" ? "var(--red)" : band === "amber" ? "var(--amber)" : "var(--green)";
+  const n = (items || []).length;
+  if (!n) return h("p", { className: "faint", style: { fontSize: 13 } }, "No dated milestones on record yet.");
+  // With a single milestone, i/(n-1) is 0/0 = NaN and the node loses its position
+  // entirely. Place a lone node in the middle of the track instead.
+  const at = (i) => (n === 1 ? 50 : (i / (n - 1)) * 100);
   // slippage = between first promised and last revised/now
   const promisedIdx = items.findIndex(i => i.type === "promised");
   const lastIdx = n - 1;
+  // Edge labels are centred on their node, so anchor the first/last inwards.
+  const edge = (i) => (n > 1 && i === 0 ? " edge-start" : n > 1 && i === lastIdx ? " edge-end" : "");
   return h("div", { className: "timeline" },
     h("div", { className: "tl-track" },
       h("div", { className: "tl-fill", style: { width: "100%", background: "var(--gauge-track)" } }),
       (promisedIdx >= 0 && lastIdx > promisedIdx && (items[lastIdx].type === "revised" || items[lastIdx].type === "revoked" || items[lastIdx].type === "now")) &&
         h("div", { className: "tl-slip", style: {
-          left: `${(promisedIdx / (n - 1)) * 100}%`,
-          width: `${((lastIdx - promisedIdx) / (n - 1)) * 100}%`,
+          left: `${at(promisedIdx)}%`,
+          width: `${at(lastIdx) - at(promisedIdx)}%`,
         } }, "delay / slippage"),
       items.map((it, i) =>
-        h("div", { key: i, className: `tl-node ${it.type}`, style: { left: `${(i / (n - 1)) * 100}%` } },
+        h("div", { key: i, className: `tl-node ${it.type}${edge(i)}`, style: { left: `${at(i)}%` } },
           h("div", { className: "lab", style: i % 2 ? { bottom: 34 } : {} }, it.label),
           h("div", { className: "dot" }),
           h("div", { className: "dte" }, it.date)

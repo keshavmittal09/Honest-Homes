@@ -147,13 +147,13 @@ function ScrollScene({ go }) {
   ];
   const segFill = (i) => ({ width: `clamp(0%, calc((var(--p) - ${(i * 0.3334).toFixed(4)}) * 300%), 100%)` });
 
-  return h("section", { className: "scene", ref: sceneRef, style: { height: vh * 2.4 } },
+  return h("section", { className: "scene", ref: sceneRef, style: { height: vh * 2.9 } },
     h("div", { className: "scene-sticky scene-glow-shift", ref: rootRef, style: { height: vh } },
 
       // left copy
       h("div", { className: "scene-copy" },
         h("div", { className: "scene-progressbar" },
-          [0, 1, 2].map(i => h("div", { key: i, className: "seg" }, h("i", { style: segFill(i) })))),
+          [0, 1, 2].map(i => h("div", { key: i, className: "pseg" }, h("i", { style: segFill(i) })))),
         h("div", { style: { position: "relative", minHeight: 240 } },
           steps.map((s, i) =>
             h("div", { key: i, className: "scene-step",
@@ -164,7 +164,7 @@ function ScrollScene({ go }) {
               h("h2", { className: "scene-h" }, s.h[0], h("em", null, s.h[1]), s.h[2]),
               h("p", { className: "scene-p" }, s.p),
               i === 2 && h("button", { className: "btn btn-primary",
-                  style: { marginTop: 24, opacity: `clamp(0, calc((var(--p) - 0.85) * 8), 1)` },
+                  style: { marginTop: 26, opacity: `clamp(0, calc((var(--p) - 0.72) * 7), 1)` },
                   onClick: () => go.results() },
                 "Check a project", h(Icon_sc, { name: "arrow", size: 16 }))))
         )
@@ -182,7 +182,7 @@ function ScrollScene({ go }) {
             h("div", { className: "t" }, h(Icon_sc, { name: "shield-check", size: 14 }), "P51800004321"),
             h("div", { className: "d" }, "MahaRERA · registered 2019")),
           h("div", { className: "stem right" })),
-        h("div", { className: "ann amber", style: { "--s": 0.47, top: 188, right: 2 } },
+        h("div", { className: "ann amber", style: { "--s": 0.47, top: 188, right: 18 } },
           h("div", { className: "card" },
             h("div", { className: "t" }, h(Icon_sc, { name: "calendar-clock", size: 14 }), "Completion revised ×2"),
             h("div", { className: "d" }, "2022 → 2023 → 2024")),
