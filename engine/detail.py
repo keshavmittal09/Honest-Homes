@@ -15,6 +15,7 @@ actual document files are present locally (so download links only show when real
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import os
 import re
@@ -34,26 +35,36 @@ def _ro(api: dict, ep: str):
 # Order matters: first match wins.
 _DOC_RULES = [
     (r"commencement|cc[ _\-]?compress|\bcc[ _\-]\d", "Commencement Certificate", "Approvals & certificates", True),
-    (r"occupanc|\boc[ _\-]", "Occupancy Certificate", "Approvals & certificates", True),
+    (r"occupanc|\boc\b", "Occupancy Certificate", "Approvals & certificates", True),
     (r"completion", "Completion Certificate", "Approvals & certificates", True),
     (r"registration", "RERA Registration Certificate", "Approvals & certificates", True),
-    (r"agreement.*sale|agreement_for_sale|sale.*agreement|allotment", "Agreement for Sale", "Agreements & legal", True),
-    (r"\biod\b|building.?aproov|building.?approv|sanction|approved.?plan|intimation of disapproval", "Building Approval (IOD)", "Approvals & certificates", True),
-    (r"title", "Title Report", "Agreements & legal", True),
+    (r"agreement.*(sale|sell)|(sale|sell).*agreement|allot", "Agreement for Sale", "Agreements & legal", True),
+    (r"\biod\b|building.?aproov|building.?approv|building.?permit|sanction|approved.?plan|intimation of disapproval",
+     "Building Approval (IOD)", "Approvals & certificates", True),
+    (r"title|search report|legal report", "Title & Search Report", "Agreements & legal", True),
     (r"layout", "Layout Plan", "Plans", False),
     (r"floor.?plan|\bplan\b|drawing", "Building Plan", "Plans", False),
     (r"encumbr", "Encumbrance Certificate", "Agreements & legal", False),
-    (r"form.?1|architect", "Form 1 — Architect's Certificate", "Professional certificates", False),
-    (r"form.?2|engineer", "Form 2 — Engineer's Certificate", "Professional certificates", False),
-    (r"form.?3|chartered|\bca[ _\-]", "Form 3 — CA Certificate", "Professional certificates", False),
-    (r"\bpan\b", "PAN Card", "KYC & financial", False),
+    # MahaRERA's statutory forms. Form 1 = architect, 2 = engineer, 3 = CA,
+    # 4 = architect's project-completion certificate, 5 = annual CA report,
+    # B = promoter's declaration.
+    (r"for[mn].?1\b|architec|arch.?cert", "Form 1 — Architect's Certificate", "Professional certificates", False),
+    (r"for[mn].?2\b|engineer|\bengg\b", "Form 2 — Engineer's Certificate", "Professional certificates", False),
+    (r"for[mn].?3\b|chartered|\bca\b", "Form 3 — CA Certificate", "Professional certificates", False),
+    (r"for[mn].?4\b", "Form 4 — Completion Certificate (Architect)", "Professional certificates", False),
+    (r"for[mn].?5\b", "Form 5 — Annual CA Report", "Professional certificates", False),
+    (r"for[mn].?b\b", "Form B — Promoter's Declaration", "Agreements & legal", False),
+    (r"pan ?card|\bpan\b", "PAN Card", "KYC & financial", False),
     (r"aadha", "Aadhaar", "KYC & financial", False),
     (r"\bgst", "GST Certificate", "KYC & financial", False),
     (r"7.?12|extract", "7/12 Extract", "Agreements & legal", False),
+    (r"index.?(2|ii)\b", "Index II", "Agreements & legal", False),
     (r"deed", "Deed", "Agreements & legal", False),
     (r"\bnoc\b", "NOC", "Approvals & certificates", False),
     (r"receipt|payment", "Payment Receipt", "KYC & financial", False),
     (r"declarat|affidav", "Declaration / Affidavit", "Agreements & legal", False),
+    (r"sold.?unsold|unsold", "Sold / Unsold Units List", "Other", False),
+    (r"society", "Society Handover", "Agreements & legal", False),
     (r"brochure|advertis", "Brochure", "Other", False),
     (r"profileimage|photo", "Photograph", "Other", False),
     (r"apartment|association", "Apartment Association", "Other", False),
@@ -62,15 +73,81 @@ _DOC_COMPILED = [(re.compile(rx, re.I), lab, cat, imp) for rx, lab, cat, imp in 
 DOC_CATEGORY_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
                       "Professional certificates", "KYC & financial", "Other"]
 
+# Captured filenames are underscore-joined and often carry a numeric de-duplication
+# prefix ("1_OC.pdf", "3_Title_report.pdf"). Underscore is a WORD character to the
+# regex engine, so "\bpan\b" never matched "1_PAN.pdf" and "\boc[ _-]" never matched
+# "1_OC.pdf" — which is why most documents fell through to "Other". Normalise the
+# name to spaced words first, so the rules above see real word boundaries.
+_EXT = re.compile(r"\.[a-z0-9]+$", re.I)
+_DEDUP_PREFIX = re.compile(r"^\d+[ _-]+")
+
+
+def _match_text(filename: str) -> str:
+    s = _EXT.sub("", filename or "")
+    s = s.replace("_", " ").replace("-", " ")
+    s = _DEDUP_PREFIX.sub("", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+_BARE_UUID = re.compile(r"^[0-9a-f]{8}[ ][0-9a-f]{4}[ ][0-9a-f]{4}[ ][0-9a-f]{4}[ ][0-9a-f]{12}$", re.I)
+
 
 def label_document(filename: str) -> dict:
+    text = _match_text(filename)
     for rx, label, cat, imp in _DOC_COMPILED:
-        if rx.search(filename or ""):
+        if rx.search(text):
             return {"file": filename, "label": label, "category": cat, "important": imp}
-    base = re.sub(r"\.[a-z0-9]+$", "", filename or "").replace("_", " ").strip()
-    base = re.sub(r"\s+", " ", base)
-    base = base[:1].upper() + base[1:] if base else (filename or "Document")
+    # A filename that is just the storage UUID tells the reader nothing; say so
+    # rather than printing the raw hex as if it were a title.
+    if not text or _BARE_UUID.match(text):
+        return {"file": filename, "label": "Unnamed document", "category": "Other", "important": False}
+    base = text[:1].upper() + text[1:]
     return {"file": filename, "label": base[:54], "category": "Other", "important": False}
+
+
+def dedupe_files(doc_dir: Path, files: list[str]) -> list[str]:
+    """Drop byte-identical copies of the same document.
+
+    The same PDF is often filed under several DMS references, and the downloader
+    keeps both by prefixing a counter ("Commencement_cert.pdf" and
+    "1_Commencement_cert.pdf"). About a fifth of every capture is such duplicates,
+    which is what turned the documents list into six identical rows. Keep one copy
+    per content hash, preferring the filename without the counter prefix.
+    """
+    by_hash: dict[str, str] = {}
+    for f in files:
+        p = doc_dir / f
+        try:
+            digest = hashlib.sha256(p.read_bytes()).hexdigest()
+        except OSError:
+            by_hash.setdefault(f, f)   # unreadable: keep it, keyed by name
+            continue
+        kept = by_hash.get(digest)
+        if kept is None or (_DEDUP_PREFIX.match(kept) and not _DEDUP_PREFIX.match(f)):
+            by_hash[digest] = f
+    return sorted(by_hash.values())
+
+
+def label_documents(files: list[str]) -> list[dict]:
+    """Label a project's documents, numbering repeats so they can be told apart.
+
+    A project routinely files the same kind of document several times (one
+    commencement certificate per building, a CA certificate per year). Rendering
+    five identical "Commencement Certificate" rows gives the reader no way to pick
+    one, so repeats get a 1-based suffix.
+    """
+    docs = [label_document(f) for f in files]
+    counts: dict[str, int] = {}
+    for d in docs:
+        d["kind"] = d["label"]          # stable, un-numbered label for grouping/icons
+        counts[d["kind"]] = counts.get(d["kind"], 0) + 1
+    seen: dict[str, int] = {}
+    for d in docs:
+        kind = d["kind"]
+        if counts[kind] > 1:
+            seen[kind] = seen.get(kind, 0) + 1
+            d["label"] = f"{kind} ({seen[kind]} of {counts[kind]})"
+    return docs
 
 
 def _first(api: dict, ep: str) -> dict:
@@ -78,6 +155,37 @@ def _first(api: dict, ep: str) -> dict:
     if isinstance(ro, list) and ro:
         return ro[0]
     return ro if isinstance(ro, dict) else {}
+
+
+def _geo(api: dict) -> dict | None:
+    """Latitude/longitude from the project's geo-tagging details.
+
+    The index snapshot's map_url is empty for all but one of 44,279 projects
+    ("...&query=,"), so Tier-2 is in practice the ONLY source of coordinates —
+    and it carries them for every project captured so far.
+    """
+    found: list[tuple] = []
+
+    def walk(x):
+        if isinstance(x, dict):
+            la, lo = x.get("latitude"), x.get("longitude")
+            if la not in (None, "", 0) and lo not in (None, "", 0):
+                try:
+                    found.append((float(la), float(lo)))
+                except (TypeError, ValueError):
+                    pass
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+
+    walk(api.get("endpoints", {}))
+    for lat, lng in found:
+        # Maharashtra's bounding box — rejects 0,0 and transposed pairs.
+        if 15.5 <= lat <= 22.5 and 72.0 <= lng <= 81.0:
+            return {"lat": round(lat, 6), "lng": round(lng, 6)}
+    return None
 
 
 def parse_record(api: dict, doc_files: list[str]) -> dict:
@@ -154,17 +262,89 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         units["booked"] = g.get("totalNumberOfSoldUnits") or 0
     units["mix"] = [m for m in units["mix"] if m.get("count")]
 
-    # --- Litigation ---
+    # --- Litigation / court cases declared for THIS project ---
     lit_ro = _ro(api, "getProjectLitigationDetails")
     litigation = None
     if isinstance(lit_ro, dict):
-        lp = lit_ro.get("isLitigationPresent")
-        if lp not in (None, ""):
-            litigation = {"present": bool(lp), "declared": bool(lit_ro.get("isDeclared"))}
+        cases = []
+        for c in (lit_ro.get("projectLitigationDtlsResponse") or []):
+            cases.append({
+                "court": (c.get("courtName") or "").strip() or None,
+                "caseNo": c.get("caseNumber") or c.get("caseNo"),
+                "year": c.get("caseYear"),
+                "status": (c.get("caseStatus") or "").strip() or None,
+                "remark": (c.get("litigationRemark") or c.get("remark") or "").strip() or None,
+            })
+        present = lit_ro.get("isLitigationPresent")
+        litigation = {
+            "present": bool(present) or bool(cases),
+            "declared": bool(lit_ro.get("isDeclared")),
+            "cases": cases,
+            "count": len(cases),
+        }
 
-    # --- Complaints (from the project's own detail, if any) ---
-    comp = _ro(api, "getComplaintByProjectId") or _ro(api, "getComplaintDetailsByProjectId")
-    complaints = len(comp) if isinstance(comp, list) else None
+    # --- Complaints filed against THIS project -------------------------------
+    # Two endpoints carry different halves of the picture and BOTH have to be
+    # read: getComplaintByProjectId is a list of the complaints themselves, while
+    # getComplaintDetailsByProjectId is a *dict* holding the signed orders, the
+    # non-compliance applications and the recovery warrants. The previous version
+    # only counted a list, so whenever the first endpoint returned NO_RECORDS_FOUND
+    # the dict fell through and the count became None — reporting "unknown" for
+    # every project, including the ones with a genuinely clean record.
+    comp_list = _ro(api, "getComplaintByProjectId")
+    comp_list = comp_list if isinstance(comp_list, list) else []
+    det_ro = _ro(api, "getComplaintDetailsByProjectId")
+    det_ro = det_ro if isinstance(det_ro, dict) else {}
+
+    def _rows(key):
+        v = det_ro.get(key)
+        return v if isinstance(v, list) else []
+
+    orders = [{
+        "complaintNo": o.get("complaintRegistrationNo"),
+        "filedOn": o.get("complaintFilingDate"),
+        "orderFile": o.get("orderFileName"),
+        "orderRef": o.get("orderDmsRefNo"),
+        "complainant": (o.get("complainantName") or "").strip() or None,
+        "respondent": (o.get("respondentName") or "").strip() or None,
+    } for o in _rows("complaintDetails")]
+
+    noncompliance = [{
+        "complaintNo": m.get("complaintRegistrationNo"),
+        "appliedOn": m.get("nonComplianceAppliedDate"),
+        "roznamaFile": m.get("roznamaFileName"),
+        "roznamaOn": m.get("roznamaGenerationDate"),
+    } for m in _rows("miscComplaintDetails")]
+
+    warrants = [{
+        "complaintNo": w.get("complaintRegistrationNo"),
+        "amount": w.get("recoveryAmount") or w.get("amount"),
+        "issuedOn": w.get("warrantIssueDate") or w.get("issueDate"),
+        "status": (w.get("warrantStatus") or "").strip() or None,
+    } for w in _rows("warrentDetails")]
+
+    complaint_rows = [{
+        "complaintNo": c.get("complaintRegistrationNo"),
+        "type": c.get("complaintTypeName"),
+        "filedOn": (c.get("complaintRegistrationDate") or "")[:10] or None,
+        "status": (c.get("complaintStatus") or "").strip() or None,
+        "complainant": (c.get("profileNameComplainant") or "").strip() or None,
+        "respondent": (c.get("profileNameRespondent") or "").strip() or None,
+    } for c in comp_list]
+
+    # Complaint numbers seen anywhere, so a complaint that only appears in the
+    # orders table still counts toward the total.
+    seen_nos = {r["complaintNo"] for r in complaint_rows if r.get("complaintNo")}
+    seen_nos |= {o["complaintNo"] for o in orders if o.get("complaintNo")}
+    complaints = len(seen_nos) if (seen_nos or det_ro or comp_list) else None
+
+    project_complaints = {
+        "count": complaints,
+        "rows": complaint_rows,
+        "orders": orders,
+        "nonCompliance": noncompliance,
+        "warrants": warrants,
+    }
 
     specs = {
         "type": g.get("projectTypeName"),
@@ -190,29 +370,154 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "extensions": extensions,
         "buildings": buildings,
         "units": units,
+        "geo": _geo(api),
         "litigation": litigation,
         "complaints": complaints,
-        "documents": [label_document(f) for f in sorted(doc_files)],
+        "projectComplaints": project_complaints,
+        "documents": label_documents(sorted(doc_files)),
         "document_count": len(doc_files),
     }
 
 
-def build_parsed_snapshot() -> Path:
-    """Read the latest raw capture dir, write a small parsed records.json. Returns its dir."""
+def _kv(d: dict, *needles: str):
+    """First key_values entry whose key starts with any of `needles`."""
+    kv = d.get("key_values") or {}
+    for n in needles:
+        for k, v in kv.items():
+            if k.lower().startswith(n.lower()):
+                s = str(v).strip()
+                if s and s != ":":
+                    return s
+    return None
+
+
+def _num(s):
+    try:
+        return float(str(s).replace(",", ""))
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_html_record(d: dict) -> dict:
+    """Parse a capture made by the HTML collector (run_detail.py).
+
+    That page carries the plot's identity — CTS/survey number, land area,
+    boundaries, the declared-litigation flag — which the API capture does NOT.
+    It carries no complaints and no documents, so those stay unknown (None), not
+    zero: we have genuinely not looked at the project's complaint page.
+    """
+    lat, lng = _num(_kv(d, "Latitude")), _num(_kv(d, "Longitude"))
+    geo = None
+    if lat and lng and 15.5 <= lat <= 22.5 and 72.0 <= lng <= 81.0:
+        geo = {"lat": round(lat, 6), "lng": round(lng, 6)}
+    return {
+        "rera_id": d.get("rera_id"),
+        "project_name": d.get("project_name"),
+        "promoter_name": d.get("promoter_name"),
+        "source": "html",
+        "capturedAt": (d.get("captured_at") or "")[:10],
+        "geo": geo,
+        "plot": {
+            "cts": _kv(d, "Final Plot bearing", "CTS Number", "Survey"),
+            "landArea": _num(_kv(d, "Total Land Area")),
+            "builtUpArea": _num(_kv(d, "Permissible Built-up")),
+            "village": _kv(d, "Village"),
+            "taluka": _kv(d, "Taluka"),
+            "district": _kv(d, "District"),
+            "pincode": _kv(d, "Pin Code"),
+            "boundaries": {side: _kv(d, "Boundaries " + side)
+                           for side in ("North", "South", "East", "West")},
+        },
+        "litigationDeclared": _kv(d, "Is there any litigation"),
+        "specs": {}, "timeline": [], "extensions": [], "buildings": [],
+        "units": {"total": 0, "booked": 0, "mix": []},
+        "litigation": None,
+        "complaints": None,
+        "projectComplaints": {"count": None, "rows": [], "orders": [],
+                              "nonCompliance": [], "warrants": []},
+        "documents": [], "document_count": 0,
+    }
+
+
+def _merge(api_rec: dict, html_rec: dict) -> dict:
+    """API record wins (it is far richer); HTML fills in what only it knows."""
+    out = dict(api_rec)
+    out["source"] = "api+html"
+    out["plot"] = html_rec.get("plot")
+    out["litigationDeclared"] = html_rec.get("litigationDeclared")
+    if not out.get("geo"):
+        out["geo"] = html_rec.get("geo")
+    return out
+
+
+def build_parsed_snapshot(out_name: str | None = None) -> Path:
+    """Merge EVERY raw capture dir into one parsed records.json. Returns its dir.
+
+    This deliberately reads all capture dates and both capture formats rather than
+    only the newest directory. Taking just the newest meant a fresh collector run
+    silently replaced the live dataset — a run that captured 9 new projects would
+    have dropped the 10 already published, and an HTML-only run would have emitted
+    an empty file (it globbed *.api.json, which those captures do not produce).
+
+    Per project the richest capture wins: the API record carries complaints,
+    orders, litigation and documents; the HTML record contributes the plot's
+    CTS/survey number, land area and boundaries, which the API does not expose.
+    """
     raw_dirs = sorted(d for d in RAW_ROOT.glob("*") if d.is_dir() and d.name != ".assist")
     if not raw_dirs:
         raise SystemExit("No raw detail capture found.")
-    raw = raw_dirs[-1]
-    records = {}
-    for f in sorted(raw.glob("*.api.json")):
-        api = json.loads(f.read_text(encoding="utf-8"))
-        rid = api.get("rera_id")
-        if not rid:
+
+    # Hosting URLs written by collector.upload_docs live only in the parsed file.
+    # Carry them across a rebuild, keyed by (rera_id, filename), so re-parsing does
+    # not silently un-publish every document.
+    prior: dict[tuple[str, str], str] = {}
+    for pf in PARSED_ROOT.glob("*/records.json"):
+        try:
+            for rid, rec in json.loads(pf.read_text(encoding="utf-8")).items():
+                for d in rec.get("documents", []):
+                    if d.get("url") and d.get("file"):
+                        prior[(rid, d["file"])] = d["url"]
+        except (json.JSONDecodeError, AttributeError):
             continue
-        ddir = raw / "docs" / rid
-        files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
-        records[rid] = parse_record(api, files)
-    out_dir = PARSED_ROOT / raw.name
+
+    api_recs: dict[str, dict] = {}
+    html_recs: dict[str, dict] = {}
+
+    for raw in raw_dirs:                      # oldest -> newest, newest wins
+        for f in sorted(raw.glob("*.api.json")):
+            api = json.loads(f.read_text(encoding="utf-8"))
+            rid = api.get("rera_id")
+            if not rid:
+                continue
+            ddir = raw / "docs" / rid
+            files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
+            if files:
+                files = dedupe_files(ddir, files)
+            rec = parse_record(api, files)
+            rec["source"] = "api"
+            rec["capturedAt"] = raw.name
+            for d in rec["documents"]:
+                url = prior.get((rid, d.get("file", "")))
+                if url:
+                    d["url"] = url
+            api_recs[rid] = rec
+
+        for f in sorted(raw.glob("*.json")):
+            if f.name.endswith(".api.json") or f.name in ("snapshot.json", "api_snapshot.json"):
+                continue
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                continue
+            if d.get("rera_id") and "key_values" in d:
+                html_recs[d["rera_id"]] = parse_html_record(d)
+
+    records: dict[str, dict] = {}
+    for rid in sorted(set(api_recs) | set(html_recs)):
+        a, h = api_recs.get(rid), html_recs.get(rid)
+        records[rid] = _merge(a, h) if (a and h) else (a or h)
+
+    out_dir = PARSED_ROOT / (out_name or raw_dirs[-1].name)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "records.json").write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
     return out_dir
@@ -224,6 +529,9 @@ class DetailStore:
         self.captured_at = ""
         self.docs_dir: Path | None = None   # local raw docs dir, if present
         self.loaded = False
+        # Whether the external host recorded in records.json still answers. Probed
+        # once at startup; until then we assume it does.
+        self.external_ok = True
 
     def load_latest(self) -> bool:
         dirs = sorted(d for d in PARSED_ROOT.glob("*") if d.is_dir())
@@ -240,6 +548,34 @@ class DetailStore:
         self.docs_dir = raw_docs if raw_docs.is_dir() else None
         self.loaded = True
         return True
+
+    def sample_external_url(self) -> str | None:
+        """Any one document URL recorded at capture time, for the reachability probe."""
+        for rec in self.records.values():
+            for d in rec.get("documents", []):
+                if d.get("url"):
+                    return d["url"]
+        return None
+
+    def probe_external(self, timeout: float = 6.0) -> bool:
+        """Check once whether externally hosted documents are still reachable.
+
+        Storage buckets get deleted and their hostnames stop resolving. Rather than
+        render links that 404 for every visitor, we probe a single URL at startup
+        and, if it fails, stop offering external hrefs — the UI then says the
+        document is on the MahaRERA record instead of pretending to serve it.
+        """
+        url = self.sample_external_url()
+        if not url:
+            self.external_ok = False
+            return False
+        try:
+            import httpx
+            r = httpx.head(url, timeout=timeout, follow_redirects=True)
+            self.external_ok = r.status_code < 400
+        except Exception:
+            self.external_ok = False
+        return self.external_ok
 
     def get(self, rera_id: str) -> dict | None:
         return self.records.get(rera_id)

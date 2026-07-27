@@ -26,6 +26,107 @@ function SpecCell({ k, v, accent }) {
     h("div", { className: `spec-v ${accent ? "accent" : ""}` }, (v === null || v === undefined || v === "") ? "—" : v));
 }
 
+// ---- Complaints filed against THIS project (not the builder) ----------------
+// The distinction matters: a complaint against this project is directly relevant
+// to this flat, while a builder-level count is spread across every project they
+// have ever registered.
+function ProjectComplaints({ p, asOf }) {
+  const d = p.detail || {};
+  const pc = d.projectComplaints || {};
+  const lit = d.litigation || {};
+  if (pc.count == null) return null;             // no tier-2 record: say nothing
+
+  const rows = pc.rows || [], orders = pc.orders || [];
+  const misc = pc.nonCompliance || [], warrants = pc.warrants || [];
+  const cases = lit.cases || [];
+  const clean = pc.count === 0 && !cases.length;
+
+  const stat = (n, label, danger) => h("div", { className: "tr-stat" },
+    h("div", { className: "n", style: n && danger ? { color: `var(--${danger})` } : {} }, n),
+    h("div", { className: "l" }, label));
+
+  return h("div", { className: "panel", style: { marginTop: 16 } },
+    h("div", { className: "panel-h" },
+      h("h2", { className: "row gap-8" },
+        h(Icon_v, { name: clean ? "shield-check" : "file-warning", size: 17,
+          style: { color: clean ? "var(--green)" : "var(--red)" } }),
+        "Complaints against this project"),
+      h("span", { className: "faint", style: { fontSize: 12.5 } }, "This project only — not the builder")),
+    h("div", { className: "panel-b", style: { paddingTop: 16 } },
+      clean
+        ? h("p", { className: "muted", style: { fontSize: 14, lineHeight: 1.55 } },
+            "No consumer complaints and no declared court cases appear on this project's own ",
+            "MahaRERA record. That is a fact about this project specifically — the builder may ",
+            "still have complaints on its other projects (see Builder track record).")
+        : h(React.Fragment, null,
+            h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
+              stat(pc.count, "Complaints", "red"),
+              stat(orders.length, "Orders", "amber"),
+              stat(warrants.length, "Warrants", "red"),
+              stat(cases.length, "Court cases", "amber")),
+            rows.map((c, i) => h("div", { key: i, className: "cmpl-row" },
+              h("div", { className: "row", style: { justifyContent: "space-between", gap: 10, flexWrap: "wrap" } },
+                h("span", { className: "mono", style: { fontSize: 13, fontWeight: 700 } }, c.complaintNo || "Complaint"),
+                c.status && h("span", { className: "badge amber", style: { fontSize: 11 } }, c.status)),
+              h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 4 } },
+                c.type ? c.type + " · " : "", c.filedOn ? "filed " + c.filedOn : "",
+                c.complainant ? " · by " + c.complainant : ""))),
+            misc.length > 0 && h("p", { className: "muted", style: { fontSize: 13, marginTop: 12 } },
+              h("b", null, misc.length, " non-compliance application(s)"),
+              " filed — meaning an order was passed and the complainant reported it was not followed."),
+            // Order/roznama PDFs are referenced by MahaRERA but were not captured in
+            // this snapshot, so we name them rather than offer a link that 404s.
+            orders.some(o => o.orderFile) && h("p", { className: "faint", style: { fontSize: 12, marginTop: 10, lineHeight: 1.6 } },
+              h("b", null, "Orders on record: "),
+              orders.filter(o => o.orderFile).map(o => o.orderFile).join(" · "),
+              " — read these on the MahaRERA portal."),
+            cases.length > 0 && h("div", { style: { marginTop: 14 } },
+              h("div", { className: "doc-group-h" }, "Court cases declared by the promoter"),
+              cases.map((c, i) => h("div", { key: i, className: "cmpl-row" },
+                h("b", { style: { fontSize: 13.5 } }, (c.court || "Court").replace(/\b\w/g, m => m.toUpperCase())),
+                c.caseNo && h("span", { className: "faint mono", style: { fontSize: 12, marginLeft: 8 } }, "case ", c.caseNo),
+                c.remark && h("div", { className: "muted", style: { fontSize: 12.5, marginTop: 3 } }, c.remark))))
+          ),
+      h("div", { className: "src-row", style: { marginTop: 14, display: "flex" } },
+        h(SourceTag, { source: "MahaRERA — this project's complaint record", asOf: d.capturedAt || asOf }))));
+}
+
+// ---- Where the project actually is -----------------------------------------
+function LocationMap({ p }) {
+  // Coordinates come from the Tier-2 record. The index's map_url is empty
+  // ("...&query=,") for all but one of 44,279 projects, so it is only a fallback.
+  const geo = (p.detail || {}).geo;
+  const m = geo ? null : /query=(-?\d+\.\d+),\s*(-?\d+\.\d+)/.exec(p.mapUrl || "");
+  if (!geo && !m) return null;
+  const lat = geo ? String(geo.lat) : m[1];
+  const lng = geo ? String(geo.lng) : m[2];
+  // Google's keyless embed — no API key, no billing, no quota to manage.
+  const src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+  return h("div", { className: "panel", style: { marginTop: 16 } },
+    h("div", { className: "panel-h" },
+      h("h2", { className: "row gap-8" }, h(Icon_v, { name: "pin", size: 17, className: "faint" }), "Location"),
+      h("a", { className: "btn btn-ghost btn-sm", target: "_blank", rel: "noopener",
+          href: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` },
+        h(Icon_v, { name: "link", size: 14 }), "Open in Google Maps")),
+    h("div", { className: "panel-b", style: { padding: 0 } },
+      h("iframe", { className: "map-embed", src, loading: "lazy", title: "Project location",
+        referrerPolicy: "no-referrer-when-downgrade", allowFullScreen: true })),
+    h("div", { className: "panel-b", style: { paddingTop: 12 } },
+      h("div", { className: "kvbar" },
+        h(KV, { k: "District", v: p.district }),
+        (p.plot && p.plot.village) && h(KV, { k: "Village", v: p.plot.village }),
+        h(KV, { k: "Pincode", v: (p.plot && p.plot.pincode) || p.pincode || "—" }),
+        h(KV, { k: "Coordinates", v: `${(+lat).toFixed(5)}, ${(+lng).toFixed(5)}`, mono: true })),
+      // Plot identity as filed with MahaRERA — the CTS/survey number is what a
+      // Development Plan remarks lookup is keyed on.
+      p.plot && (p.plot.cts || p.plot.landArea) && h("div", { className: "kvbar", style: { marginTop: 10 } },
+        p.plot.cts && h(KV, { k: "CTS / Survey no.", v: p.plot.cts, mono: true }),
+        p.plot.landArea && h(KV, { k: "Plot area", v: `${p.plot.landArea.toLocaleString("en-IN")} sq.m` }),
+        p.plot.builtUpArea && h(KV, { k: "Permissible built-up", v: `${p.plot.builtUpArea.toLocaleString("en-IN")} sq.m` })),
+      h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
+        h(SourceTag, { source: "MahaRERA — registered project address", asOf: p.dataAsOf }))));
+}
+
 // The Tier-2 detail block: specs, sales/inventory, delays, documents.
 function DetailSection({ p }) {
   const d = p.detail || {};
@@ -42,12 +143,20 @@ function DetailSection({ p }) {
   // group documents by category + collect the key (important) ones, deduped by label
   const groups = {};
   docs.forEach(o => { (groups[o.category] = groups[o.category] || []).push(o); });
+  // Feature one of each important kind. Dedupe on `kind` (the un-numbered label),
+  // not `label` — repeats are numbered "(2 of 5)" and would each look unique.
   const keyDocs = [];
   const seenKey = new Set();
-  docs.forEach(o => { if (o.important && !seenKey.has(o.label)) { seenKey.add(o.label); keyDocs.push(o); } });
-  const docHref = (o) => o.url || `/api/hh/doc/${encodeURIComponent(p.id)}/${encodeURIComponent(o.file)}`;
-  const canOpen = (o) => !!o.url || d.documentsAvailable;
-  const anyOpen = d.documentsAvailable || docs.some(o => o.url);
+  docs.forEach(o => {
+    const k = o.kind || o.label;
+    if (o.important && !seenKey.has(k)) { seenKey.add(k); keyDocs.push(o); }
+  });
+  // The backend resolves each document to a href it has actually verified (our own
+  // /api/hh/doc route when the file ships with the app, otherwise an external URL).
+  // It is null when nothing can serve the file, so a link is never shown dead.
+  const docHref = (o) => o.href;
+  const canOpen = (o) => !!o.href;
+  const anyOpen = docs.some(o => o.href);
   const docItem = (o, i) => {
     const inner = h("span", { className: "row gap-8", style: { minWidth: 0 } },
       h(Icon_v, { name: "doc", size: 15, className: "doc-ic" }),
@@ -129,9 +238,9 @@ function DetailSection({ p }) {
           h("div", { className: "keydoc-grid" },
             keyDocs.map((o, i) => {
               const body = h(React.Fragment, null,
-                h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.label] || "doc", size: 19 })),
+                h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.kind || o.label] || "doc", size: 19 })),
                 h("div", { style: { minWidth: 0, flex: 1 } },
-                  h("div", { className: "keydoc-label" }, o.label),
+                  h("div", { className: "keydoc-label" }, o.kind || o.label),
                   h("div", { className: "keydoc-act" }, canOpen(o) ? "Open document" : "On MahaRERA record")));
               return canOpen(o)
                 ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
@@ -194,7 +303,7 @@ function Verdict({ id, go }) {
     h("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 18, flexWrap: "wrap", gap: 12 } },
       h("button", { className: "btn btn-quiet btn-sm", onClick: go.back },
         h(Icon_v, { name: "back", size: 15 }), "Back to results"),
-      h("div", { className: "row gap-8" },
+      h("div", { className: "row gap-8", style: { flexWrap: "wrap", justifyContent: "flex-end" } },
         h(InquiryButton, { project: p, label: "Ask a question", variant: "btn-ghost", size: "sm" }),
         unlocked
           ? h(React.Fragment, null,
@@ -221,7 +330,7 @@ function Verdict({ id, go }) {
           h("div", { className: "eyebrow", style: { marginBottom: 10 } }, "Verdict · ", p.id),
           h("h1", { className: "verdict-headline" }, p.headline)
         ),
-        h("p", { className: "muted", style: { fontSize: 15, lineHeight: 1.6, marginTop: -6 } }, p.summary),
+        h("p", { className: "verdict-summary" }, p.summary),
         h("div", { className: "kvbar" },
           h(KV, { k: "Project", v: p.name }),
           h(KV, { k: "Builder", v: p.builder }),
@@ -252,7 +361,7 @@ function Verdict({ id, go }) {
 
     // ---------- RED FLAG callouts ----------
     !incomplete && flags.length > 0 && h("div", { style: { marginTop: 22 } },
-      h("div", { className: "grid", style: { gridTemplateColumns: flags.length > 1 ? "1fr 1fr" : "1fr", gap: 14 } },
+      h("div", { className: `grid ${flags.length > 1 ? "grid-2up" : ""}`, style: { gap: 14 } },
         flags.slice(0, 4).map((f, i) =>
           h("div", { key: i, className: `flag ${f.kind === "severe" ? "" : "amber"}` },
             h("div", { className: "fico" }, h(Icon_v, { name: f.kind === "severe" ? "ban" : "info", size: 20 })),
@@ -279,23 +388,26 @@ function Verdict({ id, go }) {
         h("span", { className: "row gap-8" },
           h("span", { className: "faint", style: { fontSize: 13 } }, "Final verdict"),
           h(ScoreChip, { score: p.score, band: p.band })))
-    )),
+    ),
 
     // ---------- TWO COLUMN: track record + timeline ----------
-    h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 16 } },
+    h("div", { className: "grid grid-2up", style: { gap: 16, marginTop: 16 } },
       // builder track record
       h("div", { className: "panel" },
         h("div", { className: "panel-h" }, h("h2", null, "Builder track record"),
           h("span", { className: "row gap-8" }, h(Icon_v, { name: "building", size: 15, className: "faint" }))),
         h("div", { className: "panel-b", style: { paddingTop: 16 } },
           h("div", { className: "row gap-8", style: { marginBottom: 14 } },
-            h("div", null,
-              h("div", { style: { fontWeight: 700, fontSize: 16 } }, b.name),
-              h("div", { className: "faint", style: { fontSize: 12.5 } }, `Active since ${b.since} · ${b.totalProjects} projects on record`))),
+            h("div", { style: { minWidth: 0 } },
+              h("div", { style: { fontWeight: 700, fontSize: 16, overflowWrap: "anywhere" } }, b.name),
+              h("div", { className: "faint", style: { fontSize: 12.5 } },
+                b.totalProjects ? `${b.totalProjects} project(s) in the MahaRERA index` : "Project count not available"))),
+          // Only counts the public record actually supports. "Delivered"/"Delayed"
+          // are not in the index, so we don't show tiles for them.
           h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 6 } },
-            h("div", { className: "tr-stat" }, h("div", { className: "n" }, b.delivered), h("div", { className: "l" }, "Delivered")),
-            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.delayed ? { color: "var(--amber)" } : {} }, b.delayed == null ? "—" : b.delayed), h("div", { className: "l" }, "Delayed")),
-            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.revoked ? { color: "var(--red)" } : {} }, b.revoked), h("div", { className: "l" }, "Revoked"))),
+            h("div", { className: "tr-stat" }, h("div", { className: "n" }, b.totalProjects == null ? "—" : b.totalProjects), h("div", { className: "l" }, "Projects")),
+            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.complaints ? { color: "var(--amber)" } : {} }, b.complaints == null ? "—" : b.complaints), h("div", { className: "l" }, "Complaints")),
+            h("div", { className: "tr-stat" }, h("div", { className: "n", style: b.revoked ? { color: "var(--red)" } : {} }, b.revoked == null ? "—" : b.revoked), h("div", { className: "l" }, "Revoked"))),
           h("p", { className: "muted", style: { fontSize: 13, margin: "12px 2px", lineHeight: 1.5 } }, b.note),
           (b.others && b.others.length > 0) && h("div", { style: { marginTop: 4 } },
             b.others.map((o, i) =>
@@ -329,10 +441,20 @@ function Verdict({ id, go }) {
       )
     ),
 
-    // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
-    p.hasDetail && h(DetailSection, { p }),
+    // ---------- COMPLAINTS AGAINST THIS PROJECT ----------
+    p.hasDetail && h(ProjectComplaints, { p, asOf }),
 
-    // ---------- DISCLAIMER ----------
+    // ---------- LOCATION ----------
+    h(LocationMap, { p }),
+
+    // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
+    p.hasDetail && h(DetailSection, { p })),
+    // ^ the lead gate closes HERE, not after the score panel. Everything of value
+    //   — track record, timeline, snapshot, sales, and every document link — must
+    //   sit inside it, otherwise a visitor just scrolls past the blur and reads it
+    //   all without ever entering a name.
+
+    // ---------- DISCLAIMER (deliberately outside the gate: it's boilerplate) ----------
     h("div", { className: "disclaimer", style: { marginTop: 18 } },
       h("div", { className: "dico" }, h(Icon_v, { name: "info", size: 19 })),
       h("div", null,

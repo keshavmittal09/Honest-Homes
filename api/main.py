@@ -47,15 +47,17 @@ store = ProjectStore()
 def _load() -> None:
     import sys
     log.info("Python version: %s", sys.version)
-    log.info("SUPABASE_URL: %s", os.getenv("SUPABASE_URL", "(using default)"))
-    log.info("SUPABASE_KEY: %s", "***" if os.getenv("SUPABASE_KEY") else "(using default)")
+    # Supabase is NOT a data source. Project/reputation/detail data all come from
+    # the JSONL + JSON snapshots committed in data/. Supabase is only ever used to
+    # store submitted leads, and only when SUPABASE_KEY is set.
+    log.info("lead storage: supabase %s", "configured" if os.getenv("SUPABASE_KEY") else "NOT configured")
 
     try:
         n = store.load_latest()
         if n == 0:
-            log.error("CRITICAL: No projects loaded from REST API")
+            log.error("CRITICAL: No projects loaded from the committed snapshot")
         else:
-            log.info("Successfully loaded %d projects from Supabase REST API", n)
+            log.info("loaded %d projects from the committed data/ snapshot", n)
     except Exception as e:
         log.error("FAILED to load projects: %s", e, exc_info=True)
 
@@ -72,6 +74,18 @@ def _load() -> None:
         if load_detail():
             log.info("tier-2 detail loaded: %d projects (snapshot %s, docs_available=%s)",
                      len(DETAIL.records), DETAIL.captured_at, DETAIL.docs_available)
+            # Only probe the external document host when we are NOT shipping the
+            # files ourselves — if they're local, external reachability is moot.
+            if not DETAIL.docs_available:
+                sample = DETAIL.sample_external_url()
+                if DETAIL.probe_external():
+                    log.info("external document host reachable")
+                else:
+                    log.warning(
+                        "external document host UNREACHABLE (%s) — document links will be "
+                        "shown as unavailable. Ship the files with the app "
+                        "(data/snapshots/detail/<date>/docs/) or re-upload to a live host.",
+                        sample or "no URL recorded")
         else:
             log.info("no tier-2 detail data loaded")
     except Exception as e:
@@ -80,11 +94,22 @@ def _load() -> None:
 
 @app.get("/api/health")
 def health() -> dict:
+    """Status + enough config diagnostics to tell, from outside, whether the
+    deployment is actually wired up. Reports only booleans and hostnames — never
+    a key. Without this there is no way to distinguish "leads are being stored"
+    from "leads are being silently dropped", because /api/lead answers the
+    visitor optimistically either way.
+    """
+    key = os.getenv("SUPABASE_KEY", "")
     return {
         "status": "ok",
         "projects_loaded": store.count(),
         "snapshot_date": store.snapshot_date,
         "total_in_rera": store.total_reported,
+        "detail_projects": len(DETAIL.records) if DETAIL.loaded else 0,
+        "lead_storage": "supabase" if key else "EPHEMERAL FILE — submissions are lost on restart",
+        "supabase_host": (os.getenv("SUPABASE_URL", "") or "").replace("https://", "").rstrip("/") or None,
+        "documents": "local" if DETAIL.docs_available else ("external" if DETAIL.external_ok else "unavailable"),
     }
 
 
@@ -172,8 +197,16 @@ async def lead(payload: dict, request: Request) -> dict:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     except Exception as e:  # never fail the user's submission on a storage hiccup
         log.error("lead write failed: %s", e)
-    log.info("SUBMIT[%s] %s | %s | %s (supabase=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
-    return {"ok": True}
+    if not stored:
+        # Loud, because the fallback file is on an ephemeral disk: on Render this
+        # submission is gone at the next restart. Silent success here is how leads
+        # disappear without anyone noticing.
+        log.error("LEAD NOT DURABLY STORED — SUPABASE_KEY missing or insert failed. "
+                  "Submission kept only in the ephemeral %s", LEADS_FILE.name)
+    log.info("SUBMIT[%s] %s | %s | %s (durable=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
+    # `stored` tells an operator whether this actually landed somewhere permanent.
+    # The visitor still sees success either way — their submission is not their problem.
+    return {"ok": True, "stored": stored}
 
 
 @app.get("/api/config")
@@ -193,11 +226,17 @@ def config() -> dict:
 
 
 @app.get("/api/search")
-def search(q: str = "") -> dict:
-    results = store.search(q)
+def search(q: str = "", offset: int = 0, limit: int = 30) -> dict:
+    # store.search returns (rows, total); unpacking it matters — treating the tuple
+    # as the result list made `count` always 2 and `results` a [rows, total] pair.
+    limit = max(1, min(limit, 60))
+    results, total = store.search(q, limit=limit, offset=offset)
     return {
         "query": q,
         "count": len(results),
+        "total": total,
+        "offset": offset,
+        "limit": limit,
         "results": results,
         "snapshot_date": store.snapshot_date,
     }

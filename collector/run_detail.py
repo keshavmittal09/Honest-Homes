@@ -56,7 +56,10 @@ def _load_index() -> dict[str, dict]:
 def _targets(path: str | None, index: dict[str, dict], limit: int) -> list[str]:
     ids: list[str] = []
     if path and Path(path).exists():
-        for line in Path(path).read_text(encoding="utf-8").splitlines():
+        # utf-8-sig: the file is edited on Windows and picks up a BOM, which would
+        # otherwise glue itself to the first id ("﻿P50500000005") so that id
+        # never matches the index and is retried on every run.
+        for line in Path(path).read_text(encoding="utf-8-sig").splitlines():
             line = line.split("#", 1)[0].strip()
             if line:
                 ids.append(line)

@@ -14,6 +14,7 @@ collector lands, at which point this mapper grows to emit green/amber/red verdic
 from __future__ import annotations
 
 from datetime import date
+from urllib.parse import quote
 
 from engine.verdict import build_verdict
 from engine.reputation import ReputationStore
@@ -38,15 +39,49 @@ _KIND = {"positive": "positive", "caution": "caution", "negative": "severe", "ne
 _ICON = {
     "rera_registered": "shield-check",
     "revoked": "ban",
+    "revoked_siblings": "ban",
+    "complaints": "file-warning",
+    "no_complaints": "shield-check",
+    "project_complaints": "file-warning",
+    "project_no_complaints": "shield-check",
+    "recovery_warrant": "gavel",
+    "project_litigation": "scale",
+    "coverage": "info",
     "long_on_record": "calendar-clock",
     "recent_record": "calendar-check",
     "depth_pending": "hourglass",
 }
 
 
+def _detail_for(row: dict) -> dict | None:
+    """The Tier-2 record for this project, if we hold one."""
+    return DETAIL.get(row.get("rera_id", "")) if DETAIL.loaded else None
+
+
 def _as_of(row: dict) -> str:
     raw = (row.get("fetched_at") or "")[:10]
     return raw or date.today().isoformat()
+
+
+def _doc_with_href(rera_id: str, doc: dict) -> dict:
+    """Attach the href the browser should actually open, resolved server-side.
+
+    Preference order:
+      1. our own /api/hh/doc route, when the captured file ships with this app —
+         always reachable, no third party involved;
+      2. an external URL recorded at capture time (e.g. object storage);
+      3. nothing — `href` is None and the UI renders the row as unopenable rather
+         than as a link that 404s.
+    """
+    out = dict(doc)
+    fname = doc.get("file") or ""
+    if fname and DETAIL.loaded and DETAIL.doc_path(rera_id, fname) is not None:
+        out["href"] = f"/api/hh/doc/{quote(rera_id)}/{quote(fname)}"
+    elif DETAIL.external_ok:
+        out["href"] = doc.get("url") or None
+    else:
+        out["href"] = None
+    return out
 
 
 def _score_to_band(v) -> tuple[str, float | None]:
@@ -58,7 +93,7 @@ def _score_to_band(v) -> tuple[str, float | None]:
 
 def project_to_card(row: dict) -> dict:
     """The lightweight shape used by landing/results cards."""
-    v = build_verdict(row, reputation=REPUTATION)
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
     band, score = _score_to_band(v)
     return {
         "id": row.get("rera_id", ""),
@@ -76,7 +111,7 @@ def project_to_card(row: dict) -> dict:
 
 def project_to_full(row: dict) -> dict:
     """The rich shape used by the Verdict screen."""
-    v = build_verdict(row, reputation=REPUTATION)
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
     band, score = _score_to_band(v)
     complete = score is not None
     as_of = v.data_as_of or _as_of(row)
@@ -85,12 +120,16 @@ def project_to_full(row: dict) -> dict:
     signals = []
     for s in v.signals:
         s = s.to_dict()
+        fact = s["title"]
+        # Don't print the same sentence twice: when the long form only restates the
+        # title, the row shows just the title.
+        detail = "" if s["reason"].rstrip(".").strip() == fact.rstrip(".").strip() else s["reason"]
         signals.append({
             "kind": _KIND.get(s["kind"], "neutral"),
             "impact": (s["points"] if complete and s["points"] != 0 else (0 if complete else None)),
             "icon": _ICON.get(s["key"], "file"),
-            "fact": s["reason"].split(".")[0][:120],
-            "detail": s["reason"],
+            "fact": fact,
+            "detail": detail,
             "source": s["source"],
             "asOf": s["as_of"],
         })
@@ -143,18 +182,33 @@ def project_to_full(row: dict) -> dict:
         card["extensions"] = len(exts)
         card["units"] = sp.get("unitsTotal")
         card["statusNote"] = sp.get("status") or card["statusNote"]
-        card["hasDetail"] = True
+        # Plot identity (CTS/survey number, land area, boundaries) only exists in the
+        # HTML capture; it is what a DP-remarks lookup is keyed on.
+        card["plot"] = det.get("plot")
+        rid = row.get("rera_id", "")
+        docs = [_doc_with_href(rid, o) for o in det.get("documents", [])]
+        # An HTML-only capture has no specs, units or documents — flagging it as
+        # "hasDetail" would render a Project snapshot of nothing but em-dashes.
+        card["hasDetail"] = bool(sp) or bool(det.get("documents"))
         card["detail"] = {
             "specs": sp,
             "extensions": exts,
             "buildings": det.get("buildings", []),
             "units": det.get("units", {}),
             "litigation": det.get("litigation"),
-            "documents": det.get("documents", []),
+            "documents": docs,
             "documentCount": det.get("document_count", 0),
-            "documentsAvailable": DETAIL.docs_available,
+            "documentsAvailable": any(o.get("href") for o in docs),
             "capturedAt": DETAIL.captured_at,
+            "projectComplaints": det.get("projectComplaints") or {},
+            "geo": det.get("geo"),
         }
+        # Project-level counts override the builder-level placeholders, because
+        # they answer the question the buyer actually asked.
+        pc = det.get("projectComplaints") or {}
+        card["projectComplaints"] = pc.get("count")
+        card["orders"] = len(pc.get("orders") or []) if pc.get("count") is not None else None
+        card["courtCases"] = (det.get("litigation") or {}).get("count")
     else:
         card["hasDetail"] = False
 
@@ -162,25 +216,42 @@ def project_to_full(row: dict) -> dict:
 
 
 def builder_stub(row: dict) -> dict:
-    """Builder track record from captcha-free reputation data."""
+    """Builder track record from captcha-free reputation data.
+
+    Only reports numbers we can actually source. We do NOT know how many projects a
+    builder has delivered or delayed — the index has no completion field — so those
+    are reported as unknown rather than inferred. (An earlier version showed the
+    complaint count under a 'Delayed' heading, which stated something the record
+    does not say.)
+    """
     name = row.get("promoter_name") or "Unknown builder"
     if not REPUTATION.loaded:
-        return {"name": name, "since": "—", "totalProjects": "—", "delivered": "—",
-                "delayed": None, "revoked": 0, "others": [],
+        return {"name": name, "since": "—", "totalProjects": None,
+                "complaints": None, "revoked": None, "others": [],
                 "note": "Builder track record requires reputation data not yet ingested."}
+
     complaints = REPUTATION.complaints_for(name) or 0
     revoked = REPUTATION.revoked_count_for(name) or 0
+    total = REPUTATION.projects_for(name) or 0
+
+    scope = f"across its {total} project(s) in the MahaRERA index" if total else "on the MahaRERA record"
+    caveat = ("Delivery and delay history is not part of the public index, so this is not a "
+              "completion track record.")
     if complaints == 0 and revoked == 0:
-        note = "No complaints or revoked registrations found against this builder on the MahaRERA record."
+        note = (f"No consumer complaints or revoked registrations found against this builder "
+                f"{scope}. {caveat}")
     else:
         bits = []
-        if complaints: bits.append(f"{complaints} complaint(s)")
-        if revoked: bits.append(f"{revoked} revoked registration(s)")
-        note = "On the MahaRERA record, this builder has " + " and ".join(bits) + "."
+        if complaints:
+            bits.append(f"{complaints} consumer complaint(s)")
+        if revoked:
+            bits.append(f"{revoked} revoked registration(s)")
+        note = (f"This builder has " + " and ".join(bits) + f" on record {scope}. {caveat}")
     return {
-        "name": name, "since": "—", "totalProjects": "—",
-        "delivered": "—",
-        "delayed": complaints if complaints else 0,
+        "name": name,
+        "since": "—",
+        "totalProjects": total or None,
+        "complaints": complaints,
         "revoked": revoked,
         "note": note,
         "others": [],

@@ -50,3 +50,10 @@ data/snapshots/reputation/2026-06-04/snapshot.json
 !data/snapshots/index/2026-06-02/rows.jsonl
 !data/snapshots/reputation/2026-06-04/complaints.jsonl
 !data/snapshots/reputation/2026-06-04/revoked.jsonl
+
+# Loose copies at snapshots/<kind>/ duplicate the dated snapshot dirs and are
+# never read (the loaders glob for dated subdirectories). Keep only the dated ones.
+data/snapshots/index/*.jsonl
+data/snapshots/index/*.json
+data/snapshots/reputation/*.jsonl
+data/snapshots/reputation/*.json
