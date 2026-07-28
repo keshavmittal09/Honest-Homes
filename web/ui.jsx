@@ -279,8 +279,9 @@ function ShareMenu({ url, title, size = "sm" }) {
 // ---------- Contact modal: request-a-project OR ask-about-a-project ----------
 function ContactModal({ onClose, type = "request", projectName = "", projectId = "",
     lockProject = false, prefill = "", heading, intro, requireMessage = false, cta = "Send request" }) {
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
+  const saved = savedLead();
+  const [name, setName] = useState(saved.name || "");
+  const [contact, setContact] = useState(saved.phone || "");
   const [project, setProject] = useState(lockProject ? projectName : (prefill || ""));
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -305,6 +306,10 @@ function ContactModal({ onClose, type = "request", projectName = "", projectId =
       const r = await submitEntry({ type, name: name.trim(), phone: contact.trim(),
         project: project.trim(), projectId, message: message.trim() });
       if (!r.ok) throw new Error("bad");
+      try {
+        localStorage.setItem("hh-lead", JSON.stringify(
+          { name: name.trim(), phone: contact.trim(), ts: Date.now() }));
+      } catch (_) {}
       setSent(true);
     } catch (_) {
       setErr("Couldn't send right now — please try again in a moment.");
@@ -343,8 +348,10 @@ function ContactModal({ onClose, type = "request", projectName = "", projectId =
                 ? field("Project", h("input", { value: project, readOnly: true, className: "ro" }))
                 : field("Project or builder *", h("input", { value: project, onChange: e => setProject(e.target.value), placeholder: "e.g. Lodha Park, Worli" })),
               h("div", { className: "form-2col" },
-                field("Your name *", h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Full name" })),
-                field("Phone *", h("input", { value: contact, onChange: e => setContact(e.target.value), placeholder: "Mobile number", inputMode: "tel" }))),
+                field("Your name *", h("input", { value: name, onChange: e => setName(e.target.value),
+                  placeholder: "Full name", name: "name", autoComplete: "name" })),
+                field("Phone *", h("input", { value: contact, onChange: e => setContact(e.target.value),
+                  placeholder: "Mobile number", inputMode: "tel", name: "tel", autoComplete: "tel" }))),
               field(inquiry ? "Your question *" : "Anything else (optional)",
                 h("textarea", { value: message, onChange: e => setMessage(e.target.value), rows: 3,
                   placeholder: inquiry ? "e.g. What's the price of a 2BHK? Is possession on track?" : "Location, RERA ID, or what you'd like to know" })),
@@ -417,10 +424,18 @@ function hasLead() {
   try { return !!localStorage.getItem("hh-lead"); } catch (_) { return false; }
 }
 
+// What this visitor already told us. Reused to prefill every later form — asking
+// the same person for their name and number a third time is pure friction.
+function savedLead() {
+  try { return JSON.parse(localStorage.getItem("hh-lead") || "{}") || {}; }
+  catch (_) { return {}; }
+}
+
 // ---------- Lead gate (blurs children until name+phone submitted) ----------
 function LeadGate({ project, active = true, onUnlock, children }) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const saved = savedLead();
+  const [name, setName] = useState(saved.name || "");
+  const [phone, setPhone] = useState(saved.phone || "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
@@ -451,8 +466,10 @@ function LeadGate({ project, active = true, onUnlock, children }) {
           "Enter your details to see the full MahaRERA trust verdict for ", h("b", { style: { color: "var(--ink)" } }, pname),
           ". It's free — we'll only reach out about this project or important builder updates."),
         h("form", { className: "gate-form", onSubmit: submit },
-          h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Your name", "aria-label": "Your name" }),
-          h("input", { value: phone, onChange: e => setPhone(e.target.value), placeholder: "Phone number", inputMode: "tel", "aria-label": "Phone number" }),
+          h("input", { value: name, onChange: e => setName(e.target.value), placeholder: "Your name",
+            "aria-label": "Your name", name: "name", autoComplete: "name" }),
+          h("input", { value: phone, onChange: e => setPhone(e.target.value), placeholder: "Phone number",
+            inputMode: "tel", "aria-label": "Phone number", name: "tel", autoComplete: "tel" }),
           err && h("div", { className: "form-err", style: { justifyContent: "center" } }, h(Icon, { name: "info", size: 14 }), err),
           h("button", { type: "submit", className: "btn btn-primary btn-lg", disabled: busy, style: { width: "100%", justifyContent: "center" } },
             busy ? "Unlocking…" : h("span", { className: "row gap-8" }, h(Icon, { name: "shield-check", size: 16 }), "Unlock verdict"))),
@@ -489,4 +506,4 @@ function Footer({ go }) {
   );
 }
 
-Object.assign(window, { SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton, InquiryButton, submitEntry, submitLead, hasLead, LeadGate, Footer });
+Object.assign(window, { savedLead, SourceTag, BandBadge, ScoreChip, ProjectCard, TrustGauge, SignalRow, ImpactTag, Timeline, SkeletonCard, useToast, BAND_LABEL, BAND_ICON, ShareMenu, ContactModal, ContactButton, InquiryButton, submitEntry, submitLead, hasLead, LeadGate, Footer });

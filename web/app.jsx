@@ -4,11 +4,55 @@
 const { useState: useStateA, useEffect: useEffectA } = React;
 const Icon_a = window.Icon;
 
+// ---- URL <-> route -----------------------------------------------------------
+// The app was pure in-memory state: every screen lived at "/", so the #/verdict/<id>
+// links the Share menu hands out opened the homepage, the back button left the site,
+// and nothing could be bookmarked or indexed.
+function routeToHash(r) {
+  if (!r || r.name === "home") return "";
+  if (r.name === "results") return "#/search" + (r.q ? "/" + encodeURIComponent(r.q) : "");
+  if (r.name === "verdict") return "#/verdict/" + encodeURIComponent(r.id);
+  if (r.name === "report") return "#/report/" + encodeURIComponent(r.id);
+  return "";
+}
+
+function hashToRoute(hash) {
+  const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean);
+  if (!parts.length) return { name: "home" };
+  const [what, arg] = parts;
+  if (what === "verdict" && arg) return { name: "verdict", id: decodeURIComponent(arg) };
+  if (what === "report" && arg) return { name: "report", id: decodeURIComponent(arg) };
+  if (what === "search") return { name: "results", q: arg ? decodeURIComponent(arg) : "" };
+  return { name: "home" };
+}
+
 function App() {
   const [theme, setTheme] = useStateA(() => localStorage.getItem("hh-theme") || "light");
-  const [route, setRoute] = useStateA({ name: "home" });
-  const [query, setQuery] = useStateA("");
+  const [route, setRoute] = useStateA(() => hashToRoute(location.hash));
+  const [query, setQuery] = useStateA(() => hashToRoute(location.hash).q || "");
   const [hist, setHist] = useStateA([]);
+
+  // Keep the address bar in step, and honour the browser's back/forward buttons.
+  useEffectA(() => {
+    const want = routeToHash(route);
+    if ((location.hash || "") !== want) {
+      history.pushState(null, "", want || location.pathname);
+    }
+  }, [route]);
+
+  useEffectA(() => {
+    const onPop = () => {
+      const r = hashToRoute(location.hash);
+      setRoute(r);
+      if (r.name === "results") setQuery(r.q || "");
+    };
+    window.addEventListener("popstate", onPop);
+    window.addEventListener("hashchange", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      window.removeEventListener("hashchange", onPop);
+    };
+  }, []);
 
   useEffectA(() => { document.documentElement.setAttribute("data-theme", theme); localStorage.setItem("hh-theme", theme); }, [theme]);
 
@@ -26,13 +70,15 @@ function App() {
   const nav = (r) => { setHist(hh => [...hh, route]); setRoute(r); };
   const go = {
     home: () => setRoute({ name: "home" }),
-    results: () => nav({ name: "results" }),
+    results: () => nav({ name: "results", q: query }),
     verdict: (id) => nav({ name: "verdict", id }),
     report: (id) => nav({ name: "report", id }),
     download: (id) => nav({ name: "report", id, print: true }),
-    back: () => { setHist(hh => { if (hh.length) { setRoute(hh[hh.length - 1]); return hh.slice(0, -1); } setRoute({ name: "results" }); return hh; }); },
+    // Prefer the browser's own history so back behaves as the user expects even
+    // when they arrived on a deep link.
+    back: () => { if (hist.length) { history.back(); } else { setRoute({ name: "results", q: query }); } },
   };
-  const onSearch = (q) => { setQuery(q); nav({ name: "results" }); };
+  const onSearch = (q) => { setQuery(q); nav({ name: "results", q }); };
 
   let screen;
   if (route.name === "home") screen = h(Landing, { go, onSearch });

@@ -95,6 +95,13 @@
 
 /* ---------- reset ---------- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* The design was drawn a touch small — it reads correctly at about 110% browser
+   zoom. `zoom` applies that for everyone, and unlike a transform it scales the
+   layout itself, so nothing overlaps and media queries still see a sensible
+   width. A root font-size would have done nothing here: this sheet is written in
+   px, not rem. Phones already have a small viewport, so they keep 1:1. */
+body { zoom: 1.1; }
+@media (max-width: 560px) { body { zoom: 1; } }
 html, body { height: 100%; }
 /* NB: do NOT put overflow-x:hidden on html/body. It turns the root into a scroll
    container, which kills `position: sticky` — that would break the scroll scene,
