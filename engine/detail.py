@@ -34,6 +34,13 @@ def _ro(api: dict, ep: str):
 # Map a raw document filename -> (clean label, category, is_important).
 # Order matters: first match wins.
 _DOC_RULES = [
+    # Complaint evidence comes FIRST. These are the papers behind the most damaging
+    # facts on a project's page — the signed order, the hearing record, and the
+    # recovery warrant. They were previously unmatched, so they fell to the bottom
+    # of the download priority and were cut by the per-project cap.
+    (r"\brecovery warrant|\bwarrant\b|\brw[ _\-]", "Recovery Warrant", "Complaint papers", True),
+    (r"ro[zj]e?anama|roznama|\brfo\b", "Hearing Record (Roznama)", "Complaint papers", True),
+    (r"interim order|final order|\border\b|\bcc\d{3}|order of ", "Complaint Order", "Complaint papers", True),
     (r"commencement|cc[ _\-]?compress|\bcc[ _\-]\d", "Commencement Certificate", "Approvals & certificates", True),
     (r"occupanc|\boc\b", "Occupancy Certificate", "Approvals & certificates", True),
     (r"completion", "Completion Certificate", "Approvals & certificates", True),
@@ -70,7 +77,7 @@ _DOC_RULES = [
     (r"apartment|association", "Apartment Association", "Other", False),
 ]
 _DOC_COMPILED = [(re.compile(rx, re.I), lab, cat, imp) for rx, lab, cat, imp in _DOC_RULES]
-DOC_CATEGORY_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
+DOC_CATEGORY_ORDER = ["Complaint papers", "Approvals & certificates", "Agreements & legal", "Plans",
                       "Professional certificates", "KYC & financial", "Other"]
 
 # Captured filenames are underscore-joined and often carry a numeric de-duplication
@@ -126,6 +133,38 @@ def dedupe_files(doc_dir: Path, files: list[str]) -> list[str]:
         if kept is None or (_DEDUP_PREFIX.match(kept) and not _DEDUP_PREFIX.match(f)):
             by_hash[digest] = f
     return sorted(by_hash.values())
+
+
+def _sanitised(name: str) -> str:
+    """The on-disk filename the downloader would produce for this reference."""
+    safe = re.sub(r"[^A-Za-z0-9._-]", "_", name or "")[:120]
+    return safe if "." in safe else safe + ".pdf"
+
+
+def merge_document_refs(on_disk: list[str], refs: list[dict]) -> list[tuple[str, bool]]:
+    """(filename, downloaded) for every document the project references.
+
+    A project can reference hundreds of documents while we only pull the ones a
+    buyer checks. Listing just the downloaded ones would misrepresent the record
+    as thinner than it is, so every reference is kept and flagged; the UI links
+    only the ones actually present and points the rest at MahaRERA.
+    """
+    have = set(on_disk)
+    out: list[tuple[str, bool]] = [(f, True) for f in sorted(on_disk)]
+    seen = set(on_disk)
+    for r in refs or []:
+        fn = r.get("fileName")
+        if not fn:
+            continue
+        safe = _sanitised(fn)
+        if safe in have or safe in seen:
+            continue
+        # the downloader prefixes "<n>_" on collision, so check those too
+        if any(d.endswith("_" + safe) for d in have):
+            continue
+        seen.add(safe)
+        out.append((safe, False))
+    return out
 
 
 def label_documents(files: list[str]) -> list[dict]:
@@ -186,6 +225,217 @@ def _geo(api: dict) -> dict | None:
         if 15.5 <= lat <= 22.5 and 72.0 <= lng <= 81.0:
             return {"lat": round(lat, 6), "lng": round(lng, 6)}
     return None
+
+
+def _labelled_docs(on_disk: list[str], refs: list[dict]) -> tuple[list[dict], list[dict]]:
+    """(documents we hold, summary of every kind on record).
+
+    Listing all ~60,000 referenced documents individually produced a 13 MB
+    snapshot in which 94% of rows were unopenable — a project with 481 references
+    rendered 456 dead entries. Instead: the held documents in full (linkable), and
+    a per-kind tally covering everything on record. The reader still learns the
+    complete paper trail exists without wading through it.
+    """
+    held = label_documents(sorted(on_disk))
+    for d in held:
+        d["downloaded"] = True
+
+    counts: dict[str, int] = {}
+    for r in refs or []:
+        fn = r.get("fileName")
+        if fn:
+            counts[label_document(_sanitised(fn))["label"]] = \
+                counts.get(label_document(_sanitised(fn))["label"], 0) + 1
+    have: dict[str, int] = {}
+    for d in held:
+        have[d["kind"]] = have.get(d["kind"], 0) + 1
+
+    # Cap the tally: a project can reference a hundred distinct one-off filenames,
+    # and the long tail was 40% of the whole snapshot while telling a reader
+    # nothing. Keep the kinds that actually recur, plus a count of the remainder.
+    ranked = sorted(counts.items(), key=lambda kv: -kv[1])
+    summary = [{"kind": k, "onRecord": n, "held": have.get(k, 0)} for k, n in ranked[:12]]
+    rest = ranked[12:]
+    if rest:
+        summary.append({"kind": f"{len(rest)} other document type(s)",
+                        "onRecord": sum(n for _, n in rest),
+                        "held": sum(have.get(k, 0) for k, _ in rest)})
+    return held, summary
+
+
+_PARTY_NOISE = re.compile(r"\b(m/?s|mr|mrs|ms|shri|smt|and|ors?|others?|pvt|private|"
+                          r"ltd|limited|llp|co|company|builders?|developers?|"
+                          r"construction[s]?|realty|infra(structure)?|estates?|"
+                          r"ventures?|enterprises?)\b", re.I)
+
+
+def _party_key(name: str) -> set[str]:
+    """Distinguishing word-set for a party name, for builder/buyer matching."""
+    s = re.sub(r"^\s*\d+\)\s*", " ", name or "")        # "1) Foo 2) Bar"
+    s = re.sub(r"\d+\)", " ", s)
+    s = _PARTY_NOISE.sub(" ", s.lower())
+    return {w for w in re.split(r"[^a-z0-9]+", s) if len(w) > 2}
+
+
+def _is_promoter(name: str, promoter: str) -> bool:
+    """Is this party the project's own promoter (rather than a buyer)?"""
+    a, b = _party_key(name), _party_key(promoter)
+    if not a or not b:
+        return False
+    return len(a & b) >= min(2, len(b)) or (len(b) == 1 and b <= a)
+
+
+# Markers that a party is a business rather than a person. Needed because the
+# respondent is frequently a JOINT developer whose name differs from the
+# registered promoter — matching the promoter alone left half of all complaints
+# with an unknown direction.
+_ORG_MARKERS = re.compile(
+    r"\b(m/?s|builders?|developers?|construction|constructions|realty|infra|"
+    r"infrastructure|estates?|ventures?|enterprises?|associates?|corporation|"
+    r"company|pvt|private|ltd|limited|llp|group|projects?|promoters?|"
+    r"buildcon|landmark|properties|property|homes|housing|realtors?)\b", re.I)
+
+
+def _looks_like_org(name: str) -> bool:
+    if not name:
+        return False
+    if _ORG_MARKERS.search(name):
+        return True
+    return bool(re.search(r"\d+\)", name))       # "1) X 2) Y" — a party list
+
+
+def parse_address(api: dict) -> dict:
+    """District / taluka / village / locality for the project's LAND.
+
+    The API exposes these as plain names alongside the encrypted addressLine, and
+    they are far more precise than the index's district alone — `locality` is the
+    sector and neighbourhood, which is what a buyer actually recognises and what
+    makes the document folders browsable by area.
+    """
+    best: dict = {}
+
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get("districtName") or o.get("villageName"):
+                cand = {
+                    "district": (o.get("districtName") or "").strip() or None,
+                    "taluka": (o.get("talukaName") or "").strip() or None,
+                    "village": (o.get("villageName") or "").strip() or None,
+                    "pincode": str(o.get("pinCode") or o.get("pincode") or "").strip() or None,
+                    "locality": (o.get("locality") or "").strip() or None,
+                }
+                # prefer the richest record seen
+                if sum(v is not None for v in cand.values()) > sum(v is not None for v in best.values()):
+                    best.clear(); best.update(cand)
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(api.get("endpoints", {}))
+    return best
+
+
+def parse_complaints(api: dict, promoter: str) -> list[dict]:
+    """Every complaint on this project, assembled from all four MahaRERA sources.
+
+    The portal splits one complaint across separate endpoints: the complaint
+    itself (parties + status), the signed order, any non-compliance applications
+    with their hearing roznamas, and any recovery warrant. Keyed by registration
+    number so a buyer sees one row per dispute with its whole life-cycle, rather
+    than four disconnected tables.
+
+    Direction matters and is not given directly: MahaRERA names a complainant and
+    a respondent, so we compare both against the project's promoter to say whether
+    a buyer complained about the builder or the builder complained about a buyer.
+    """
+    eps = api.get("endpoints", {}) or {}
+
+    def ro(k):
+        v = eps.get(k)
+        return v.get("responseObject") if isinstance(v, dict) else None
+
+    base = ro("getComplaintByProjectId")
+    base = base if isinstance(base, list) else []
+    det = ro("getComplaintDetailsByProjectId") or {}
+    det = det if isinstance(det, dict) else {}
+
+    by_no: dict[str, dict] = {}
+
+    def slot(no, cid=None):
+        no = no or (f"complaint-{cid}" if cid else "unknown")
+        return by_no.setdefault(no, {
+            "complaintNo": no, "type": None, "filedOn": None, "status": None,
+            "resolved": None, "complainant": None, "respondent": None,
+            "direction": None, "order": None, "nonCompliance": [], "warrant": None,
+        })
+
+    for c in base:
+        r = slot(c.get("complaintRegistrationNo"), c.get("complaintId"))
+        r["type"] = c.get("complaintTypeName")
+        r["filedOn"] = (c.get("complaintRegistrationDate") or "")[:10] or None
+        r["status"] = (c.get("complaintStatus") or "").strip() or None
+        r["complainant"] = (c.get("profileNameComplainant") or "").strip() or None
+        r["respondent"] = (c.get("profileNameRespondent") or "").strip() or None
+
+    for o in (det.get("complaintDetails") or []):
+        r = slot(o.get("complaintRegistrationNo"), o.get("complaintId"))
+        r["complainant"] = r["complainant"] or (o.get("complainantName") or "").strip() or None
+        r["respondent"] = r["respondent"] or (o.get("respondentName") or "").strip() or None
+        r["filedOn"] = r["filedOn"] or o.get("complaintFilingDate")
+        if o.get("orderFileName") or o.get("orderDmsRefNo"):
+            r["order"] = {"file": o.get("orderFileName"),
+                          "ref": o.get("orderDmsRefNo"),
+                          "approvedOn": (o.get("approvalDateTime") or "")[:10] or None}
+
+    for m in (det.get("miscComplaintDetails") or []):
+        r = slot(m.get("complaintRegistrationNo"), m.get("complaintId"))
+        r["nonCompliance"].append({
+            "appliedOn": (m.get("nonComplianceAppliedDate") or "")[:10] or None,
+            "roznamaFile": m.get("roznamaFileName"),
+            "roznamaRef": m.get("roznamaDmsRefNo"),
+            "roznamaOn": (m.get("roznamaGenerationDate") or "")[:10] or None,
+            "note": (m.get("roznamaContent") or "").strip() or None,
+        })
+
+    for w in (det.get("warrentDetails") or []):
+        r = slot(w.get("complaintRegistrationNo"), w.get("complaintId"))
+        r["warrant"] = {
+            "file": w.get("warrantFileName"), "ref": w.get("warrantDmsRefNo"),
+            "issuedOn": (w.get("dateOfIssueOfWarrant") or "")[:10] or None,
+            "amount": w.get("totalAmountOfRecovery"),
+            "issued": (w.get("isIssued") or "").strip() or None,
+            "district": w.get("districtName"),
+        }
+
+    out = []
+    for r in by_no.values():
+        # A party is the "builder side" if it matches the registered promoter OR
+        # simply reads as a business — joint developers are named as respondents
+        # under their own name, not the promoter's.
+        comp_biz = (_is_promoter(r["complainant"] or "", promoter)
+                    or _looks_like_org(r["complainant"] or ""))
+        resp_biz = (_is_promoter(r["respondent"] or "", promoter)
+                    or _looks_like_org(r["respondent"] or ""))
+        if resp_biz and not comp_biz:
+            r["direction"] = "buyer_vs_builder"
+        elif comp_biz and not resp_biz:
+            r["direction"] = "builder_vs_buyer"
+        elif comp_biz and resp_biz:
+            r["direction"] = "business_vs_business"
+        else:
+            r["direction"] = "unknown"
+        st = (r["status"] or "").lower()
+        # An approved order closes the complaint; a warrant means the order was
+        # NOT complied with, so it re-opens as unresolved regardless of status.
+        r["resolved"] = (("order approved" in st or "closed" in st or "disposed" in st)
+                         and not r["warrant"])
+        r["nonCompliance"].sort(key=lambda x: x.get("appliedOn") or "")
+        out.append(r)
+
+    out.sort(key=lambda r: (r.get("filedOn") or ""), reverse=True)
+    return out
 
 
 def parse_record(api: dict, doc_files: list[str]) -> dict:
@@ -338,8 +588,13 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
     seen_nos |= {o["complaintNo"] for o in orders if o.get("complaintNo")}
     complaints = len(seen_nos) if (seen_nos or det_ro or comp_list) else None
 
+    full = parse_complaints(api, api.get("promoter_name") or "")
     project_complaints = {
-        "count": complaints,
+        "count": complaints if complaints is not None else (len(full) or None),
+        "complaints": full,
+        "unresolved": sum(1 for c in full if c.get("resolved") is False),
+        "byBuyer": sum(1 for c in full if c["direction"] == "buyer_vs_builder"),
+        "byBuilder": sum(1 for c in full if c["direction"] == "builder_vs_buyer"),
         "rows": complaint_rows,
         "orders": orders,
         "nonCompliance": noncompliance,
@@ -360,6 +615,8 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "lapsed": bool(g.get("isProjectLapsed")),
     }
 
+    _docs = _labelled_docs(doc_files, api.get("documents") or [])
+
     return {
         "rera_id": api.get("rera_id"),
         "project_id": api.get("project_id"),
@@ -371,11 +628,14 @@ def parse_record(api: dict, doc_files: list[str]) -> dict:
         "buildings": buildings,
         "units": units,
         "geo": _geo(api),
+        "address": parse_address(api),
         "litigation": litigation,
         "complaints": complaints,
         "projectComplaints": project_complaints,
-        "documents": label_documents(sorted(doc_files)),
+        "documents": _docs[0],
+        "documentSummary": _docs[1],
         "document_count": len(doc_files),
+        "document_refs": len(api.get("documents") or []),
     }
 
 
@@ -484,13 +744,25 @@ def build_parsed_snapshot(out_name: str | None = None) -> Path:
     html_recs: dict[str, dict] = {}
 
     for raw in raw_dirs:                      # oldest -> newest, newest wins
+        # Document folders may be grouped by area (docs/<District>/<Village>/<RID>),
+        # so locate them by scanning rather than assuming the flat docs/<RID>/ path.
+        doc_dirs = {d.name: d for d in (raw / "docs").rglob("*")
+                    if d.is_dir() and re.fullmatch(r"P\d{11}", d.name)}                    if (raw / "docs").is_dir() else {}
         for f in sorted(raw.glob("*.api.json")):
-            api = json.loads(f.read_text(encoding="utf-8"))
+            try:
+                api = json.loads(f.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            # run_detail_assist writes a LIST of intercepted browser responses (it
+            # carries the auth token, not a project record); only the dict form
+            # written by fetch_detail_api is a parseable capture.
+            if not isinstance(api, dict):
+                continue
             rid = api.get("rera_id")
             if not rid:
                 continue
-            ddir = raw / "docs" / rid
-            files = sorted(os.listdir(ddir)) if ddir.is_dir() else []
+            ddir = doc_dirs.get(rid)
+            files = sorted(os.listdir(ddir)) if ddir and ddir.is_dir() else []
             if files:
                 files = dedupe_files(ddir, files)
             rec = parse_record(api, files)
@@ -527,7 +799,10 @@ class DetailStore:
     def __init__(self) -> None:
         self.records: dict[str, dict] = {}
         self.captured_at = ""
-        self.docs_dir: Path | None = None   # local raw docs dir, if present
+        # Every capture date's docs/ directory. Documents accumulate across runs, so
+        # a single directory would hide everything collected on other dates.
+        self.docs_dirs: list[Path] = []
+        self._doc_index: dict[str, list[Path]] = {}
         self.loaded = False
         # Whether the external host recorded in records.json still answers. Probed
         # once at startup; until then we assume it does.
@@ -543,9 +818,11 @@ class DetailStore:
             return False
         self.records = json.loads(rec.read_text(encoding="utf-8"))
         self.captured_at = d.name
-        # Are the actual document files present locally? (not on the deploy)
-        raw_docs = RAW_ROOT / d.name / "docs"
-        self.docs_dir = raw_docs if raw_docs.is_dir() else None
+        # Newest first, so a re-captured document resolves to the latest copy.
+        self.docs_dirs = [p for p in
+                          sorted((RAW_ROOT.glob("*/docs")), key=lambda x: x.parent.name, reverse=True)
+                          if p.is_dir()]
+        self._index_docs()
         self.loaded = True
         return True
 
@@ -582,14 +859,29 @@ class DetailStore:
 
     @property
     def docs_available(self) -> bool:
-        return self.docs_dir is not None
+        return bool(self._doc_index or self.docs_dirs)
+
+    def _index_docs(self) -> None:
+        """Map rera_id -> EVERY directory holding its documents.
+
+        Built by scanning rather than assuming docs/<RID>/, so the folders can be
+        reorganised (e.g. grouped by district) without breaking document serving.
+        A project can appear in several capture dates with different files in
+        each — a backfill adds to one date, a re-capture to another — so all of
+        its directories are kept, newest first.
+        """
+        idx: dict[str, list[Path]] = {}
+        for root in self.docs_dirs:                    # already newest-first
+            for p in root.rglob("*"):
+                if p.is_dir() and re.fullmatch(r"P\d{11}", p.name):
+                    idx.setdefault(p.name, []).append(p)
+        self._doc_index = idx
 
     def doc_path(self, rera_id: str, filename: str) -> Path | None:
-        if not self.docs_dir:
-            return None
-        p = (self.docs_dir / rera_id / filename).resolve()
-        # guard against path traversal
-        base = (self.docs_dir / rera_id).resolve()
-        if base in p.parents and p.is_file():
-            return p
+        """Locate a document for a project, whatever the folder layout."""
+        for base in self._doc_index.get(rera_id, ()):
+            p = (base / filename).resolve()
+            # guard against path traversal
+            if base.resolve() in p.parents and p.is_file():
+                return p
         return None

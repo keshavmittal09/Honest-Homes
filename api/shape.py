@@ -202,6 +202,7 @@ def project_to_full(row: dict) -> dict:
             "capturedAt": DETAIL.captured_at,
             "projectComplaints": det.get("projectComplaints") or {},
             "geo": det.get("geo"),
+            "address": det.get("address"),
         }
         # Project-level counts override the builder-level placeholders, because
         # they answer the question the buyer actually asked.

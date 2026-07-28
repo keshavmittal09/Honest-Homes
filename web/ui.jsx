@@ -43,8 +43,10 @@ function ProjectCard({ p, onOpen }) {
     ),
     h("div", { className: "meta" },
       h("span", { className: "row gap-8" }, h(Icon, { name: "pin", size: 13 }),
-        [p.district, p.locality && p.locality !== p.district ? p.locality : null].filter(Boolean).join(" · ")),
-      h("span", { className: "k" }, p.id)
+        [p.area || p.district, p.locality && p.locality !== p.district ? p.locality : null].filter(Boolean).join(" · ")),
+      h("span", { className: "k" }, p.id),
+      // distance sits inline; as an absolute overlay it landed on the band badge
+      p.distanceKm != null && h("span", { className: "pcard-dist mono" }, p.distanceKm, " km")
     ),
     h("div", { className: "pcard-foot" },
       h("span", { className: "row gap-8 faint", style: { fontSize: 12.5 } },

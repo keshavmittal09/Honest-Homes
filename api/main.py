@@ -280,6 +280,57 @@ def hh_search(q: str = "", offset: int = 0, limit: int = 30) -> dict:
     }
 
 
+@app.get("/api/hh/nearby")
+def hh_nearby(lat: float, lng: float, km: float = 10.0, limit: int = 24) -> dict:
+    """Projects closest to a point, nearest first.
+
+    Only projects we hold Tier-2 detail for can appear: the index snapshot has no
+    usable coordinates (its map_url is empty for all but one of 44,279 rows), so
+    coordinates exist solely for the deep-collected set. The response says how
+    many that is, because "nothing near you" must not be mistaken for "nothing
+    exists near you".
+    """
+    import math
+
+    if not DETAIL.loaded:
+        return {"cards": [], "searched": 0, "radiusKm": km}
+
+    km = max(0.5, min(km, 100.0))
+    limit = max(1, min(limit, 60))
+    hits = []
+    for rid, rec in DETAIL.records.items():
+        g = rec.get("geo") or {}
+        if not (g.get("lat") and g.get("lng")):
+            continue
+        # equirectangular approximation — accurate well inside a city, and far
+        # cheaper than haversine across every record on each request
+        dlat = math.radians(g["lat"] - lat)
+        dlng = math.radians(g["lng"] - lng) * math.cos(math.radians((g["lat"] + lat) / 2))
+        d = 6371.0 * math.sqrt(dlat * dlat + dlng * dlng)
+        if d <= km:
+            hits.append((d, rid))
+
+    hits.sort()
+    cards = []
+    for d, rid in hits[:limit]:
+        row = store.get(rid)
+        if row is None:
+            continue
+        card = project_to_card(row)
+        card["distanceKm"] = round(d, 2)
+        rec = DETAIL.records.get(rid) or {}
+        addr = rec.get("address") or {}
+        card["area"] = addr.get("village") or addr.get("taluka") or card.get("district")
+        cards.append(card)
+
+    return {
+        "cards": cards,
+        "radiusKm": km,
+        "searched": sum(1 for r in DETAIL.records.values() if (r.get("geo") or {}).get("lat")),
+        "found": len(hits),
+    }
+
+
 @app.get("/api/hh/project/{rera_id}")
 def hh_project(rera_id: str) -> dict:
     row = store.get(rera_id)

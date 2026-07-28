@@ -52,6 +52,16 @@ const HH = (() => {
       return { cards: real, total: realTotal, offset, nextOffset: offset + real.length, hasMore };
     },
 
+    // Projects nearest a point. Only the deep-collected set carries coordinates,
+    // so the response also reports how many were searched.
+    async nearby(lat, lng, km = 10) {
+      try {
+        return await _json(`/api/hh/nearby?lat=${lat}&lng=${lng}&km=${km}`);
+      } catch {
+        return { cards: [], searched: 0, found: 0, radiusKm: km };
+      }
+    },
+
     // Full project (verdict/report). Cached.
     async project(id) {
       if (fullCache.has(id)) return fullCache.get(id);

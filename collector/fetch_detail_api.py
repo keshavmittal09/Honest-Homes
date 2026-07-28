@@ -51,9 +51,37 @@ DMS_URL = f"{HOST}/api/maha-rera-dms-service/batch-job/downloadDocumentForPublic
 UUID = re.compile(r"^[0-9a-fA-F-]{36}(;[0-9.]+)?$")
 _VIEW = re.compile(r"/view/(\d+)")
 
+# Download pacing, set from CLI flags in main(). Module-level so _fetch_one can
+# stay a plain function.
+_DOC_DELAY = 0.7
+_MAX_DOCS = 0
+_IMPORTANT_ONLY = False
+
 
 class _TokenDead(Exception):
     """The public-view token stopped being accepted mid-run."""
+
+
+def keep_awake(on: bool = True) -> None:
+    """Stop Windows sleeping mid-run (no-op elsewhere).
+
+    A token costs a human captcha and lives ~90 minutes of WALL CLOCK time, not
+    90 minutes of runtime — so if the machine sleeps, the token dies unused. That
+    happened once and burned ~80 minutes of a solve.
+    """
+    try:
+        import ctypes
+        ES_CONTINUOUS = 0x80000000
+        ES_SYSTEM_REQUIRED = 0x00000001
+        ES_AWAYMODE_REQUIRED = 0x00000040   # survives Modern Standby on laptops
+        flags = ((ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED)
+                 if on else ES_CONTINUOUS)
+        if ctypes.windll.kernel32.SetThreadExecutionState(flags) == 0 and on:
+            # away-mode is refused on some builds; fall back to plain idle suppression
+            ctypes.windll.kernel32.SetThreadExecutionState(
+                ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
+    except Exception:
+        pass          # not Windows, or not permitted — the run still works
 
 
 def already_captured() -> set[str]:
@@ -149,11 +177,49 @@ def _collect_doc_jobs(api_by_ep: dict) -> dict[str, str]:
     return jobs
 
 
-def _download_docs(jobs: dict[str, str], out: Path, headers: dict) -> int:
+class _Throttled(Exception):
+    """MahaRERA's DDoS guard rejected us; back off rather than push through."""
+
+
+def _doc_priority(fn: str) -> int:
+    """0 = fetch first. Uses the same labelling the site displays.
+
+    A large project references several hundred documents — mostly per-year
+    professional certificates and KYC scans. The ones a buyer actually checks are
+    few, so those are fetched first and the long tail is optional. This keeps us
+    well inside the server's tolerance and inside the storage budget.
+    """
+    from engine.detail import label_document
+    lab = label_document(fn)
+    # Complaint papers rank above everything: they are the evidence behind the
+    # worst facts we publish about a project, so they must never be the ones cut
+    # by the per-project cap.
+    if lab.get("category") == "Complaint papers":
+        return 0
+    return 1 if lab.get("important") else (2 if lab.get("category") == "Plans" else 3)
+
+
+def _download_docs(jobs: dict[str, str], out: Path, headers: dict,
+                   delay: float = 0.7, max_docs: int = 0,
+                   important_only: bool = False) -> tuple[int, list[str]]:
+    """Download documents politely. Returns (count, filenames written).
+
+    MahaRERA answers 403 "Restricted due to multiple requests send in short
+    time(DDoS)" when hit hard, and the previous version fired every reference for
+    a project back-to-back with no pause at all — 481 POSTs in a row for one
+    project — which cost us 88% of all documents. Now: a pause between each, and
+    a 403 backs off and then abandons the project rather than pushing through.
+    """
     out.mkdir(parents=True, exist_ok=True)
-    ok = 0
+    order = sorted(jobs.items(), key=lambda kv: (_doc_priority(kv[1]), kv[1]))
+    if important_only:
+        order = [kv for kv in order if _doc_priority(kv[1]) == 0]
+    if max_docs:
+        order = order[:max_docs]
+
+    ok, written, strikes = 0, [], 0
     with httpx.Client(timeout=60, verify=False) as c:
-        for did, fn in jobs.items():
+        for did, fn in order:
             safe = re.sub(r"[^A-Za-z0-9._-]", "_", fn)[:120] or did
             if "." not in safe:
                 safe += ".pdf"
@@ -162,12 +228,23 @@ def _download_docs(jobs: dict[str, str], out: Path, headers: dict) -> int:
                 p, k = out / f"{k}_{safe}", k + 1
             try:
                 r = c.post(DMS_URL, json={"documentId": did, "fileName": fn}, headers=headers)
+                if r.status_code == 403:
+                    strikes += 1
+                    if strikes >= 3:
+                        raise _Throttled()
+                    time.sleep(20 * strikes)          # back off, then try once more
+                    continue
                 if r.status_code == 200 and len(r.content) > 200:
                     p.write_bytes(r.content)
+                    written.append(p.name)
                     ok += 1
+                    strikes = 0
+            except _Throttled:
+                raise
             except Exception:
                 pass
-    return ok
+            time.sleep(delay)
+    return ok, written
 
 
 def _fetch_one(c, rid: str, row: dict, endpoints: list[str], headers: dict,
@@ -202,19 +279,33 @@ def _fetch_one(c, rid: str, row: dict, endpoints: list[str], headers: dict,
             pass
 
     docs = _collect_doc_jobs(api_by_ep)
-    n_docs = _download_docs(docs, cap_dir / "docs" / rid, headers)
+    throttled = False
+    try:
+        n_docs, written = _download_docs(
+            docs, cap_dir / "docs" / rid, headers,
+            delay=_DOC_DELAY, max_docs=_MAX_DOCS, important_only=_IMPORTANT_ONLY)
+    except _Throttled:
+        n_docs, written, throttled = 0, [], True
+
+    # Record EVERY referenced document, downloaded or not. The metadata is tiny and
+    # lets the site list the full paper trail and link out for anything we did not
+    # pull down, instead of pretending those documents do not exist.
     out = {
         "rera_id": rid, "project_id": pid, "project_name": row.get("project_name", ""),
         "promoter_name": row.get("promoter_name", ""),
         "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "endpoints": api_by_ep,
-        "documents": [{"documentId": d, "fileName": f} for d, f in docs.items()],
+        "throttled": throttled,
+        "documents": [{"documentId": d, "fileName": f,
+                       "downloaded": re.sub(r"[^A-Za-z0-9._-]", "_", f)[:120] in written}
+                      for d, f in docs.items()],
     }
     (cap_dir / f"{rid}.api.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     ok_ep = sum(1 for v in api_by_ep.values() if isinstance(v, dict) and v.get("status") == "1")
     return {"rera_id": rid, "name": row.get("project_name", ""),
-            "endpoints_ok": ok_ep, "docs": n_docs}
+            "endpoints_ok": ok_ep, "docs": n_docs, "refs": len(docs),
+            "throttled": throttled}
 
 
 def main() -> None:
@@ -228,7 +319,18 @@ def main() -> None:
                     help="comma-separated districts to do first, e.g. 'Pune,Thane'")
     ap.add_argument("--refetch", action="store_true",
                     help="re-fetch projects already captured (off by default)")
+    ap.add_argument("--doc-delay", type=float, default=0.7,
+                    help="seconds between document downloads (server 403s if too fast)")
+    ap.add_argument("--max-docs", type=int, default=25,
+                    help="max documents per project (0 = all); the long tail is "
+                         "per-year certificates and KYC scans")
+    ap.add_argument("--important-only", action="store_true",
+                    help="only the documents a buyer checks (certificates, "
+                         "agreement, IOD, title)")
     args = ap.parse_args()
+
+    global _DOC_DELAY, _MAX_DOCS, _IMPORTANT_ONLY
+    _DOC_DELAY, _MAX_DOCS, _IMPORTANT_ONLY = args.doc_delay, args.max_docs, args.important_only
 
     index = _load_index()
     token, endpoints = _reference()
@@ -259,8 +361,10 @@ def main() -> None:
         return
 
     headers = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
+    keep_awake(True)          # the token expires on wall-clock time, not runtime
     summary: list[dict] = []
     stopped = "queue exhausted"
+    throttle_hits = 0
 
     try:
         with httpx.Client(timeout=45, verify=False) as c:
@@ -274,14 +378,25 @@ def main() -> None:
                     print(f"[{i}/{len(queue)}] {rid} — no projectId in detail_url, skipped")
                     continue
                 summary.append(res)
+                flag = " THROTTLED" if res.get("throttled") else ""
                 print(f"[{i}/{len(queue)}] {res['name'][:34]:36s} {rid} "
                       f"endpoints={res['endpoints_ok']}/{len(endpoints)} "
-                      f"docs={res['docs']:<3} ~{remaining // 60}min left")
+                      f"docs={res['docs']:<3} ~{remaining // 60}min left{flag}")
+                if res.get("throttled"):
+                    throttle_hits += 1
+                    if throttle_hits >= 3:
+                        stopped = "server throttling us (403) — backing off"
+                        break
+                    time.sleep(45)
+                else:
+                    throttle_hits = 0
                 time.sleep(args.delay)
     except _TokenDead:
         stopped = "token rejected (401)"
     except KeyboardInterrupt:
         stopped = "interrupted"
+    finally:
+        keep_awake(False)
 
     (cap_dir / "api_snapshot.json").write_text(
         json.dumps({"captured_at": cap_dir.name, "stopped_because": stopped,

@@ -11,19 +11,97 @@ function KV({ k, v, mono }) {
   );
 }
 
-// Document categories in display order (labels come from the parser).
-const DOC_ORDER = ["Approvals & certificates", "Agreements & legal", "Plans",
-  "Professional certificates", "KYC & financial", "Other"];
+// Document categories in display order. This list must stay in step with
+// DOC_CATEGORY_ORDER in engine/detail.py — a category missing here is filtered
+// out of the panel entirely even though the API is serving it.
+const DOC_ORDER = ["Complaint papers", "Approvals & certificates", "Agreements & legal",
+  "Plans", "Professional certificates", "KYC & financial", "Other"];
 const DOC_ICON = {
   "Commencement Certificate": "shield-check", "Occupancy Certificate": "shield-check",
   "Completion Certificate": "shield-check", "RERA Registration Certificate": "shield-check",
-  "Agreement for Sale": "doc", "Building Approval (IOD)": "building", "Title Report": "doc",
+  "Agreement for Sale": "doc", "Building Approval (IOD)": "building",
+  "Title & Search Report": "doc", "Title Report": "doc",
+  "Complaint Order": "gavel", "Recovery Warrant": "gavel", "Hearing Record (Roznama)": "scale",
 };
 
 function SpecCell({ k, v, accent }) {
   return h("div", { className: "spec-cell" },
     h("div", { className: "spec-k" }, k),
     h("div", { className: `spec-v ${accent ? "accent" : ""}` }, (v === null || v === undefined || v === "") ? "—" : v));
+}
+
+// ---- One complaint, whole life-cycle ---------------------------------------
+const DIRECTION = {
+  buyer_vs_builder:     { t: "Buyer → Builder", cls: "red",   d: "A buyer filed this against the builder" },
+  builder_vs_buyer:     { t: "Builder → Buyer", cls: "amber", d: "The builder filed this against a buyer" },
+  business_vs_business: { t: "Business ↔ Business", cls: "amber", d: "Both parties are businesses" },
+  unknown:              { t: "Parties unclear", cls: "", d: "Could not determine which side filed" },
+};
+
+function ComplaintRow({ c }) {
+  const [open, setOpen] = useStateV(false);
+  const dir = DIRECTION[c.direction] || DIRECTION.unknown;
+  const nc = c.nonCompliance || [];
+  const money = (v) => v ? "₹" + Number(v).toLocaleString("en-IN") : null;
+
+  return h("div", { className: "cmpl" },
+    h("button", { className: "cmpl-head", onClick: () => setOpen(o => !o), "aria-expanded": open },
+      h("div", { style: { minWidth: 0, flex: 1 } },
+        h("div", { className: "row gap-8", style: { flexWrap: "wrap" } },
+          h("span", { className: "mono", style: { fontSize: 13, fontWeight: 700 } }, c.complaintNo),
+          c.resolved === false
+            ? h("span", { className: "badge red", style: { fontSize: 10.5 } }, h("span", { className: "dot" }), "UNRESOLVED")
+            : h("span", { className: "badge green", style: { fontSize: 10.5 } }, h("span", { className: "dot" }), "Resolved"),
+          c.warrant && h("span", { className: "badge red", style: { fontSize: 10.5 } },
+            h(Icon_v, { name: "gavel", size: 11 }), "Recovery warrant")),
+        h("div", { className: "cmpl-parties" },
+          h("b", null, c.complainant || "—"), " vs ", h("b", null, c.respondent || "—")),
+        h("div", { className: "faint", style: { fontSize: 12, marginTop: 3 } },
+          h("span", { className: `cmpl-dir ${dir.cls}` }, dir.t),
+          c.filedOn ? " · filed " + c.filedOn : "", c.status ? " · " + c.status : "")),
+      h(Icon_v, { name: open ? "close" : "more", size: 15, className: "faint" })),
+
+    open && h("div", { className: "cmpl-body" },
+      h("div", { className: "faint", style: { fontSize: 12, marginBottom: 10 } }, dir.d, "."),
+      c.order && h("div", { className: "cmpl-item" },
+        h("b", null, "Order passed"), c.order.approvedOn ? ` on ${c.order.approvedOn}` : "",
+        c.order.file && h("div", { className: "faint mono", style: { fontSize: 11.5, marginTop: 2 } }, c.order.file)),
+      nc.length > 0 && h("div", { className: "cmpl-item" },
+        h("b", null, `${nc.length} non-compliance application(s)`),
+        " — the complainant reported the order was not followed.",
+        nc.map((m, j) => h("div", { key: j, className: "faint", style: { fontSize: 11.5, marginTop: 3 } },
+          m.appliedOn ? `applied ${m.appliedOn}` : "",
+          m.roznamaOn ? ` · hearing record ${m.roznamaOn}` : "",
+          m.roznamaFile ? ` · ${m.roznamaFile}` : ""))),
+      c.warrant && h("div", { className: "cmpl-item danger" },
+        h("b", null, "Recovery warrant issued"),
+        c.warrant.amount ? ` — ${money(c.warrant.amount)} to recover` : "",
+        c.warrant.district ? ` · ${c.warrant.district}` : "",
+        h("div", { className: "faint", style: { fontSize: 11.5, marginTop: 2 } },
+          "MahaRERA moved to recover after the order went uncomplied.",
+          c.warrant.file ? " · " + c.warrant.file : "")),
+      !c.order && !nc.length && !c.warrant &&
+        h("div", { className: "faint", style: { fontSize: 12 } }, "No order or hearing record published yet.")));
+}
+
+// A project can carry 85 complaints. Dumping them all makes a wall nobody reads,
+// so lead with the ones that still matter — unresolved, warrants, most recent —
+// and keep the rest one click away rather than hidden.
+function ComplaintList({ complaints }) {
+  const [all, setAll] = useStateV(false);
+  const ranked = [...complaints].sort((a, b) => {
+    const w = (c) => (c.warrant ? 2 : 0) + (c.resolved === false ? 1 : 0);
+    return (w(b) - w(a)) || String(b.filedOn || "").localeCompare(String(a.filedOn || ""));
+  });
+  const shown = all ? ranked : ranked.slice(0, 6);
+  const hidden = ranked.length - shown.length;
+  return h(React.Fragment, null,
+    shown.map((c, i) => h(ComplaintRow, { key: c.complaintNo || i, c })),
+    hidden > 0 && h("button", { className: "btn btn-ghost btn-sm", style: { marginTop: 12 },
+        onClick: () => setAll(true) },
+      `Show all ${ranked.length} complaints`),
+    all && ranked.length > 6 && h("button", { className: "btn btn-quiet btn-sm", style: { marginTop: 12 },
+        onClick: () => setAll(false) }, "Show fewer"));
 }
 
 // ---- Complaints filed against THIS project (not the builder) ----------------
@@ -61,25 +139,18 @@ function ProjectComplaints({ p, asOf }) {
         : h(React.Fragment, null,
             h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
               stat(pc.count, "Complaints", "red"),
-              stat(orders.length, "Orders", "amber"),
-              stat(warrants.length, "Warrants", "red"),
+              stat(pc.unresolved || 0, "Unresolved", "red"),
+              stat(pc.byBuyer || 0, "By buyers", "amber"),
               stat(cases.length, "Court cases", "amber")),
-            rows.map((c, i) => h("div", { key: i, className: "cmpl-row" },
-              h("div", { className: "row", style: { justifyContent: "space-between", gap: 10, flexWrap: "wrap" } },
-                h("span", { className: "mono", style: { fontSize: 13, fontWeight: 700 } }, c.complaintNo || "Complaint"),
-                c.status && h("span", { className: "badge amber", style: { fontSize: 11 } }, c.status)),
-              h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 4 } },
-                c.type ? c.type + " · " : "", c.filedOn ? "filed " + c.filedOn : "",
-                c.complainant ? " · by " + c.complainant : ""))),
-            misc.length > 0 && h("p", { className: "muted", style: { fontSize: 13, marginTop: 12 } },
+            (pc.byBuilder || 0) > 0 && h("p", { className: "muted", style: { fontSize: 13, marginBottom: 12 } },
+              h("b", null, pc.byBuilder, " of these were filed BY the builder"), " against buyers — the rest were filed against the builder."),
+            h(ComplaintList, { complaints: pc.complaints || rows }),
+            // Each complaint above carries its own order, hearing record and
+            // warrant, so a flat list of every order filename would just repeat
+            // that as an unreadable wall.
+            misc.length > 0 && h("p", { className: "faint", style: { fontSize: 12.5, marginTop: 14 } },
               h("b", null, misc.length, " non-compliance application(s)"),
-              " filed — meaning an order was passed and the complainant reported it was not followed."),
-            // Order/roznama PDFs are referenced by MahaRERA but were not captured in
-            // this snapshot, so we name them rather than offer a link that 404s.
-            orders.some(o => o.orderFile) && h("p", { className: "faint", style: { fontSize: 12, marginTop: 10, lineHeight: 1.6 } },
-              h("b", null, "Orders on record: "),
-              orders.filter(o => o.orderFile).map(o => o.orderFile).join(" · "),
-              " — read these on the MahaRERA portal."),
+              " across all complaints — each is shown against its complaint above."),
             cases.length > 0 && h("div", { style: { marginTop: 14 } },
               h("div", { className: "doc-group-h" }, "Court cases declared by the promoter"),
               cases.map((c, i) => h("div", { key: i, className: "cmpl-row" },

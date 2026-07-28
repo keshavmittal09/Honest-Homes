@@ -260,7 +260,7 @@ a { color: inherit; text-decoration: none; }
    PROJECT CARD
    ============================================================ */
 .pcard {
-  display: block; text-align: left; width: 100%;
+  display: flex; flex-direction: column; text-align: left; width: 100%; height: 100%;
   background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r-lg); padding: 18px;
   box-shadow: var(--shadow-sm);
@@ -278,7 +278,12 @@ a { color: inherit; text-decoration: none; }
 .pcard .meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 14px; color: var(--ink-3); font-size: 12.5px; min-width: 0; }
 .pcard .meta > * { min-width: 0; overflow-wrap: anywhere; }
 .pcard .meta .k { font-family: var(--mono); font-size: 11.5px; }
-.pcard-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--line); }
+.pcard-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 15px; padding-top: 13px; border-top: 1px solid var(--line); }
+
+.pcard-dist {
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  background: var(--brand-tint); color: var(--brand);
+}
 
 /* mini score chip */
 .scorechip {
@@ -688,6 +693,26 @@ a { color: inherit; text-decoration: none; }
    content width, which shreds a label like "Court cases". */
 .cmpl-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 560px) { .cmpl-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* one complaint, expandable to its full life-cycle */
+.cmpl { border-top: 1px solid var(--line); }
+.cmpl:first-of-type { border-top: none; }
+.cmpl-head {
+  display: flex; align-items: flex-start; gap: 12px; width: 100%;
+  padding: 13px 0; background: none; border: none; cursor: pointer;
+  text-align: left; font-family: inherit; color: inherit;
+}
+.cmpl-head:hover { background: var(--surface-2); }
+.cmpl-parties { font-size: 13.5px; margin-top: 5px; overflow-wrap: anywhere; }
+.cmpl-parties b { font-weight: 700; }
+.cmpl-dir { font-weight: 700; }
+.cmpl-dir.red { color: var(--red); }
+.cmpl-dir.amber { color: var(--amber); }
+.cmpl-body { padding: 0 0 14px 4px; border-left: 2px solid var(--line); margin-left: 4px; padding-left: 14px; }
+.cmpl-item { font-size: 13px; color: var(--ink-2); margin-bottom: 10px; line-height: 1.5; }
+.cmpl-item b { color: var(--ink); }
+.cmpl-item.danger { padding: 10px 12px; border-radius: var(--r-sm); background: var(--red-tint); border: 1px solid var(--red-line); }
+.cmpl-item.danger b { color: var(--red); }
+
 .cmpl-row { padding: 12px 0; border-top: 1px solid var(--line); }
 .cmpl-row:first-of-type { border-top: none; padding-top: 2px; }
 .map-embed {

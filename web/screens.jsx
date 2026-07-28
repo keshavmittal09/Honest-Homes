@@ -5,6 +5,80 @@
 const { useState: useStateS, useEffect: useEffectS } = React;
 const Icon_s = window.Icon;
 
+// ---------------- NEAR ME ----------------
+// Browser geolocation needs HTTPS (localhost is exempt) and an explicit grant,
+// so every failure path says what happened rather than silently showing nothing.
+function NearMe({ go }) {
+  const [state, setState] = useStateS("asking");   // asking | done | denied | error
+  const [res, setRes] = useStateS(null);
+  const [km, setKm] = useStateS(10);
+
+  const find = (radius = km) => {
+    if (!navigator.geolocation) { setState("error"); return; }
+    setState("asking");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        window.HH.nearby(pos.coords.latitude, pos.coords.longitude, radius).then(r => {
+          setRes(r); setState("done");
+        });
+      },
+      (err) => setState(err.code === 1 ? "denied" : "error"),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 }
+    );
+  };
+
+  // Load on arrival rather than waiting for a click — this is the first thing a
+  // buyer wants. The browser still gates the actual location behind its own
+  // permission prompt; we just stop adding a second click in front of it.
+  useEffectS(() => { find(10); }, []);
+
+  return h("section", { className: "wrap section-pad" },
+    h("div", { className: "results-head" },
+      h("div", null,
+        h("div", { className: "eyebrow" }, "Near you"),
+        h("h2", { className: "section-title", style: { marginTop: 6 } }, "Projects around you")),
+      state === "done" && h("div", { className: "filterbar" },
+        [5, 10, 25].map(r => h("button", { key: r, className: "chip",
+          onClick: () => { setKm(r); find(r); },
+          style: km === r ? { background: "var(--brand)", color: "var(--on-brand)", borderColor: "var(--brand)" } : {} },
+          r, " km")))),
+
+    // Skeletons while the browser resolves position — the section keeps its shape
+    // instead of collapsing and shoving the page around when results land.
+    state === "asking" && h("div", null,
+      h("p", { className: "faint", style: { fontSize: 12.5, margin: "-6px 0 14px" } },
+        h(Icon_s, { name: "pin", size: 13, style: { verticalAlign: "-2px", marginRight: 6 } }),
+        "Finding projects around you…"),
+      h("div", { className: "grid grid-3" }, [0, 1, 2].map(i => h(SkeletonCard, { key: i })))),
+
+    state === "denied" && h("div", { className: "panel", style: { padding: "24px 26px" } },
+      h("p", { className: "muted", style: { fontSize: 14, maxWidth: "60ch", lineHeight: 1.55 } },
+        "We don't have your location, so we can't show what's around you. ",
+        "Allow location in your browser's address bar, or just search by project or builder name above."),
+      h("button", { className: "btn btn-ghost btn-sm", style: { marginTop: 12 }, onClick: () => find() },
+        h(Icon_s, { name: "pin", size: 14 }), "Use my location")),
+
+    state === "error" && h("div", { className: "panel", style: { padding: "24px 26px" } },
+      h("p", { className: "muted", style: { fontSize: 14 } },
+        "Couldn't get your location. This needs a secure (https) connection and a device that reports position.")),
+
+    state === "done" && res && (
+      res.cards.length
+        ? h("div", null,
+            h("p", { className: "faint", style: { fontSize: 12.5, margin: "-6px 0 14px" } },
+              `${res.found} project${res.found === 1 ? "" : "s"} within ${res.radiusKm} km · searched the ${res.searched} projects we hold full records for`),
+            h("div", { className: "grid grid-3" },
+              res.cards.map(p => h(ProjectCard, { key: p.id, p, onOpen: go.verdict }))))
+        : h("div", { className: "panel", style: { padding: "26px" } },
+            h("p", { className: "muted", style: { fontSize: 14, lineHeight: 1.55, maxWidth: "64ch" } },
+              `No deep-collected projects within ${res.radiusKm} km. That does NOT mean there are none near you — `,
+              h("b", { style: { color: "var(--ink)" } }, `we hold full records for ${res.searched} projects so far`),
+              ", mostly around Thane, Navi Mumbai and Mumbai. Search by name above to check any of the 44,000 registered projects."),
+            h("button", { className: "btn btn-ghost btn-sm", style: { marginTop: 14 },
+              onClick: () => { setKm(25); find(25); } }, "Widen to 25 km")))
+  );
+}
+
 // ---------------- LANDING ----------------
 function Landing({ go, onSearch }) {
   const [q, setQ] = useStateS("");
@@ -55,6 +129,10 @@ function Landing({ go, onSearch }) {
         h("span", { className: "c" }, h(Icon_s, { name: "calendar-check", size: 15 }), "Updated monthly")
       )
     ),
+
+    // Near-you comes before the scroll story: it is the most useful thing on
+    // arrival, and burying it under a full-height scroll scene hid it.
+    h(NearMe, { go }),
 
     h(HeroScene, { go, onSearch }),
 
@@ -203,4 +281,4 @@ function EmptyState({ query, filter, onClear }) {
   );
 }
 
-Object.assign(window, { Landing, Results, EmptyState });
+Object.assign(window, { Landing, Results, EmptyState, NearMe });

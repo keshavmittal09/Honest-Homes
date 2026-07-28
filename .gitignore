@@ -28,8 +28,11 @@ wheels/
 # Captured visitor leads — never commit personal data
 data/leads.jsonl
 
-# Tier-2 detail captures (raw HTML + parsed) — local recon for now
+# Tier-2 detail captures — NONE of it is committed.
+# Documents are served from Supabase Storage (URLs live in detail_parsed/*/records.json);
+# at 12,000+ files / 5+ GB they are far past what git or a Render clone should carry.
 data/snapshots/detail/
+
 
 # IDE
 .vscode/

@@ -36,18 +36,45 @@ def _latest(root: Path) -> Path | None:
 
 
 def main() -> None:
-    url = os.getenv("SUPABASE_URL", "https://buhxytlquxsxziagooog.supabase.co").rstrip("/")
+    import argparse
+    from engine.detail import DetailStore
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--projects", default="",
+                    help="JSON file or comma-separated RERA ids to upload (default: all)")
+    ap.add_argument("--dry-run", action="store_true")
+    args = ap.parse_args()
+
+    url = os.getenv("SUPABASE_URL", "").rstrip("/")
     key = os.getenv("SUPABASE_KEY", "")
-    if not key:
-        sys.exit("SUPABASE_KEY not set. Put the service_role key in .env, then re-run.")
+    if not url or not key:
+        sys.exit("SUPABASE_URL / SUPABASE_KEY not set. Put them in .env, then re-run.")
 
     parsed_dir = _latest(PARSED_ROOT)
-    raw_dir = _latest(RAW_ROOT)
-    if not parsed_dir or not raw_dir:
-        sys.exit("No parsed records / raw docs found.")
+    if not parsed_dir:
+        sys.exit("No parsed records found.")
     records_path = parsed_dir / "records.json"
     records = json.loads(records_path.read_text(encoding="utf-8"))
-    docs_root = raw_dir / "docs"
+
+    # Documents are grouped by area now, so resolve each project's folder through
+    # the same index the app uses rather than assuming docs/<RID>/.
+    store = DetailStore()
+    store.load_latest()
+
+    wanted: set[str] | None = None
+    if args.projects:
+        p = Path(args.projects)
+        if p.exists():
+            wanted = set(json.loads(p.read_text(encoding="utf-8")))
+        else:
+            wanted = {x.strip() for x in args.projects.split(",") if x.strip()}
+
+    todo = [(rid, rec) for rid, rec in records.items()
+            if (wanted is None or rid in wanted) and rec.get("documents")]
+    n_docs = sum(len(r.get("documents", [])) for _, r in todo)
+    print(f"{len(todo)} project(s), {n_docs} document(s) to upload")
+    if args.dry_run:
+        return
 
     headers = {"apikey": key, "Authorization": f"Bearer {key}"}
     with httpx.Client(timeout=120, headers=headers) as c:
@@ -57,17 +84,17 @@ def main() -> None:
             print("bucket create:", b.status_code, b.text[:160])
 
         total = up_ok = 0
-        for rid, rec in records.items():
+        for rid, rec in todo:
+            n = 0
             for doc in rec.get("documents", []):
                 f = doc.get("file")
                 if not f:
                     continue
-                local = docs_root / rid / f
-                if not local.is_file():
+                local = store.doc_path(rid, f)
+                if local is None:
                     continue
                 total += 1
-                obj_key = f"{rid}/{f}"
-                enc_key = urllib.parse.quote(obj_key)
+                enc_key = urllib.parse.quote(f"{rid}/{f}")
                 mime = mimetypes.guess_type(f)[0] or "application/octet-stream"
                 r = c.post(
                     f"{url}/storage/v1/object/{BUCKET}/{enc_key}",
@@ -77,9 +104,10 @@ def main() -> None:
                 if r.status_code in (200, 201):
                     doc["url"] = f"{url}/storage/v1/object/public/{BUCKET}/{enc_key}"
                     up_ok += 1
+                    n += 1
                 else:
-                    print("FAIL", obj_key, r.status_code, r.text[:120])
-            print(f"  {rid}: {sum(1 for d in rec.get('documents', []) if d.get('url'))}/{len(rec.get('documents', []))} uploaded")
+                    print("  FAIL", rid, f[:40], r.status_code, r.text[:100])
+            print(f"  {rid}: {n}/{len(rec.get('documents', []))} uploaded")
 
     records_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nDone. {up_ok}/{total} documents uploaded. URLs written to {records_path}")
