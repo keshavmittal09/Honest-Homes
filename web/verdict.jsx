@@ -363,7 +363,7 @@ function Verdict({ id, go }) {
   const mapUrl = p.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || "") + " " + (p.district || "") + " Maharashtra")}`;
   const asOf = p.dataAsOf || (p.signals && p.signals[0] && p.signals[0].asOf) || window.HH.meta().asOf;
 
-  const shareUrl = `${location.origin}${location.pathname}#/verdict/${encodeURIComponent(p.id)}`;
+  const shareUrl = `${location.origin}/verdict/${encodeURIComponent(p.id)}`;
   const shareTitle = `Honest Homes verdict — ${p.name} (${p.builder})`;
 
   const flags = p.signals.filter(s => s.kind === "severe" || (s.kind === "caution" && (p.band === "amber" || p.band === "red")));

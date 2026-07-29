@@ -8,16 +8,20 @@ const Icon_a = window.Icon;
 // The app was pure in-memory state: every screen lived at "/", so the #/verdict/<id>
 // links the Share menu hands out opened the homepage, the back button left the site,
 // and nothing could be bookmarked or indexed.
-function routeToHash(r) {
-  if (!r || r.name === "home") return "";
-  if (r.name === "results") return "#/search" + (r.q ? "/" + encodeURIComponent(r.q) : "");
-  if (r.name === "verdict") return "#/verdict/" + encodeURIComponent(r.id);
-  if (r.name === "report") return "#/report/" + encodeURIComponent(r.id);
-  return "";
+function routeToPath(r) {
+  if (!r || r.name === "home") return "/";
+  if (r.name === "results") return "/search" + (r.q ? "/" + encodeURIComponent(r.q) : "");
+  if (r.name === "verdict") return "/verdict/" + encodeURIComponent(r.id);
+  if (r.name === "report") return "/report/" + encodeURIComponent(r.id);
+  return "/";
 }
 
-function hashToRoute(hash) {
-  const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean);
+// Real paths, not #fragments: a fragment never reaches the server, so no verdict
+// could be indexed by Google or given its own WhatsApp preview. Legacy #/... links
+// already shared are still understood.
+function pathToRoute(pathname, hash) {
+  let parts = (pathname || "/").split("/").filter(Boolean);
+  if (!parts.length && hash) parts = hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   if (!parts.length) return { name: "home" };
   const [what, arg] = parts;
   if (what === "verdict" && arg) return { name: "verdict", id: decodeURIComponent(arg) };
@@ -28,21 +32,21 @@ function hashToRoute(hash) {
 
 function App() {
   const [theme, setTheme] = useStateA(() => localStorage.getItem("hh-theme") || "light");
-  const [route, setRoute] = useStateA(() => hashToRoute(location.hash));
-  const [query, setQuery] = useStateA(() => hashToRoute(location.hash).q || "");
+  const [route, setRoute] = useStateA(() => pathToRoute(location.pathname, location.hash));
+  const [query, setQuery] = useStateA(() => pathToRoute(location.pathname, location.hash).q || "");
   const [hist, setHist] = useStateA([]);
 
   // Keep the address bar in step, and honour the browser's back/forward buttons.
   useEffectA(() => {
-    const want = routeToHash(route);
-    if ((location.hash || "") !== want) {
-      history.pushState(null, "", want || location.pathname);
+    const want = routeToPath(route);
+    if (location.pathname !== want || location.hash) {
+      history.pushState(null, "", want);
     }
   }, [route]);
 
   useEffectA(() => {
     const onPop = () => {
-      const r = hashToRoute(location.hash);
+      const r = pathToRoute(location.pathname, location.hash);
       setRoute(r);
       if (r.name === "results") setQuery(r.q || "");
     };

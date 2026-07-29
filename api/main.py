@@ -13,6 +13,7 @@ import datetime
 import json
 import logging
 import os
+import re
 from pathlib import Path
 
 import httpx
@@ -27,7 +28,7 @@ except Exception:
     pass
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from engine.verdict import build_verdict
@@ -351,10 +352,71 @@ def hh_doc(rera_id: str, filename: str) -> FileResponse:
 
 
 # --- static frontend ---------------------------------------------------------------
-@app.get("/")
-def index() -> FileResponse:
-    return FileResponse(WEB_DIR / "index.html")
-
-
 if WEB_DIR.exists():
     app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+
+
+_OG_ESCAPE = str.maketrans({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"})
+
+
+def _page(title: str = "", description: str = "", url: str = "") -> HTMLResponse:
+    """index.html with per-page social/SEO tags injected.
+
+    A hash route (#/verdict/x) is never sent to the server, so every share on
+    WhatsApp and every crawl by Google saw the same generic homepage. Real paths
+    let each verdict carry its own title, description and preview card — which
+    matters for a product whose growth is people sharing a verdict.
+    """
+    html = (WEB_DIR / "index.html").read_text(encoding="utf-8")
+    if not title:
+        return HTMLResponse(html)
+
+    t = title.translate(_OG_ESCAPE)
+    d = description.translate(_OG_ESCAPE)
+    tags = (
+        f"<title>{t}</title>\n"
+        f'<meta name="description" content="{d}" />\n'
+        f'<meta property="og:type" content="article" />\n'
+        f'<meta property="og:title" content="{t}" />\n'
+        f'<meta property="og:description" content="{d}" />\n'
+        f'<meta property="og:url" content="{url}" />\n'
+        f'<meta name="twitter:card" content="summary" />\n'
+        f'<meta name="twitter:title" content="{t}" />\n'
+        f'<meta name="twitter:description" content="{d}" />\n'
+    )
+    html = re.sub(r"<title>.*?</title>", "", html, count=1, flags=re.S)
+    return HTMLResponse(html.replace("</head>", tags + "</head>", 1))
+
+
+@app.get("/")
+def index() -> HTMLResponse:
+    return _page()
+
+
+@app.get("/verdict/{rera_id}")
+def page_verdict(rera_id: str, request: Request) -> HTMLResponse:
+    row = store.get(rera_id)
+    if row is None:
+        return _page()
+    v = build_verdict(row, reputation=REPUTATION, detail=DETAIL.get(rera_id))
+    name = row.get("project_name") or rera_id
+    builder = row.get("promoter_name") or "the builder"
+    score = "" if v.score is None else f"{v.score}/10 — "
+    return _page(
+        title=f"{name} — MahaRERA verdict | Honest Homes",
+        description=f"{score}{v.headline} Sourced from the official MahaRERA record for {name} by {builder}.",
+        url=str(request.url),
+    )
+
+
+@app.get("/search/{q}")
+def page_search(q: str, request: Request) -> HTMLResponse:
+    return _page(title=f'"{q}" — MahaRERA project search | Honest Homes',
+                 description=f'Trust verdicts for MahaRERA-registered projects matching "{q}".',
+                 url=str(request.url))
+
+
+@app.get("/search")
+@app.get("/report/{rera_id}")
+def page_plain(rera_id: str = "") -> HTMLResponse:
+    return _page()

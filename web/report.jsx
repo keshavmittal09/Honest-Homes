@@ -72,7 +72,7 @@ function Report({ id, go, print }) {
   const bandWord = { green: "CLEAN", amber: "CAUTION", red: "SERIOUS FLAGS", incomplete: "INCOMPLETE" }[p.band];
   const reraUrl = p.detailUrl || "https://maharera.maharashtra.gov.in/projects-search-result";
 
-  const shareUrl = `${location.origin}${location.pathname}#/verdict/${encodeURIComponent(p.id)}`;
+  const shareUrl = `${location.origin}/verdict/${encodeURIComponent(p.id)}`;
   const shareTitle = `Honest Homes verdict — ${p.name} (${p.builder})`;
 
   return h("div", { style: { padding: "26px 16px 70px", background: "var(--paper)" } },
