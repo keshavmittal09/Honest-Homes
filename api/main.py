@@ -28,7 +28,7 @@ except Exception:
     pass
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from engine.verdict import build_verdict
@@ -359,7 +359,7 @@ if WEB_DIR.exists():
 _OG_ESCAPE = str.maketrans({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"})
 
 
-def _page(title: str = "", description: str = "", url: str = "") -> HTMLResponse:
+def _page(title: str = "", description: str = "", url: str = "", image: str = "") -> HTMLResponse:
     """index.html with per-page social/SEO tags injected.
 
     A hash route (#/verdict/x) is never sent to the server, so every share on
@@ -380,12 +380,88 @@ def _page(title: str = "", description: str = "", url: str = "") -> HTMLResponse
         f'<meta property="og:title" content="{t}" />\n'
         f'<meta property="og:description" content="{d}" />\n'
         f'<meta property="og:url" content="{url}" />\n'
-        f'<meta name="twitter:card" content="summary" />\n'
+        f'<meta name="twitter:card" content="{"summary_large_image" if image else "summary"}" />\n'
         f'<meta name="twitter:title" content="{t}" />\n'
         f'<meta name="twitter:description" content="{d}" />\n'
     )
+    if image:
+        tags += (f'<meta property="og:image" content="{image}" />\n'
+                 f'<meta property="og:image:width" content="1200" />\n'
+                 f'<meta property="og:image:height" content="630" />\n'
+                 f'<meta name="twitter:image" content="{image}" />\n')
     html = re.sub(r"<title>.*?</title>", "", html, count=1, flags=re.S)
     return HTMLResponse(html.replace("</head>", tags + "</head>", 1))
+
+
+@app.get("/og/{rera_id}.png")
+def og_image(rera_id: str) -> Response:
+    """Share card for one project. Cached hard — the inputs only change monthly."""
+    row = store.get(rera_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="project not found")
+    try:
+        from .og import card
+    except Exception:            # Pillow unavailable — better no card than a 500
+        raise HTTPException(status_code=404, detail="image rendering unavailable")
+
+    det = DETAIL.get(rera_id)
+    v = build_verdict(row, reputation=REPUTATION, detail=det)
+    addr = (det or {}).get("address") or {}
+    area = " · ".join(x for x in (addr.get("village"), addr.get("district") or row.get("district")) if x)
+    png = card(row.get("project_name") or rera_id, row.get("promoter_name") or "",
+               v.score, v.band, v.headline, area)
+    return Response(png, media_type="image/png",
+                    headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.get("/robots.txt")
+def robots(request: Request) -> Response:
+    base = f"{request.url.scheme}://{request.url.netloc}"
+    return Response(f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n",
+                    media_type="text/plain")
+
+
+_SITEMAP_CHUNK = 10_000
+
+
+@app.get("/sitemap.xml")
+def sitemap_index(request: Request) -> Response:
+    """Index of the per-chunk sitemaps.
+
+    One file cannot hold the whole catalogue (the protocol caps a sitemap at
+    50,000 URLs), and paginating from the start means this keeps working as the
+    index grows past that.
+    """
+    base = f"{request.url.scheme}://{request.url.netloc}"
+    n = max(1, -(-store.count() // _SITEMAP_CHUNK))
+    body = "".join(f"<sitemap><loc>{base}/sitemap-{i}.xml</loc></sitemap>" for i in range(n))
+    return Response(
+        f'<?xml version="1.0" encoding="UTF-8"?>'
+        f'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</sitemapindex>',
+        media_type="application/xml")
+
+
+@app.get("/sitemap-{page}.xml")
+def sitemap_page(page: int, request: Request) -> Response:
+    base = f"{request.url.scheme}://{request.url.netloc}"
+    rows, _ = store.search("", limit=_SITEMAP_CHUNK, offset=page * _SITEMAP_CHUNK)
+    if not rows:
+        raise HTTPException(status_code=404, detail="no such sitemap page")
+    lastmod = store.snapshot_date or ""
+    parts = []
+    for r in rows:
+        rid = r.get("rera_id")
+        if not rid:
+            continue
+        # Enriched projects carry real detail, so they deserve the higher priority.
+        pri = "0.8" if DETAIL.loaded and rid in DETAIL.records else "0.5"
+        parts.append(f"<url><loc>{base}/verdict/{rid}</loc>"
+                     + (f"<lastmod>{lastmod}</lastmod>" if lastmod else "")
+                     + f"<changefreq>monthly</changefreq><priority>{pri}</priority></url>")
+    return Response(
+        f'<?xml version="1.0" encoding="UTF-8"?>'
+        f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{"".join(parts)}</urlset>',
+        media_type="application/xml")
 
 
 @app.get("/")
@@ -406,6 +482,7 @@ def page_verdict(rera_id: str, request: Request) -> HTMLResponse:
         title=f"{name} — MahaRERA verdict | Honest Homes",
         description=f"{score}{v.headline} Sourced from the official MahaRERA record for {name} by {builder}.",
         url=str(request.url),
+        image=f"{request.url.scheme}://{request.url.netloc}/og/{rera_id}.png",
     )
 
 
