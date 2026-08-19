@@ -62,11 +62,19 @@ function Icon({ name, size = 18, sw = 1.75, fill = false, style, className }) {
 window.Icon = Icon;
 
 // ---------- Brand mark ----------
-// The two towers that form the H, redrawn as vector from the logo. Colours come
-// from the theme tokens rather than being baked in, so the same mark works on
-// warm paper and on dark slate; window slots are knocked out to the page colour
-// so they read as openings at any size.
-function LogoMark({ size = 32, className, style }) {
+// The real logo artwork, lifted off its grey backdrop. It reads properly from
+// about 40px up; below that the painted towers collapse into a smudge, so small
+// renders fall back to a flat two-tower derivative of the same shape (which is
+// also what the 16/32px favicons use).
+function LogoMark({ size = 36, className, style }) {
+  if (size >= 34) {
+    return h("img", {
+      src: "/static/img/logo-mark.png",
+      width: size, height: size, className,
+      alt: "Honest Homes",
+      style: Object.assign({ objectFit: "contain", display: "block" }, style),
+    });
+  }
   return h("svg", {
     width: size, height: size, viewBox: "4 2 56 57", className, style,
     role: "img", "aria-label": "Honest Homes",
@@ -76,11 +84,10 @@ function LogoMark({ size = 32, className, style }) {
     h("rect", { x: 25, y: 30, width: 14, height: 8, fill: "var(--brand)" }),
     h("rect", { x: 45.5, y: 4, width: 3, height: 8, fill: "var(--brand-2)" }),
     h("rect", { x: 8, y: 52, width: 48, height: 2.5, rx: 1, fill: "var(--brand)", opacity: .35 }),
-    // windows
-    [[13, 22], [18.5, 22], [13, 41], [18.5, 41]].map(([x, y], i) =>
-      h("rect", { key: "l" + i, x, y, width: 3.5, height: 3.5, rx: .6, fill: "var(--paper)" })),
-    [[42, 17], [47.5, 17], [42, 24], [47.5, 24], [42, 41], [47.5, 41]].map(([x, y], i) =>
-      h("rect", { key: "r" + i, x, y, width: 3.5, height: 3.5, rx: .6, fill: "var(--paper)" }))
+    [[13,22],[18.5,22],[13,41],[18.5,41]].map(([x, y], i) =>
+      h("rect", { key: "l"+i, x, y, width: 3.5, height: 3.5, rx: .6, fill: "var(--paper)" })),
+    [[42,17],[47.5,17],[42,24],[47.5,24],[42,41],[47.5,41]].map(([x, y], i) =>
+      h("rect", { key: "r"+i, x, y, width: 3.5, height: 3.5, rx: .6, fill: "var(--paper)" }))
   );
 }
 

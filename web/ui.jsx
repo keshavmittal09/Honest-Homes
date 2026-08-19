@@ -485,7 +485,7 @@ function Footer({ go }) {
     h("div", { className: "wrap footer-inner" },
       h("div", { className: "footer-brand" },
         h("div", { className: "brandmark", onClick: go.home, style: { cursor: "pointer" } },
-          h("div", { className: "glyph", style: { width: 28, height: 28 } }, h(window.LogoMark, { size: 28 })),
+          h("div", { className: "glyph", style: { width: 34, height: 34 } }, h(window.LogoMark, { size: 34 })),
           h("div", { className: "wordmark", style: { fontSize: 17 } }, "Honest", h("span", null, "Homes"))),
         h("p", { className: "faint", style: { fontSize: 12.5, marginTop: 10, maxWidth: "42ch", lineHeight: 1.55 } },
           "Plain-language trust verdicts on Maharashtra builders, sourced from official MahaRERA public records. Information, not legal advice.")),

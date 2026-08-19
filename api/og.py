@@ -44,27 +44,27 @@ def _font(name: str, size: int) -> ImageFont.FreeTypeFont:
         return ImageFont.load_default()
 
 
-def _mark(d: ImageDraw.ImageDraw, x: int, y: int, size: int) -> None:
-    """The Honest Homes tower mark, same geometry as web/img/mark.svg.
+MARK_PATH = Path(__file__).resolve().parent.parent / "web" / "img" / "logo-mark.png"
 
-    Drawn rather than loaded so the card needs no SVG rasteriser, and so it stays
-    in step with the favicon: both are generated from this one set of rectangles.
-    """
-    VX, VY, VW = 4, 2, 56
-    k = size / VW
-    def box(bx, by, bw, bh, fill):
-        d.rectangle([x + (bx - VX) * k, y + (by - VY) * k,
-                     x + (bx - VX + bw) * k, y + (by - VY + bh) * k], fill=fill)
-    box(10, 18, 15, 34, BRAND)
-    box(39, 12, 15, 40, (94, 155, 219))
-    box(25, 30, 14, 8, BRAND)
-    box(45.5, 4, 3, 8, (94, 155, 219))
-    for bx in (13, 18.5):
-        for by in (22, 41):
-            box(bx, by, 3.5, 3.5, PAPER)
-    for bx in (42, 47.5):
-        for by in (17, 24, 41):
-            box(bx, by, 3.5, 3.5, PAPER)
+
+@lru_cache(maxsize=4)
+def _mark_img(height: int):
+    """The real logo artwork, sized for the card. Cached — it is the same on
+    every card, and decoding a 512px PNG per request would be wasted work."""
+    try:
+        m = Image.open(MARK_PATH).convert("RGBA")
+    except OSError:
+        return None
+    return m.resize((round(m.width * height / m.height), height), Image.LANCZOS)
+
+
+def _mark(img: Image.Image, x: int, y: int, size: int) -> int:
+    """Paste the mark, returning the x where text should begin."""
+    m = _mark_img(size)
+    if m is None:
+        return x
+    img.alpha_composite(m, (x, y)) if img.mode == "RGBA" else img.paste(m, (x, y), m)
+    return x + m.width + 16
 
 
 def _wrap(draw: ImageDraw.ImageDraw, text: str, font, max_w: int, max_lines: int) -> list[str]:
@@ -92,16 +92,16 @@ def _wrap(draw: ImageDraw.ImageDraw, text: str, font, max_w: int, max_lines: int
 
 def card(name: str, builder: str, score, band: str, headline: str, area: str = "") -> bytes:
     colour, label = BAND.get(band, BAND["incomplete"])
-    img = Image.new("RGB", (W, H), PAPER)
+    img = Image.new("RGBA", (W, H), PAPER)
     d = ImageDraw.Draw(img)
 
     # band stripe down the left edge — the verdict readable at thumbnail size
     d.rectangle([0, 0, 18, H], fill=colour)
 
-    _mark(d, 64, 46, 44)
+    tx = _mark(img, 60, 44, 56)
     bold = _font("DejaVuSans-Bold.ttf", 30)
-    d.text((122, 52), "HONEST HOMES", font=bold, fill=BRAND)
-    d.text((122, 90), "Verdict from the official MahaRERA record",
+    d.text((tx, 52), "HONEST HOMES", font=bold, fill=BRAND)
+    d.text((tx, 90), "Verdict from the official MahaRERA record",
            font=_font("DejaVuSans.ttf", 22), fill=INK_3)
 
     # project name, wrapped
@@ -134,5 +134,5 @@ def card(name: str, builder: str, score, band: str, headline: str, area: str = "
     d.text((980, 348), label, font=lab, fill=PAPER, anchor="mm")
 
     buf = io.BytesIO()
-    img.save(buf, format="PNG", optimize=True)
+    img.convert("RGB").save(buf, format="PNG", optimize=True)
     return buf.getvalue()
