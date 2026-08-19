@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 2 56 57" role="img" aria-label="Honest Homes">
+  <!--
+    The two towers that form the H, redrawn as vector from the raster logo: crisp
+    at any size, no baked-in background, and cropped to the artwork so it fills
+    the box it is given. Detail is deliberately coarse — window slots are 3.5 units
+    at a 56-unit crop, which still reads at 16px where finer mullions turn to mud.
+    Colours are literal here (a standalone file has no CSS variables); the in-app
+    LogoMark in icons.jsx draws the same shape from theme tokens.
+  -->
+  <rect x="10" y="18" width="15" height="34" fill="#1B4E80"/>
+  <rect x="39" y="12" width="15" height="40" fill="#5E9BDB"/>
+  <rect x="25" y="30" width="14" height="8" fill="#1B4E80"/>
+  <rect x="45.5" y="4" width="3" height="8" fill="#5E9BDB"/>
+  <rect x="8" y="52" width="48" height="2.5" rx="1" fill="#1B4E80" opacity=".35"/>
+  <g fill="#fff">
+    <rect x="13" y="22" width="3.5" height="3.5" rx=".6"/>
+    <rect x="18.5" y="22" width="3.5" height="3.5" rx=".6"/>
+    <rect x="13" y="41" width="3.5" height="3.5" rx=".6"/>
+    <rect x="18.5" y="41" width="3.5" height="3.5" rx=".6"/>
+    <rect x="42" y="17" width="3.5" height="3.5" rx=".6"/>
+    <rect x="47.5" y="17" width="3.5" height="3.5" rx=".6"/>
+    <rect x="42" y="24" width="3.5" height="3.5" rx=".6"/>
+    <rect x="47.5" y="24" width="3.5" height="3.5" rx=".6"/>
+    <rect x="42" y="41" width="3.5" height="3.5" rx=".6"/>
+    <rect x="47.5" y="41" width="3.5" height="3.5" rx=".6"/>
+  </g>
+</svg>

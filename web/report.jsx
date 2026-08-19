@@ -93,8 +93,8 @@ function Report({ id, go, print }) {
       // letterhead
       h("div", { className: "letterhead" },
         h("div", { className: "row gap-12" },
-          h("div", { className: "glyph", style: { width: 38, height: 38, display: "grid", placeItems: "center", borderRadius: 10, background: "var(--brand)", color: "var(--on-brand)" } },
-            h(Icon_r, { name: "shield-check", size: 22 })),
+          h("div", { className: "glyph", style: { width: 38, height: 38, display: "grid", placeItems: "center" } },
+            h(window.LogoMark, { size: 38 })),
           h("div", null,
             h("div", { className: "serif", style: { fontWeight: 600, fontSize: 21, lineHeight: 1 } }, "Honest Homes"),
             h("div", { className: "faint", style: { fontSize: 12, marginTop: 3 } }, "Independent due-diligence report"))),

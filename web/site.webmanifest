@@ -1,0 +1,14 @@
+{
+  "name": "Honest Homes",
+  "short_name": "Honest Homes",
+  "description": "Plain-language trust verdicts on Maharashtra builders, sourced from official MahaRERA records.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F0E8",
+  "theme_color": "#1B4E80",
+  "icons": [
+    { "src": "/static/img/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/img/favicon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/static/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

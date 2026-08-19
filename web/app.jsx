@@ -92,7 +92,7 @@ function App() {
 
   const chrome = h("div", { className: "chrome" },
     h("div", { className: "brandmark", onClick: go.home },
-      h("div", { className: "glyph" }, h(Icon_a, { name: "shield-check", size: 19 })),
+      h("div", { className: "glyph" }, h(window.LogoMark, { size: 30 })),
       h("div", { className: "wordmark" }, "Honest", h("span", null, "Homes"))),
     h("div", { className: "chrome-spacer" }),
     h("div", { className: "chrome-nav" },

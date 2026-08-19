@@ -44,6 +44,29 @@ def _font(name: str, size: int) -> ImageFont.FreeTypeFont:
         return ImageFont.load_default()
 
 
+def _mark(d: ImageDraw.ImageDraw, x: int, y: int, size: int) -> None:
+    """The Honest Homes tower mark, same geometry as web/img/mark.svg.
+
+    Drawn rather than loaded so the card needs no SVG rasteriser, and so it stays
+    in step with the favicon: both are generated from this one set of rectangles.
+    """
+    VX, VY, VW = 4, 2, 56
+    k = size / VW
+    def box(bx, by, bw, bh, fill):
+        d.rectangle([x + (bx - VX) * k, y + (by - VY) * k,
+                     x + (bx - VX + bw) * k, y + (by - VY + bh) * k], fill=fill)
+    box(10, 18, 15, 34, BRAND)
+    box(39, 12, 15, 40, (94, 155, 219))
+    box(25, 30, 14, 8, BRAND)
+    box(45.5, 4, 3, 8, (94, 155, 219))
+    for bx in (13, 18.5):
+        for by in (22, 41):
+            box(bx, by, 3.5, 3.5, PAPER)
+    for bx in (42, 47.5):
+        for by in (17, 24, 41):
+            box(bx, by, 3.5, 3.5, PAPER)
+
+
 def _wrap(draw: ImageDraw.ImageDraw, text: str, font, max_w: int, max_lines: int) -> list[str]:
     words, lines, cur = (text or "").split(), [], ""
     for w in words:
@@ -75,9 +98,10 @@ def card(name: str, builder: str, score, band: str, headline: str, area: str = "
     # band stripe down the left edge — the verdict readable at thumbnail size
     d.rectangle([0, 0, 18, H], fill=colour)
 
+    _mark(d, 64, 46, 44)
     bold = _font("DejaVuSans-Bold.ttf", 30)
-    d.text((64, 56), "HONEST HOMES", font=bold, fill=BRAND)
-    d.text((64, 96), "Verdict from the official MahaRERA record",
+    d.text((122, 52), "HONEST HOMES", font=bold, fill=BRAND)
+    d.text((122, 90), "Verdict from the official MahaRERA record",
            font=_font("DejaVuSans.ttf", 22), fill=INK_3)
 
     # project name, wrapped
