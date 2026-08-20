@@ -18,12 +18,25 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 
+from engine.scoring import score_builder, score_project
+
 
 # Verdict bands for the headline traffic-light.
 BAND_GREEN = "green"     # looks clean on available records
 BAND_AMBER = "amber"     # some caution flags / incomplete picture
 BAND_RED = "red"         # serious flags on record
 BAND_INCOMPLETE = "incomplete"  # not enough data to score honestly
+
+# v2 scores into five bands; the traffic-light UI understands three. "Reasonable"
+# maps to amber rather than green on purpose: it means minor items were found,
+# and green is a positive claim we only make when nothing adverse is on record.
+_BAND_V2_TO_LEGACY = {
+    "clear": BAND_GREEN,
+    "reasonable": BAND_AMBER,
+    "watch": BAND_AMBER,
+    "serious": BAND_RED,
+    "severe": BAND_RED,
+}
 
 
 @dataclass(slots=True)
@@ -66,11 +79,19 @@ class Verdict:
     rera_id: str
     project_name: str
     promoter_name: str
-    score: int                 # 0..10
+    score: float | None        # 0..10, the legacy headline number
     band: str
     headline: str
     signals: list[Signal] = field(default_factory=list)
     data_as_of: str = ""
+    # v2: the project and builder are scored separately out of 100 and never
+    # blended, because they answer different questions. `confidence` is the share
+    # of the framework we actually had data for; below the floor the numeric is
+    # suppressed and only the band is published.
+    project_score: dict | None = None
+    builder_score: dict | None = None
+    confidence: float | None = None
+    band_v2: str = ""
     disclaimer: str = (
         "This summary is generated automatically from public MahaRERA records as of the "
         "date shown. It is informational only, not legal or financial advice, and may be "
@@ -88,6 +109,10 @@ class Verdict:
             "signals": [s.to_dict() for s in self.signals],
             "data_as_of": self.data_as_of,
             "disclaimer": self.disclaimer,
+            "projectScore": self.project_score,
+            "builderScore": self.builder_score,
+            "confidence": self.confidence,
+            "bandV2": self.band_v2 or None,
         }
 
 
@@ -176,7 +201,7 @@ def _project_signals(detail: dict, as_of: str) -> list[Signal]:
 
 
 def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
-                  today: date | None = None) -> Verdict:
+                  today: date | None = None, portfolio: list | None = None) -> Verdict:
     """Build a verdict from one project index record, optionally enriched with the
     captcha-free reputation data (complaints + revoked status).
 
@@ -190,13 +215,17 @@ def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
     rera_id = project.get("rera_id", "")
     signals: list[Signal] = []
 
-    # Baseline: registered.
+    # Registration is deliberately NOT scored. Every project in this index is
+    # registered, so a +2 for it discriminated between nothing and merely lifted
+    # the base — it made unregistered-looking projects impossible and flattered
+    # everything else. It is stated as context, worth zero.
     if rera_id:
         signals.append(Signal(
-            key="rera_registered", points=2,
+            key="rera_registered", points=0,
             title="Registered with MahaRERA",
-            reason=f"Project is RERA-registered (ID {rera_id}).",
-            source=_SRC_INDEX, as_of=as_of, kind="positive",
+            reason=f"Project is RERA-registered (ID {rera_id}). Registration is a legal "
+                   "requirement to sell, not a quality signal, so it earns no points.",
+            source=_SRC_INDEX, as_of=as_of, kind="neutral",
         ))
 
     rep_loaded = reputation is not None and getattr(reputation, "loaded", False)
@@ -298,9 +327,35 @@ def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
 
         score = max(0, min(10, _BASE_SCORE + sum(s.points for s in signals)))
         band, headline = _band_and_headline_scored(score, signals, project)
+
+        # --- v2 ---------------------------------------------------------------
+        # When we hold the project's own record, the v2 framework is strictly
+        # better evidence than the legacy signal sum: it reads complaint
+        # direction, decays old events and reports its own coverage. It becomes
+        # the published number, and the legacy 0-10 is derived from it so the
+        # headline and the breakdown can never disagree.
+        p_score = b_score = None
+        if detail:
+            p_score = score_project(detail, revoked=reputation.is_revoked(rera_id, promoter),
+                                    today=today)
+            own = len([c for c in (detail.get("projectComplaints") or {}).get("complaints") or []
+                       if c.get("direction") == "buyer_vs_builder"])
+            b_score = score_builder(promoter, portfolio=portfolio or [detail],
+                                    reputation=reputation, exclude_complaints=own,
+                                    today=today)
+            band = _BAND_V2_TO_LEGACY.get(p_score.band, BAND_AMBER)
+            # Below the confidence floor a number would imply precision we do not
+            # have, so we publish the band alone.
+            score = round(p_score.total / 10.0, 1) if p_score.publishable else None
+            headline = _headline_v2(p_score, project, signals)
+
         return Verdict(rera_id=rera_id, project_name=project.get("project_name", ""),
                        promoter_name=promoter, score=score, band=band, headline=headline,
-                       signals=signals, data_as_of=rep_as_of)
+                       signals=signals, data_as_of=rep_as_of,
+                       project_score=p_score.to_dict() if p_score else None,
+                       builder_score=b_score.to_dict() if b_score else None,
+                       confidence=round(p_score.confidence, 2) if p_score else None,
+                       band_v2=p_score.band if p_score else "")
 
     # --- No reputation data loaded: honest N/A (incomplete) ---------------------
     signals.append(Signal(
@@ -315,6 +370,32 @@ def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
                    headline=f"{project.get('project_name') or 'This project'} is RERA-registered; "
                             "full verdict pending reputation data.",
                    signals=signals, data_as_of=as_of)
+
+
+def _headline_v2(ps, project: dict, signals: list[Signal]) -> str:
+    """One sentence stating the strongest thing the record actually says.
+
+    Built from the scored findings rather than the number, so the headline always
+    names a fact the buyer can go and check.
+    """
+    name = project.get("project_name") or "This project"
+    worst = None
+    for c in ps.categories:
+        for f in c.findings:
+            if f.impact < 0 and (worst is None or f.impact < worst.impact):
+                worst = f
+
+    if ps.capped_by == "revocation":
+        return (f"{name}'s MahaRERA registration has been revoked — treat with "
+                "serious caution.")
+    if not ps.publishable:
+        return (f"We could not check enough of {name}'s record to publish a score. "
+                f"{ps.band_label}: {ps.band_note.lower()}.")
+    if worst is None:
+        return (f"Nothing adverse is on {name}'s public MahaRERA record — no complaints, "
+                "no lapse and no revocation. This is a records check, not a clearance.")
+    lead = worst.text[0].lower() + worst.text[1:]
+    return f"{name} scores {ps.total:.0f}/100 ({ps.band_label.lower()}) — {lead}."
 
 
 def _band_and_headline_scored(score: int, signals: list[Signal], project: dict) -> tuple[str, str]:

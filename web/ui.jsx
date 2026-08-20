@@ -125,7 +125,12 @@ function TrustGauge({ score, band, size = 250, animate = true }) {
       incomplete
         ? h("div", { className: "gauge-num", style: { fontSize: size * 0.16, color: colorVar } }, "N/A")
         : h("div", null,
-            h("span", { className: "gauge-num", style: { fontSize: size * 0.28, color: colorVar } }, val.toFixed(1)),
+            // The NUMERAL shows the true score immediately; only the needle and
+            // arc sweep. Animating the digits meant the header read "0.0" for the
+            // first second while the body already showed the real figure — a
+            // screenshot or share card taken in that window published a false
+            // score. The flourish is not worth stating a wrong number.
+            h("span", { className: "gauge-num", style: { fontSize: size * 0.28, color: colorVar } }, score.toFixed(1)),
             h("span", { className: "mono", style: { fontSize: size * 0.085, color: "var(--ink-3)", fontWeight: 600 } }, " /10")
           ),
       h("div", { style: { marginTop: 8 } }, h(BandBadge, { band: incomplete ? "incomplete" : band }))

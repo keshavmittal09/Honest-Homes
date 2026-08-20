@@ -58,6 +58,27 @@ def _detail_for(row: dict) -> dict | None:
     return DETAIL.get(row.get("rera_id", "")) if DETAIL.loaded else None
 
 
+_PORTFOLIO: dict[str, list] = {}
+
+
+def _portfolio_for(promoter: str) -> list:
+    """Every Tier-2 record we hold for this promoter.
+
+    The builder score is computed over the portfolio, so it needs more than the
+    one project being viewed. Built lazily on first use and cached — DETAIL is
+    immutable once loaded, and rebuilding this per request would rescan
+    thousands of records.
+    """
+    if not promoter or not DETAIL.loaded:
+        return []
+    if not _PORTFOLIO:
+        for rec in DETAIL.records.values():
+            key = (rec.get("promoter_name") or "").strip().lower()
+            if key:
+                _PORTFOLIO.setdefault(key, []).append(rec)
+    return _PORTFOLIO.get(promoter.strip().lower(), [])
+
+
 def _as_of(row: dict) -> str:
     raw = (row.get("fetched_at") or "")[:10]
     return raw or date.today().isoformat()
@@ -85,15 +106,23 @@ def _doc_with_href(rera_id: str, doc: dict) -> dict:
 
 
 def _score_to_band(v) -> tuple[str, float | None]:
-    """Map the engine verdict to the UI band/score. 'incomplete' -> N/A."""
-    if v.score is None or v.band == "incomplete":
+    """Map the engine verdict to the UI band/score.
+
+    A suppressed v2 numeric is NOT the same as 'incomplete': we still know which
+    band the project falls in, we just decline to publish a decimal we cannot
+    defend. Only a verdict with no v2 assessment at all becomes N/A.
+    """
+    if v.band == "incomplete":
         return "incomplete", None
+    if v.score is None:
+        return (v.band, None) if v.band_v2 else ("incomplete", None)
     return v.band, round(v.score, 1)
 
 
 def project_to_card(row: dict) -> dict:
     """The lightweight shape used by landing/results cards."""
-    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row),
+                      portfolio=_portfolio_for(row.get("promoter_name", "")))
     band, score = _score_to_band(v)
     return {
         "id": row.get("rera_id", ""),
@@ -111,7 +140,8 @@ def project_to_card(row: dict) -> dict:
 
 def project_to_full(row: dict) -> dict:
     """The rich shape used by the Verdict screen."""
-    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row))
+    v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row),
+                      portfolio=_portfolio_for(row.get("promoter_name", "")))
     band, score = _score_to_band(v)
     complete = score is not None
     as_of = v.data_as_of or _as_of(row)
@@ -168,6 +198,14 @@ def project_to_full(row: dict) -> dict:
         "detailUrl": row.get("detail_url", ""),
         "dataComplete": complete,
         "dataAsOf": as_of,
+        # v2 scoring. `scoreSuppressed` distinguishes "we assessed it but will not
+        # publish a decimal at this confidence" from "we have no data" — the UI
+        # must not render the first as N/A.
+        "projectScore": v.project_score,
+        "builderScore": v.builder_score,
+        "confidence": v.confidence,
+        "bandV2": v.band_v2 or None,
+        "scoreSuppressed": bool(v.band_v2) and score is None,
     })
 
     # --- Merge Tier-2 detail (timeline, specs, documents) when we have it ---

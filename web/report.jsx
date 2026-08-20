@@ -139,6 +139,48 @@ function Report({ id, go, print }) {
       h("div", { className: "rsection-h" }, "Why this verdict — every signal, sourced"),
       h("div", null, p.signals.map((s, i) => h(RptRow, { key: i, s }))),
 
+      // ---- v2: the two scores, their categories, and the confidence caveat ----
+      p.projectScore && h("div", null,
+        h("div", { className: "rsection-h" }, "Scoring breakdown"),
+        h("div", { className: "muted", style: { fontSize: 12, lineHeight: 1.55, marginBottom: 10 } },
+          "The project and the builder are scored separately and never averaged: a capable "
+          + "builder can run a troubled project, and a weak builder can deliver a clean one. "
+          + "Each category starts at its full weight; the deductions below are the whole of the arithmetic."),
+        [["This project", p.projectScore], ["This builder", p.builderScore]]
+          .filter(([, s]) => s)
+          .map(([label, s], si) => h("div", { key: si, style: { marginTop: si ? 16 : 0, breakInside: "avoid" } },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, borderBottom: "1.5px solid var(--ink)", paddingBottom: 5 } },
+              h("div", { style: { fontWeight: 700, fontSize: 14 } }, label),
+              h("div", { className: "mono", style: { fontWeight: 700, fontSize: 14 } },
+                s.publishable === false ? "band only" : `${Math.round(s.total)}/100`,
+                h("span", { className: "muted", style: { fontWeight: 400 } }, " · ", s.bandLabel))),
+            s.cappedBy && h("div", { style: { fontSize: 11.5, marginTop: 5, fontWeight: 600 } },
+              "Score capped — ", s.cappedBy, " overrides every other category."),
+            s.categories.map((c, i) => h("div", { key: i, style: { padding: "7px 0", borderBottom: "1px solid var(--line)" } },
+              h("div", { style: { display: "flex", justifyContent: "space-between", gap: 10, fontSize: 12.5, fontWeight: 600 } },
+                h("span", null, c.label),
+                h("span", { className: "mono" }, c.covered ? `${c.earned.toFixed(1)} / ${c.weight}` : `not assessed / ${c.weight}`)),
+              c.findings.map((f, j) => h("div", { key: j, className: "muted", style: { fontSize: 11.5, marginTop: 3, display: "flex", justifyContent: "space-between", gap: 8, lineHeight: 1.45 } },
+                h("span", null, "· ", f.text),
+                h("span", { className: "mono", style: { flex: "none" } }, f.impact === 0 ? "0" : f.impact.toFixed(1)))),
+              c.note && h("div", { className: "faint", style: { fontSize: 10.5, marginTop: 3, fontStyle: "italic" } }, "Limitation: ", c.note))))),
+        h("div", { style: { marginTop: 12, padding: "10px 14px", background: "var(--surface-2)", borderRadius: 8, fontSize: 11.5, lineHeight: 1.55 } },
+          h("b", null, "Confidence: ", Math.round((p.confidence || 0) * 100), "%. "),
+          "This is the share of the framework we had usable data for. Anything we could not "
+          + "check lowers this figure rather than being scored as clean"
+          + (p.scoreSuppressed ? ", and below 60% we publish the band only, without a number." : "."))),
+
+      // ---- questions the record raises ----
+      p.projectScore && (() => {
+        const qs = [];
+        (p.projectScore.categories || []).forEach(c => (c.findings || []).forEach(f => { if (f.question) qs.push(f); }));
+        return qs.length ? h("div", null,
+          h("div", { className: "rsection-h" }, "What to ask before you pay"),
+          qs.map((f, i) => h("div", { key: i, style: { padding: "9px 0", borderTop: i ? "1px solid var(--line)" : "none", breakInside: "avoid" } },
+            h("div", { style: { fontSize: 12.5, fontWeight: 600, lineHeight: 1.5 } }, i + 1, ". ", f.question),
+            h("div", { className: "muted", style: { fontSize: 11, marginTop: 2, paddingLeft: 14 } }, "Because: ", f.text)))) : null;
+      })(),
+
       // builder
       h("div", { className: "rsection-h" }, "Builder track record"),
       h("div", { className: "muted", style: { fontSize: 13, lineHeight: 1.55 } },

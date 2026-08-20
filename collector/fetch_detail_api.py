@@ -213,9 +213,15 @@ def _download_docs(jobs: dict[str, str], out: Path, headers: dict,
     out.mkdir(parents=True, exist_ok=True)
     order = sorted(jobs.items(), key=lambda kv: (_doc_priority(kv[1]), kv[1]))
     if important_only:
-        order = [kv for kv in order if _doc_priority(kv[1]) == 0]
+        order = [kv for kv in order if _doc_priority(kv[1]) <= 1]
     if max_docs:
-        order = order[:max_docs]
+        # Complaint papers (priority 0) are never cut by the cap: they are the
+        # evidence behind the worst findings we publish, and a project with 40
+        # complaints has 40 orders that all matter. The cap only limits the
+        # ordinary paperwork behind them.
+        must = [kv for kv in order if _doc_priority(kv[1]) == 0]
+        rest = [kv for kv in order if _doc_priority(kv[1]) != 0]
+        order = must + rest[:max_docs]
 
     ok, written, strikes = 0, [], 0
     with httpx.Client(timeout=60, verify=False) as c:

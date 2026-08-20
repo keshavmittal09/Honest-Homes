@@ -328,6 +328,107 @@ function DetailSection({ p }) {
   );
 }
 
+// ============================================================
+// Scoring v2 — category breakdown, confidence, and questions
+// ============================================================
+
+const V2_TONE = { positive: "var(--green)", caution: "var(--amber)", negative: "var(--red)", neutral: "var(--ink-3)" };
+
+// One weighted category: a bar showing how much of its weight survived, then
+// the findings that took the points off. The bar is the audit trail — a reader
+// should be able to add the impacts up and land on the earned figure.
+function CategoryRow({ c }) {
+  const pct = Math.round((c.pct != null ? c.pct : c.earned / c.weight) * 100);
+  const tone = pct >= 85 ? "var(--green)" : pct >= 60 ? "var(--amber)" : "var(--red)";
+  return h("div", { style: { padding: "14px 0", borderTop: "1px solid var(--line)" } },
+    h("div", { className: "row", style: { justifyContent: "space-between", gap: 12, alignItems: "baseline" } },
+      h("div", { style: { fontWeight: 650, fontSize: 14 } }, c.label),
+      h("div", { className: "mono", style: { fontSize: 13, color: tone, fontWeight: 700, flex: "none" } },
+        c.covered ? `${c.earned.toFixed(1)} / ${c.weight}` : `— / ${c.weight}`)),
+    h("div", { style: { height: 6, borderRadius: 4, background: "var(--surface-2)", marginTop: 8, overflow: "hidden" } },
+      h("div", { style: { height: "100%", width: `${c.covered ? pct : 0}%`, background: tone, borderRadius: 4, transition: "width .5s ease" } })),
+    !c.covered && h("div", { className: "faint", style: { fontSize: 12, marginTop: 7 } },
+      "Not assessed — no usable data. Excluded from the score rather than counted as clean."),
+    c.findings.map((f, i) => h("div", { key: i, style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 10, marginTop: 9, alignItems: "start" } },
+      h("div", { style: { minWidth: 0 } },
+        h("div", { style: { fontSize: 13, lineHeight: 1.45, color: "var(--ink-2)" } },
+          h("span", { style: { color: V2_TONE[f.kind] || "var(--ink-3)", fontWeight: 700, marginRight: 6 } },
+            f.kind === "positive" ? "✓" : f.kind === "neutral" ? "•" : "!"),
+          f.text),
+        f.benchmark && h("div", { className: "faint", style: { fontSize: 11.5, marginTop: 2 } }, "Benchmark: ", f.benchmark),
+        h("div", { className: "mono", style: { fontSize: 10.5, color: "var(--ink-3)", marginTop: 3 } }, "↳ ", f.source)),
+      h("div", { className: "mono", style: { fontSize: 12.5, fontWeight: 700, flex: "none", color: f.impact < 0 ? "var(--red)" : "var(--ink-3)" } },
+        f.impact === 0 ? "0" : f.impact.toFixed(1)))),
+    // Covers two kinds of caveat: data we have not collected, and a value we had
+    // to infer. "Limitation" is honest about both without overclaiming either.
+    c.note && h("div", { className: "faint", style: { fontSize: 11.5, marginTop: 9, fontStyle: "italic" } }, "Limitation: ", c.note)
+  );
+}
+
+// How much of the framework we actually had data for. This is deliberately
+// prominent: a high score at low confidence is a weaker claim than the number
+// alone suggests, and hiding that would be the dishonest choice.
+function ConfidenceBar({ confidence, suppressed }) {
+  const pct = Math.round((confidence || 0) * 100);
+  const tone = pct >= 80 ? "var(--green)" : pct >= 60 ? "var(--amber)" : "var(--red)";
+  return h("div", { style: { padding: "13px 16px", borderRadius: 10, background: "var(--surface-2)", marginTop: 14 } },
+    h("div", { className: "row", style: { justifyContent: "space-between", gap: 10, alignItems: "baseline" } },
+      h("div", { style: { fontWeight: 650, fontSize: 13 } }, "Confidence in this assessment"),
+      h("div", { className: "mono", style: { fontWeight: 700, color: tone, fontSize: 13 } }, pct, "%")),
+    h("div", { style: { height: 6, borderRadius: 4, background: "var(--line)", marginTop: 8, overflow: "hidden" } },
+      h("div", { style: { height: "100%", width: `${pct}%`, background: tone, borderRadius: 4 } })),
+    h("div", { className: "faint", style: { fontSize: 12, marginTop: 8, lineHeight: 1.5 } },
+      suppressed
+        ? "Below our 60% threshold, so we publish the band only. A decimal here would imply a precision the record does not support."
+        : "The share of our framework we had usable data for. Anything we could not check lowers this figure instead of quietly scoring as clean."));
+}
+
+// The findings that should turn into a conversation. This is the part a buyer
+// actually takes to a site visit, so it is phrased as questions, not verdicts.
+function AskSeller({ score }) {
+  const qs = [];
+  (score.categories || []).forEach(c => (c.findings || []).forEach(f => { if (f.question) qs.push(f); }));
+  if (!qs.length) return null;
+  return h("div", { className: "panel", style: { marginTop: 16 } },
+    h("div", { className: "panel-h" },
+      h("div", null,
+        h("h2", null, "What to ask before you pay"),
+        h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 3 } },
+          qs.length, " question", qs.length === 1 ? "" : "s", " drawn from the findings above"))),
+    h("div", { className: "panel-b" },
+      qs.map((f, i) => h("div", { key: i, style: { padding: "12px 0", borderTop: i ? "1px solid var(--line)" : "none" } },
+        h("div", { style: { fontSize: 13.5, lineHeight: 1.5, fontWeight: 550 } },
+          h("span", { style: { color: "var(--brand)", fontWeight: 700, marginRight: 7 } }, i + 1, "."), f.question),
+        h("div", { className: "faint", style: { fontSize: 11.5, marginTop: 4, paddingLeft: 18 } }, "Because: ", f.text)))));
+}
+
+// The two scores sit side by side and are never averaged: one asks "is this
+// building in trouble", the other "is this company". A good builder can run a
+// troubled project, and the reverse is just as common.
+function ScoreBreakdown({ project, builder, confidence, suppressed }) {
+  if (!project) return null;
+  const pane = (s, title, sub) => !s ? null : h("div", { className: "panel", style: { flex: "1 1 320px", minWidth: 0 } },
+    h("div", { className: "panel-h" },
+      h("div", { style: { minWidth: 0 } },
+        h("h2", null, title),
+        h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 3 } }, sub)),
+      h("div", { style: { textAlign: "right", flex: "none" } },
+        h("div", { className: "mono", style: { fontSize: 26, fontWeight: 700, lineHeight: 1 } },
+          s.publishable === false ? "—" : Math.round(s.total),
+          h("span", { className: "faint", style: { fontSize: 13, fontWeight: 400 } }, "/100")),
+        h("div", { style: { fontSize: 11.5, fontWeight: 650, marginTop: 3 } }, s.bandLabel))),
+    h("div", { className: "panel-b", style: { paddingTop: 4 } },
+      s.cappedBy && h("div", { style: { padding: "10px 13px", borderRadius: 8, background: "var(--red-bg, var(--surface-2))", borderLeft: "3px solid var(--red)", fontSize: 12.5, margin: "10px 0 4px" } },
+        "Score capped: ", s.cappedBy, " overrides every other category."),
+      s.categories.map((c, i) => h(CategoryRow, { key: i, c }))));
+
+  return h("div", null,
+    h("div", { className: "row", style: { gap: 16, marginTop: 16, flexWrap: "wrap", alignItems: "flex-start" } },
+      pane(project, "This project, scored", "Delivery, legal standing, disclosure, finance, land"),
+      pane(builder, "This builder, scored", "Track record across every project we hold")),
+    h(ConfidenceBar, { confidence, suppressed }));
+}
+
 function Verdict({ id, go }) {
   const [data, setData] = useStateV(null);
   const [loading, setLoading] = useStateV(true);
@@ -454,12 +555,20 @@ function Verdict({ id, go }) {
       h("div", { className: "panel-b" },
         p.signals.map((s, i) => h(SignalRow, { key: i, s }))
       ),
-      !incomplete && h("div", { style: { padding: "14px 22px", borderTop: "1px solid var(--line)", display: "flex", justifyContent: "space-between", alignItems: "center" } },
-        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Base score 5.0 · adjusted by signals above"),
+      !incomplete && h("div", { style: { padding: "14px 22px", borderTop: "1px solid var(--line)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" } },
+        h("span", { className: "faint", style: { fontSize: 12.5 } },
+          "Scored across five weighted categories · see the full breakdown below"),
         h("span", { className: "row gap-8" },
           h("span", { className: "faint", style: { fontSize: 13 } }, "Final verdict"),
           h(ScoreChip, { score: p.score, band: p.band })))
     ),
+
+    // ---------- SCORING v2: category breakdown + confidence ----------
+    p.projectScore && h(ScoreBreakdown, {
+      project: p.projectScore, builder: p.builderScore,
+      confidence: p.confidence, suppressed: p.scoreSuppressed,
+    }),
+    p.projectScore && h(AskSeller, { score: p.projectScore }),
 
     // ---------- TWO COLUMN: track record + timeline ----------
     h("div", { className: "grid grid-2up", style: { gap: 16, marginTop: 16 } },
