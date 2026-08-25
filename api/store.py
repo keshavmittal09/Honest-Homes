@@ -68,12 +68,22 @@ class ProjectStore:
             log.error("load_latest failed: %s", e, exc_info=True)
             return 0
 
-    def search(self, query: str = "", limit: int = 30, offset: int = 0) -> tuple[list[dict], int]:
-        """Search in-memory. Returns (page_of_rows, total_matches)."""
+    def search(self, query: str = "", limit: int = 30, offset: int = 0,
+               areas=None) -> tuple[list[dict], int]:
+        """Search in-memory. Returns (page_of_rows, total_matches).
+
+        `areas` is an optional AreaIndex. When the query names a place rather
+        than a project -- "kharghar", "panvel", "410210" -- every project in that
+        area matches, including the ones whose own name says nothing about where
+        they are. Without it, searching a locality found only projects that
+        happened to have the locality in their title.
+        """
         q = query.strip().lower()
         if not q:
             total = len(self._rows)
             return self._rows[offset:offset + limit], total
+
+        area_ids = areas.ids_for(q) if areas is not None else None
 
         scored: list[tuple[int, dict]] = []
         for r in self._rows:
@@ -81,21 +91,34 @@ class ProjectStore:
             promoter = (r.get("promoter_name") or "").lower()
             rid = (r.get("rera_id") or "").lower()
             district = (r.get("district") or "").lower()
+            pincode = str(r.get("pincode") or "")
 
             if name.startswith(q):
                 scored.append((0, r))
             elif q in name:
                 scored.append((1, r))
-            elif q in promoter:
+            elif pincode == q:
                 scored.append((2, r))
-            elif q in district:
+            elif q in promoter:
                 scored.append((3, r))
-            elif q in rid:
+            # An area match ranks below a name match but above a bare district
+            # one: someone typing "kharghar" wants Kharghar projects, not every
+            # project in Raigad.
+            elif area_ids is not None and r.get("rera_id") in area_ids:
                 scored.append((4, r))
+            elif q in district:
+                scored.append((5, r))
+            elif q in rid:
+                scored.append((6, r))
 
         scored.sort(key=lambda t: t[0])
         total = len(scored)
         return [r for _, r in scored[offset:offset + limit]], total
+
+    def rows(self) -> list[dict]:
+        """Every loaded row. Read-only by convention — the area index needs the
+        whole set to know which projects sit in which pincode."""
+        return self._rows
 
     def get(self, rera_id: str) -> dict | None:
         return self._by_id.get(rera_id)

@@ -103,13 +103,16 @@ def already_captured() -> set[str]:
 
 
 def _reference() -> tuple[str, list[str]]:
-    """(token, endpoint_paths) from whichever capture holds the longest-lived token.
+    """(token, endpoint_paths): the freshest token, the widest endpoint list.
 
     Scans every capture directory rather than just the newest: the token lives in
     the browser capture from run_detail_assist, which is often not the directory
-    this run writes to.
+    this run writes to. The endpoint list is pooled across all captures because
+    any single browser session may have been closed before the page finished
+    calling everything.
     """
     best: tuple[int, str, list[str]] | None = None
+    all_paths: set[str] = set()
     for f in OUT_ROOT.glob("*/*.api.json"):
         try:
             api = json.loads(f.read_text(encoding="utf-8"))
@@ -130,13 +133,26 @@ def _reference() -> tuple[str, list[str]]:
             if "/public/projectregistartion/" in p or "/complaint/" in p or "/reatappeal/" in p:
                 if p not in paths:
                     paths.append(p)
+        if paths:
+            all_paths.update(paths)
         if tok and paths:
             left = _token_seconds_left(tok)
             if best is None or left > best[0]:
                 best = (left, tok, paths)
 
     if best and best[0] > 60:
-        return best[1], best[2]
+        # The token comes from the freshest capture, but the endpoint list is the
+        # union of every capture we hold. A browser session that was closed a
+        # moment early yields a short list -- one such token carried 31 of the 42
+        # paths, silently dropping extensions and geo-tagging, which are exactly
+        # what the delivery score and the amenity directories are built on. The
+        # endpoints are stable across projects, so the union is safe: an endpoint
+        # that does not apply to a project simply returns nothing.
+        merged = list(best[2]) + [p for p in sorted(all_paths) if p not in set(best[2])]
+        if len(merged) > len(best[2]):
+            print(f"Endpoints: {len(best[2])} in the newest capture, "
+                  f"{len(merged)} after merging every capture we hold")
+        return best[1], merged
     raise SystemExit(
         "No usable token found — the last one has expired.\n\n"
         "  1. python -m collector.run_detail_assist\n"
@@ -323,6 +339,10 @@ def main() -> None:
                     help="stop this many seconds before the token expires")
     ap.add_argument("--districts", default="",
                     help="comma-separated districts to do first, e.g. 'Pune,Thane'")
+    ap.add_argument("--region", default="",
+                    help="restrict this run to one region's pincodes, e.g. "
+                         "'kharghar-panvel'. Unlike --districts (which only "
+                         "reorders), this drops everything outside the region.")
     ap.add_argument("--refetch", action="store_true",
                     help="re-fetch projects already captured (off by default)")
     ap.add_argument("--doc-delay", type=float, default=0.7,
@@ -352,6 +372,25 @@ def main() -> None:
         rest.sort(key=lambda r: ((index[r].get("district") or "").lower() not in want, r))
     queue = [r for r in ordered + rest
              if r not in done and index.get(r, {}).get("detail_url")]
+    if args.region:
+        # A token is scarce, so a priority region means *only* that region --
+        # sorting it first would still spend the tail of the token elsewhere.
+        from collector.regions import region as _region
+        pins = _region(args.region)["pincodes"]
+        want = set(pins)
+        before = len(queue)
+        queue = [r for r in queue
+                 if str(index.get(r, {}).get("pincode") or "") in want]
+        # Order by the region's pincode list, not index order. Filtering alone
+        # spread the first token across the whole region and finished none of
+        # it; the point of a priority area is to complete one area at a time.
+        rank = {p: i for i, p in enumerate(pins)}
+        queue.sort(key=lambda r: (rank.get(str(index.get(r, {}).get("pincode") or ""), 99), r))
+        print(f"Region {args.region}: {len(queue)} of {before} queued projects match")
+        for p in pins:
+            n = sum(1 for r in queue if str(index.get(r, {}).get("pincode") or "") == p)
+            if n:
+                print(f"    {p}: {n} remaining")
     if args.limit:
         queue = queue[:args.limit]
 

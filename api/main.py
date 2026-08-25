@@ -34,6 +34,9 @@ from fastapi.staticfiles import StaticFiles
 from engine.verdict import build_verdict
 from .store import ProjectStore
 from .shape import project_to_card, project_to_full, builder_stub, load_reputation, load_detail, REPUTATION, DETAIL
+from .areas import AreaIndex
+from . import neighbourhood
+from . import discussion as disc
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("honesthomes.api")
@@ -42,6 +45,7 @@ WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 
 app = FastAPI(title="Honest Homes API", version="0.1.0")
 store = ProjectStore()
+AREAS = AreaIndex()
 
 
 @app.on_event("startup")
@@ -91,6 +95,14 @@ def _load() -> None:
             log.info("no tier-2 detail data loaded")
     except Exception as e:
         log.error("FAILED to load detail: %s", e, exc_info=True)
+
+    # Area search is built last: it needs the index rows for coverage and the
+    # Tier-2 addresses for the names people actually search by.
+    try:
+        n = AREAS.build(store.rows(), DETAIL.records if DETAIL.loaded else {})
+        log.info("area index: %d searchable areas", n)
+    except Exception as e:
+        log.error("FAILED to build area index: %s", e, exc_info=True)
 
 
 @app.get("/api/health")
@@ -270,15 +282,103 @@ def hh_search(q: str = "", offset: int = 0, limit: int = 30) -> dict:
     """Paginated search/browse. Returns this page of cards plus the total match count
     so the UI can show 'X of Y' and a working 'Load more'."""
     limit = max(1, min(limit, 60))  # guard
-    rows, total = store.search(q, limit=limit, offset=offset)
+    rows, total = store.search(q, limit=limit, offset=offset, areas=AREAS)
+    # When the query named a place, say so: "148 projects in Kharghar" is a very
+    # different result from "148 projects whose name contains kharghar", and the
+    # UI should be able to tell the visitor which one it did.
+    matched = None
+    if q:
+        hits = AREAS.suggest(q, limit=1)
+        if hits and AREAS.ids_for(q):
+            matched = {"name": hits[0]["name"], "kind": hits[0]["kind"],
+                       "count": hits[0]["count"]}
     return {
         "query": q,
         "offset": offset,
         "limit": limit,
         "total": total,
         "loaded": store.count(),
+        "area": matched,
         "cards": [project_to_card(r) for r in rows],
     }
+
+
+@app.get("/api/hh/areas")
+def hh_areas(q: str = "", limit: int = 8) -> dict:
+    """Area suggestions for the search box — localities, pincodes, districts."""
+    return {"query": q, "areas": AREAS.suggest(q, limit=max(1, min(limit, 25)))}
+
+
+@app.get("/api/hh/amenities/{rera_id}")
+def hh_amenities(rera_id: str) -> dict:
+    """The neighbourhood directory for one project, trimmed for rendering."""
+    data = neighbourhood.amenities(rera_id)
+    if data is None:
+        # Not an error: most projects simply have no directory built yet, and the
+        # page needs to say that rather than show an empty neighbourhood.
+        return {"reraId": rera_id, "available": False}
+    return dict(data, available=True)
+
+
+@app.get("/api/hh/amenities/{rera_id}/{key}")
+def hh_amenity_category(rera_id: str, key: str) -> dict:
+    """Every place in one category — the "show all N" expansion."""
+    return {"reraId": rera_id, "key": key,
+            "places": neighbourhood.category_places(rera_id, key)}
+
+
+@app.get("/api/hh/discussion/prompts")
+def hh_discussion_prompts() -> dict:
+    """The questions the post box offers, and the relationships a poster can claim."""
+    return {"prompts": disc.PROMPTS,
+            "relations": [{"key": k, "label": v} for k, v in disc.RELATION.items()]}
+
+
+@app.get("/api/hh/discussion/{rera_id}")
+async def hh_discussion(rera_id: str, limit: int = 50) -> dict:
+    posts = await disc.fetch(rera_id, max(1, min(limit, 100)))
+    return {"reraId": rera_id, "count": len(posts), "posts": posts}
+
+
+@app.post("/api/hh/discussion")
+async def hh_discussion_post(payload: dict, request: Request) -> dict:
+    ip = (request.client.host if request.client else "?")
+    if not _rate_ok(ip):
+        raise HTTPException(status_code=429, detail="too many posts, please wait a moment")
+
+    rec, err = disc.validate(payload)
+    if rec is None:
+        raise HTTPException(status_code=400, detail=err)
+
+    stored = await disc.insert(rec)
+    disc.local_write(rec)             # dev visibility and a fallback read path
+    if not stored:
+        log.error("DISCUSSION POST NOT DURABLY STORED — SUPABASE_KEY missing or "
+                  "insert failed; kept only in the ephemeral %s", disc.LOCAL_FILE.name)
+    log.info("DISCUSSION %s [%s] by %s (durable=%s)",
+             rec["rera_id"], rec["prompt"], rec["author"], stored)
+    # `removed` is surfaced so the poster is told their text was edited rather
+    # than discovering a "[phone removed]" in their own words later.
+    return {"ok": True, "stored": stored, "removed": rec.get("_removed") or []}
+
+
+@app.post("/api/hh/discussion/report")
+async def hh_discussion_report(payload: dict, request: Request) -> dict:
+    ip = (request.client.host if request.client else "?")
+    if not _rate_ok(ip):
+        raise HTTPException(status_code=429, detail="too many requests")
+    ok = await disc.report(str(payload.get("id", "")), str(payload.get("reason", "")))
+    return {"ok": ok}
+
+
+@app.get("/api/hh/amenity-map/{rera_id}/{kind}.jpg")
+def hh_amenity_map(rera_id: str, kind: str):
+    """Stitched street or satellite map for a project."""
+    p = neighbourhood.map_image(rera_id, kind)
+    if p is None:
+        raise HTTPException(status_code=404, detail="no map for this project")
+    return FileResponse(p, media_type="image/jpeg",
+                        headers={"Cache-Control": "public, max-age=86400"})
 
 
 @app.get("/api/hh/nearby")

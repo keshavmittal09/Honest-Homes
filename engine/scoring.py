@@ -493,6 +493,22 @@ def score_project(detail: dict, *, revoked: bool = False, today=None) -> Score:
             _financial(detail), _land(detail)]
 
     scored_weight = sum(c.weight for c in cats if c.covered)
+    if not scored_weight and not hard_cap:
+        # Nothing project-specific has been collected for this one yet. Scoring
+        # it zero would put it in the bottom band and read as an adverse finding
+        # about the project; it is an absence of evidence and has to be labelled
+        # as one. Revocation is exempt because that fact comes from the
+        # deregistered list, not from the project record we are missing.
+        # The findings the category functions produced are artefacts of empty
+        # input -- "No Title & Search Report on the public record" is not true
+        # of the project, it is true of our collection. Publishing them would
+        # invent adverse facts, so the categories are returned empty.
+        blank = [Category(c.key, c.label, c.weight, 0.0, False, [],
+                          "Not collected for this project yet") for c in cats]
+        return Score(0.0, "unrated", "Not yet assessed",
+                     "This project's own MahaRERA record has not been collected yet",
+                     0.0, blank)
+
     total = 100.0 * sum(c.earned for c in cats if c.covered) / scored_weight if scored_weight else 0.0
 
     confidence = scored_weight / 100.0 - sum(UNPARSED_PENALTY.values())
@@ -594,13 +610,18 @@ def score_builder(promoter: str, *, portfolio: list, reputation=None,
                 for r in portfolio]
         ages = [a for a in ages if a and a > 0]
         age = (sum(ages) / len(ages)) if ages else None
+        # "Further ... other projects" is only true when something was actually
+        # taken out of the total. With no project record to exclude, the count
+        # is simply the builder's whole register and must not imply otherwise.
+        netted = (max(0, exclude_complaints) + promoter_filed) > 0
+        scope = ("further complaint%s across this builder's other projects"
+                 if netted else "complaint%s against this builder across its portfolio")
         if others and sold and age:
             rate = others / (sold / 1000.0) / age
             pen = min(18.0, 4.0 * math.log2(1 + rate))
             e2 -= pen
             f2.append(Finding(
-                "%d further complaint%s across this builder's other projects "
-                "(%.1f per 1,000 sold units per year)"
+                ("%d " + scope + " (%.1f per 1,000 sold units per year)")
                 % (others, "" if others == 1 else "s", rate),
                 -pen, "caution", "MahaRERA — promoter complaints register",
                 benchmark="rate-normalised, so a large portfolio is not punished for size"))
@@ -608,12 +629,13 @@ def score_builder(promoter: str, *, portfolio: list, reputation=None,
             pen = min(12.0, 2.0 * math.log2(1 + others))
             e2 -= pen
             f2.append(Finding(
-                "%d further complaint%s across this builder's other projects"
-                % (others, "" if others == 1 else "s"),
+                ("%d " + scope) % (others, "" if others == 1 else "s"),
                 -pen, "caution", "MahaRERA — promoter complaints register"))
         else:
-            f2.append(Finding("No other complaints against this builder on record",
-                              0, "positive", "MahaRERA — promoter complaints register"))
+            f2.append(Finding(
+                "No other complaints against this builder on record" if netted
+                else "No complaints against this builder on record",
+                0, "positive", "MahaRERA — promoter complaints register"))
     cat2 = Category("intensity", "Complaint intensity", 25, max(0.0, e2), cov2, f2)
 
     # --- regulatory penalties (20)

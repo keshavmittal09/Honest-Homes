@@ -60,3 +60,19 @@ data/snapshots/index/*.jsonl
 data/snapshots/index/*.json
 data/snapshots/reputation/*.jsonl
 data/snapshots/reputation/*.json
+
+# --- Region packages -------------------------------------------------------
+# The per-project document files are hard links into data/snapshots/detail/,
+# which is already ignored: ~10 GB of PDFs against ~1 GB of Supabase storage.
+# The site shows document NAMES from records.json and links out to MahaRERA for
+# the files themselves, so nothing here is needed to render a page.
+data/regions/*/projects/*/documents/
+data/regions/*/projects/*/complaints/*/documents/
+
+# The full neighbourhood record keeps 40 places per category for analysis
+# (~110 KB each). `amenities-lite.json` is the shipped form and IS committed.
+data/regions/*/projects/*/amenities/amenities.json
+
+# Stitched map tiles are cached here so neighbouring projects reuse them; the
+# finished map-street/map-satellite images are committed, this scratch is not.
+data/regions/_tilecache/

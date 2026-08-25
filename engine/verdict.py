@@ -36,6 +36,8 @@ _BAND_V2_TO_LEGACY = {
     "watch": BAND_AMBER,
     "serious": BAND_RED,
     "severe": BAND_RED,
+    # No project-level record collected yet. Not a finding about the project.
+    "unrated": BAND_INCOMPLETE,
 }
 
 
@@ -334,20 +336,34 @@ def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
         # direction, decays old events and reports its own coverage. It becomes
         # the published number, and the legacy 0-10 is derived from it so the
         # headline and the breakdown can never disagree.
-        p_score = b_score = None
-        if detail:
-            p_score = score_project(detail, revoked=reputation.is_revoked(rera_id, promoter),
-                                    today=today)
-            own = len([c for c in (detail.get("projectComplaints") or {}).get("complaints") or []
-                       if c.get("direction") == "buyer_vs_builder"])
-            b_score = score_builder(promoter, portfolio=portfolio or [detail],
-                                    reputation=reputation, exclude_complaints=own,
-                                    today=today)
+        # The builder score needs only a promoter name and the reputation
+        # registers, both of which we hold for the whole index -- so it is
+        # computed for every project, not just the ~700 with a Tier-2 capture.
+        # The project score needs that capture; without it `score_project`
+        # returns an explicit "unrated", never a zero that would read as an
+        # adverse finding.
+        revoked_flag = reputation.is_revoked(rera_id, promoter)
+        p_score = score_project(detail or {}, revoked=revoked_flag, today=today)
+        own = len([c for c in (detail.get("projectComplaints") or {}).get("complaints") or []
+                   if c.get("direction") == "buyer_vs_builder"]) if detail else 0
+        b_score = score_builder(promoter,
+                                portfolio=portfolio or ([detail] if detail else []),
+                                reputation=reputation, exclude_complaints=own,
+                                today=today)
+
+        if p_score.band != "unrated":
             band = _BAND_V2_TO_LEGACY.get(p_score.band, BAND_AMBER)
             # Below the confidence floor a number would imply precision we do not
             # have, so we publish the band alone.
             score = round(p_score.total / 10.0, 1) if p_score.publishable else None
             headline = _headline_v2(p_score, project, signals)
+        else:
+            # No project record yet. The builder's own record is real evidence
+            # and still worth showing, but it is evidence about the builder --
+            # so it never becomes this project's number.
+            band = BAND_INCOMPLETE
+            score = None
+            headline = _headline_builder_only(b_score, project, promoter)
 
         return Verdict(rera_id=rera_id, project_name=project.get("project_name", ""),
                        promoter_name=promoter, score=score, band=band, headline=headline,
@@ -370,6 +386,28 @@ def build_verdict(project: dict, *, reputation=None, detail: dict | None = None,
                    headline=f"{project.get('project_name') or 'This project'} is RERA-registered; "
                             "full verdict pending reputation data.",
                    signals=signals, data_as_of=as_of)
+
+
+def _headline_builder_only(bs, project: dict, promoter: str) -> str:
+    """Headline when we hold no record for the project itself.
+
+    It must say what was and was not checked. The failure mode to avoid is a
+    sentence that reads as a clean bill of health for the project because its
+    builder happens to look fine.
+    """
+    name = project.get("project_name") or "This project"
+    who = promoter or "its builder"
+    worst = None
+    for c in bs.categories:
+        for f in c.findings:
+            if f.impact < 0 and (worst is None or f.impact < worst.impact):
+                worst = f
+    if worst is not None:
+        lead = worst.text[0].lower() + worst.text[1:]
+        return (f"{name}'s own MahaRERA file has not been collected yet. On {who}'s "
+                f"wider record: {lead}.")
+    return (f"{name}'s own MahaRERA file has not been collected yet, so it is not "
+            f"scored. Nothing adverse is on {who}'s wider record.")
 
 
 def _headline_v2(ps, project: dict, signals: list[Signal]) -> str:

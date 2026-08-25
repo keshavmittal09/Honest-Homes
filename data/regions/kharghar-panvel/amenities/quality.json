@@ -1,0 +1,754 @@
+{
+ "region": "Kharghar & Panvel",
+ "builtAt": "2026-08-21T19:35:09",
+ "sources": [
+  "Wikidata (CC0) — notability and structured facts",
+  "NIRF 2024, Ministry of Education — official national rankings"
+ ],
+ "notAvailable": [
+  "NABH hospital accreditation — list is rendered client-side and needs a browser session, not yet collected",
+  "Google Places star ratings and photos — needs a paid API key"
+ ],
+ "matched": {
+  "wikidata": 50,
+  "nirf": 1
+ },
+ "places": {
+  "way/527242919": {
+   "wikidata": {
+    "qid": "Q5204353",
+    "label": "DAV Public School Nerul",
+    "types": [
+     "academic institution"
+    ],
+    "website": "http://www.davnerul.com",
+    "since": "1998",
+    "url": "https://www.wikidata.org/wiki/Q5204353",
+    "match": "osm-tag"
+   },
+   "name": "D.A.V Public School - Nerul"
+  },
+  "way/558707643": {
+   "wikidata": {
+    "qid": "Q7206620",
+    "label": "Podar International School",
+    "types": [
+     "school"
+    ],
+    "website": null,
+    "since": "2005",
+    "url": "https://www.wikidata.org/wiki/Q7206620",
+    "match": "name"
+   },
+   "name": "Podar International School"
+  },
+  "way/563568595": {
+   "wikidata": {
+    "qid": "Q4779304",
+    "label": "Apeejay School Nerul",
+    "types": [
+     "school"
+    ],
+    "website": "http://www.apeejay.edu/nerul/home.htm",
+    "since": "1986",
+    "url": "https://www.wikidata.org/wiki/Q4779304",
+    "match": "osm-tag"
+   },
+   "name": "Apeejay School - Nerul"
+  },
+  "way/560452308": {
+   "wikidata": {
+    "qid": "Q7832954",
+    "label": "Training Ship Chanakya",
+    "types": [
+     "maritime college"
+    ],
+    "website": "http://imumumbai.com",
+    "since": "1927",
+    "url": "https://www.wikidata.org/wiki/Q7832954",
+    "match": "osm-tag"
+   },
+   "name": "T.S. Chanakya Maritime University"
+  },
+  "way/566099456": {
+   "wikidata": {
+    "qid": "Q5477421",
+    "label": "Fr. Agnel Multipurpose School and Junior College",
+    "types": [
+     "college"
+    ],
+    "website": "http://www.agnelhamara.net",
+    "since": "1982",
+    "url": "https://www.wikidata.org/wiki/Q5477421",
+    "match": "osm-tag"
+   },
+   "name": "Fr. Agnel's Multipurpose School & Jr. College"
+  },
+  "way/151585572": {
+   "wikidata": {
+    "qid": "Q5269620",
+    "label": "Dhirubhai Ambani Knowledge City",
+    "types": [
+     "science park"
+    ],
+    "website": null,
+    "since": "2002",
+    "url": "https://www.wikidata.org/wiki/Q5269620",
+    "match": "osm-tag"
+   },
+   "name": "Dhirubhai Ambani Knowledge City"
+  },
+  "way/572043480": {
+   "nirf": {
+    "name": "Bharati Vidyapeeth",
+    "city": "Pune",
+    "category": "University",
+    "rank": 78,
+    "score": 47.94,
+    "year": 2024,
+    "source": "NIRF 2024, Ministry of Education",
+    "matchConfidence": 1.0
+   },
+   "name": "Bharati Vidyapeeth"
+  },
+  "way/606556900": {
+   "wikidata": {
+    "qid": "Q6668709",
+    "label": "Lokmanya Tilak College of Engineering",
+    "types": [
+     "engineering college"
+    ],
+    "website": "http://www.ltce.ltjss.net/",
+    "since": "1984",
+    "url": "https://www.wikidata.org/wiki/Q6668709",
+    "match": "name"
+   },
+   "name": "Lokmanya Tilak College of Engineering"
+  },
+  "way/113693642": {
+   "wikidata": {
+    "qid": "Q30253815",
+    "label": "Advanced Centre for Treatment, Research and Education in Cancer",
+    "types": [
+     "medical organization"
+    ],
+    "website": "http://www.actrec.gov.in/",
+    "since": "1952",
+    "url": "https://www.wikidata.org/wiki/Q30253815",
+    "match": "name"
+   },
+   "name": "Advanced Centre for Treatment, Research and Education in Cancer"
+  },
+  "node/13808000655": {
+   "wikidata": {
+    "qid": "Q140391045",
+    "label": "Healing Hands Clinic - Vashi, New Mumbai",
+    "types": [
+     "hospital"
+    ],
+    "website": "https://www.healinghandsclinic.co.in/mumbai-location/piles-fistula-hospital-in-vashi/",
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q140391045",
+    "match": "name"
+   },
+   "name": "Healing Hands Clinic - Vashi, New Mumbai"
+  },
+  "way/510511580": {
+   "wikidata": {
+    "qid": "Q3632540",
+    "label": "Seawoods–Darave railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q3632540",
+    "match": "osm-tag"
+   },
+   "name": "Seawoods Grand Central Mall"
+  },
+  "way/151768155": {
+   "wikidata": {
+    "qid": "Q7916505",
+    "label": "Vashi railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7916505",
+    "match": "osm-tag"
+   },
+   "name": "Vashi"
+  },
+  "way/642845770": {
+   "wikidata": {
+    "qid": "Q15229831",
+    "label": "Juinagar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15229831",
+    "match": "osm-tag"
+   },
+   "name": "Juinagar"
+  },
+  "way/655530297": {
+   "wikidata": {
+    "qid": "Q5555617",
+    "label": "Ghansoli railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q5555617",
+    "match": "osm-tag"
+   },
+   "name": "Ghansoli"
+  },
+  "way/113688843": {
+   "wikidata": {
+    "qid": "Q7131981",
+    "label": "Panvel railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": "1962",
+    "url": "https://www.wikidata.org/wiki/Q7131981",
+    "match": "osm-tag"
+   },
+   "name": "Panvel (Suburban)"
+  },
+  "way/151769149": {
+   "wikidata": {
+    "qid": "Q7418902",
+    "label": "Sanpada, Navi Mumbai",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7418902",
+    "match": "osm-tag"
+   },
+   "name": "Sanpada"
+  },
+  "way/572630813": {
+   "wikidata": {
+    "qid": "Q15261704",
+    "label": "Nerul railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15261704",
+    "match": "osm-tag"
+   },
+   "name": "Nerul"
+  },
+  "way/648982743": {
+   "wikidata": {
+    "qid": "Q29026161",
+    "label": "Kharkopar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q29026161",
+    "match": "osm-tag"
+   },
+   "name": "Kharkopar"
+  },
+  "way/655144828": {
+   "wikidata": {
+    "qid": "Q7853749",
+    "label": "Turbhe railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7853749",
+    "match": "osm-tag"
+   },
+   "name": "Turbhe"
+  },
+  "way/655530301": {
+   "wikidata": {
+    "qid": "Q6431003",
+    "label": "Kopar Khairane railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": "2004",
+    "url": "https://www.wikidata.org/wiki/Q6431003",
+    "match": "osm-tag"
+   },
+   "name": "Koparkhairne"
+  },
+  "node/1435294693": {
+   "wikidata": {
+    "qid": "Q6751559",
+    "label": "Mansarovar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": "2008",
+    "url": "https://www.wikidata.org/wiki/Q6751559",
+    "match": "osm-tag"
+   },
+   "name": "Mansarovar"
+  },
+  "node/1645802025": {
+   "wikidata": {
+    "qid": "Q6400242",
+    "label": "Khandeshwar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6400242",
+    "match": "osm-tag"
+   },
+   "name": "Khandeshwar"
+  },
+  "way/562395722": {
+   "wikidata": {
+    "qid": "Q6400640",
+    "label": "Kharghar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6400640",
+    "match": "osm-tag"
+   },
+   "name": "Kharghar"
+  },
+  "way/648982741": {
+   "wikidata": {
+    "qid": "Q29026164",
+    "label": "Baman Dongri railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q29026164",
+    "match": "osm-tag"
+   },
+   "name": "Baman-Dongri"
+  },
+  "node/12189351682": {
+   "wikidata": {
+    "qid": "Q6400640",
+    "label": "Kharghar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6400640",
+    "match": "osm-tag"
+   },
+   "name": "Kharghar"
+  },
+  "node/2630075009": {
+   "wikidata": {
+    "qid": "Q7131981",
+    "label": "Panvel railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": "1962",
+    "url": "https://www.wikidata.org/wiki/Q7131981",
+    "match": "osm-tag"
+   },
+   "name": "Panvel"
+  },
+  "node/11335491946": {
+   "wikidata": {
+    "qid": "Q5009065",
+    "label": "CBD Belapur railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q5009065",
+    "match": "osm-tag"
+   },
+   "name": "CBD Belapur"
+  },
+  "node/6568083144": {
+   "wikidata": {
+    "qid": "Q7680276",
+    "label": "Taloja Panchnand railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7680276",
+    "match": "osm-tag"
+   },
+   "name": "Taloje Panchanand"
+  },
+  "node/12189351683": {
+   "wikidata": {
+    "qid": "Q3632540",
+    "label": "Seawoods–Darave railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q3632540",
+    "match": "osm-tag"
+   },
+   "name": "Seawoods"
+  },
+  "way/605163717": {
+   "wikidata": {
+    "qid": "Q6389096",
+    "label": "Kendriya Vihar",
+    "types": [],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6389096",
+    "match": "name"
+   },
+   "name": "Kendriya Vihar"
+  },
+  "way/605163722": {
+   "wikidata": {
+    "qid": "Q7903253",
+    "label": "Utsav Chowk",
+    "types": [
+     "square"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7903253",
+    "match": "name"
+   },
+   "name": "Utsav Chowk"
+  },
+  "way/648990356": {
+   "wikidata": {
+    "qid": "Q29026165",
+    "label": "Targhar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q29026165",
+    "match": "osm-tag"
+   },
+   "name": "Targhar"
+  },
+  "node/5936230491": {
+   "wikidata": {
+    "qid": "Q15232881",
+    "label": "Kalamboli railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15232881",
+    "match": "osm-tag"
+   },
+   "name": "Kalamboli"
+  },
+  "node/6568083299": {
+   "wikidata": {
+    "qid": "Q15278515",
+    "label": "Somtane railway station",
+    "types": [
+     "railway station"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15278515",
+    "match": "osm-tag"
+   },
+   "name": "Somatne"
+  },
+  "node/386483233": {
+   "wikidata": {
+    "qid": "Q63361144",
+    "label": "Chikhale railway station",
+    "types": [
+     "railway station"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q63361144",
+    "match": "osm-tag"
+   },
+   "name": "Chikhale"
+  },
+  "node/4077090608": {
+   "wikidata": {
+    "qid": "Q5555617",
+    "label": "Ghansoli railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q5555617",
+    "match": "name"
+   },
+   "name": "Ghansoli Railway Station"
+  },
+  "node/11335491947": {
+   "wikidata": {
+    "qid": "Q297847",
+    "label": "CBD Belapur",
+    "types": [
+     "central business district"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q297847",
+    "match": "name"
+   },
+   "name": "CBD Belapur"
+  },
+  "node/4662975890": {
+   "wikidata": {
+    "qid": "Q15261704",
+    "label": "Nerul railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15261704",
+    "match": "name"
+   },
+   "name": "Nerul Railway Station"
+  },
+  "node/7555912829": {
+   "wikidata": {
+    "qid": "Q29026156",
+    "label": "Ranjanpada railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q29026156",
+    "match": "osm-tag"
+   },
+   "name": "Ranjanpada"
+  },
+  "node/4648707794": {
+   "wikidata": {
+    "qid": "Q6389096",
+    "label": "Kendriya Vihar",
+    "types": [],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6389096",
+    "match": "name"
+   },
+   "name": "Kendriya Vihar"
+  },
+  "node/4648788190": {
+   "wikidata": {
+    "qid": "Q17103761",
+    "label": "Terna Engineering College",
+    "types": [
+     "engineering college"
+    ],
+    "website": "http://www.terna.org/",
+    "since": "1991",
+    "url": "https://www.wikidata.org/wiki/Q17103761",
+    "match": "name"
+   },
+   "name": "Terna Engineering College"
+  },
+  "way/827825796": {
+   "wikidata": {
+    "qid": "Q7916505",
+    "label": "Vashi railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q7916505",
+    "match": "name"
+   },
+   "name": "Vashi Railway Station"
+  },
+  "node/9665403496": {
+   "wikidata": {
+    "qid": "Q6389096",
+    "label": "Kendriya Vihar",
+    "types": [],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6389096",
+    "match": "name"
+   },
+   "name": "Kendriya Vihar"
+  },
+  "node/9897213432": {
+   "wikidata": {
+    "qid": "Q6400640",
+    "label": "Kharghar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6400640",
+    "match": "name"
+   },
+   "name": "Kharghar Railway Station"
+  },
+  "node/1366794662": {
+   "wikidata": {
+    "qid": "Q3595610",
+    "label": "Trombay",
+    "types": [
+     "suburb"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q3595610",
+    "match": "name"
+   },
+   "name": "Trombay"
+  },
+  "node/7728934351": {
+   "wikidata": {
+    "qid": "Q297732",
+    "label": "Vashi",
+    "types": [
+     "human settlement"
+    ],
+    "website": null,
+    "since": "1972",
+    "url": "https://www.wikidata.org/wiki/Q297732",
+    "match": "name"
+   },
+   "name": "Vashi"
+  },
+  "node/7728934353": {
+   "wikidata": {
+    "qid": "Q297732",
+    "label": "Vashi",
+    "types": [
+     "human settlement"
+    ],
+    "website": null,
+    "since": "1972",
+    "url": "https://www.wikidata.org/wiki/Q297732",
+    "match": "name"
+   },
+   "name": "Vashi"
+  },
+  "way/832522808": {
+   "wikidata": {
+    "qid": "Q15229831",
+    "label": "Juinagar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q15229831",
+    "match": "name"
+   },
+   "name": "Juinagar Railway Station"
+  },
+  "node/3204504352": {
+   "wikidata": {
+    "qid": "Q55607195",
+    "label": "Cheeta Camp",
+    "types": [
+     "suburb"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q55607195",
+    "match": "name"
+   },
+   "name": "cheeta camp"
+  },
+  "way/1390998153": {
+   "wikidata": {
+    "qid": "Q6400640",
+    "label": "Kharghar railway station",
+    "types": [
+     "railway station",
+     "station located on surface"
+    ],
+    "website": null,
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q6400640",
+    "match": "name"
+   },
+   "name": "Kharghar Railway Station"
+  },
+  "node/6569571978": {
+   "wikidata": {
+    "qid": "Q1156264",
+    "label": "DY Patil Stadium",
+    "types": [
+     "cricket field",
+     "association football venue"
+    ],
+    "website": "http://www.dypsa.in/",
+    "since": null,
+    "url": "https://www.wikidata.org/wiki/Q1156264",
+    "match": "osm-tag"
+   },
+   "name": "Dr. DY Patil Sports Stadium"
+  }
+ }
+}

@@ -368,7 +368,7 @@ function CategoryRow({ c }) {
 // How much of the framework we actually had data for. This is deliberately
 // prominent: a high score at low confidence is a weaker claim than the number
 // alone suggests, and hiding that would be the dishonest choice.
-function ConfidenceBar({ confidence, suppressed }) {
+function ConfidenceBar({ confidence, suppressed, unrated }) {
   const pct = Math.round((confidence || 0) * 100);
   const tone = pct >= 80 ? "var(--green)" : pct >= 60 ? "var(--amber)" : "var(--red)";
   return h("div", { style: { padding: "13px 16px", borderRadius: 10, background: "var(--surface-2)", marginTop: 14 } },
@@ -378,7 +378,9 @@ function ConfidenceBar({ confidence, suppressed }) {
     h("div", { style: { height: 6, borderRadius: 4, background: "var(--line)", marginTop: 8, overflow: "hidden" } },
       h("div", { style: { height: "100%", width: `${pct}%`, background: tone, borderRadius: 4 } })),
     h("div", { className: "faint", style: { fontSize: 12, marginTop: 8, lineHeight: 1.5 } },
-      suppressed
+      unrated
+        ? "Zero because this project's own file has not been collected yet — not because anything is wrong with it. The builder assessment beside it is unaffected."
+        : suppressed
         ? "Below our 60% threshold, so we publish the band only. A decimal here would imply a precision the record does not support."
         : "The share of our framework we had usable data for. Anything we could not check lowers this figure instead of quietly scoring as clean."));
 }
@@ -420,13 +422,21 @@ function ScoreBreakdown({ project, builder, confidence, suppressed }) {
     h("div", { className: "panel-b", style: { paddingTop: 4 } },
       s.cappedBy && h("div", { style: { padding: "10px 13px", borderRadius: 8, background: "var(--red-bg, var(--surface-2))", borderLeft: "3px solid var(--red)", fontSize: 12.5, margin: "10px 0 4px" } },
         "Score capped: ", s.cappedBy, " overrides every other category."),
-      s.categories.map((c, i) => h(CategoryRow, { key: i, c }))));
+      // Five identical "not assessed" rows say the same thing five times. One
+      // sentence is clearer, and states plainly that this is a gap in our
+      // collection rather than a finding about the project.
+      s.band === "unrated"
+        ? h("div", { style: { fontSize: 13, lineHeight: 1.55, color: "var(--ink-2)", padding: "12px 0 4px" } },
+            "We have not pulled this project's own MahaRERA file yet, so it is not scored. ",
+            h("b", null, "This is not a finding against the project"),
+            " — it means we have nothing to report either way. The builder's record on the right is real and comes from the state-wide registers.")
+        : s.categories.map((c, i) => h(CategoryRow, { key: i, c }))));
 
   return h("div", null,
     h("div", { className: "row", style: { gap: 16, marginTop: 16, flexWrap: "wrap", alignItems: "flex-start" } },
       pane(project, "This project, scored", "Delivery, legal standing, disclosure, finance, land"),
       pane(builder, "This builder, scored", "Track record across every project we hold")),
-    h(ConfidenceBar, { confidence, suppressed }));
+    h(ConfidenceBar, { confidence, suppressed, unrated: project.band === "unrated" }));
 }
 
 function Verdict({ id, go }) {
@@ -627,8 +637,18 @@ function Verdict({ id, go }) {
     // ---------- LOCATION ----------
     h(LocationMap, { p }),
 
+    // ---------- WHAT'S AROUND IT ----------
+    // Sits after location and before the registration detail: a buyer asks
+    // "where is it, and what is near it" before they ask about fee receipts.
+    window.Neighbourhood && h(window.Neighbourhood, { reraId: p.id }),
+
     // ---------- TIER-2 DETAIL (specs, delays, documents) ----------
-    p.hasDetail && h(DetailSection, { p })),
+    p.hasDetail && h(DetailSection, { p }),
+
+    // ---------- WHAT BUYERS SAY ----------
+    // Last on the page on purpose: unverified accounts should be read after the
+    // sourced record, not instead of it.
+    window.Discussion && h(window.Discussion, { reraId: p.id })),
     // ^ the lead gate closes HERE, not after the score panel. Everything of value
     //   — track record, timeline, snapshot, sales, and every document link — must
     //   sit inside it, otherwise a visitor just scrolls past the blur and reads it

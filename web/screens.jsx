@@ -105,14 +105,17 @@ function Landing({ go, onSearch }) {
       h("p", { className: "sub" },
         "Type a project or builder name. We pull the official government record — registration, complaints, legal orders, delays — and give you one sourced, plain-language verdict. No listings. No glossy photos. No spin."),
 
-      h("form", { className: "searchbox", onSubmit: (e) => { e.preventDefault(); onSearch(q); } },
-        h(Icon_s, { name: "search", size: 21, className: "mag" }),
-        h("input", { value: q, onChange: e => setQ(e.target.value),
-          "aria-label": "Search projects or builders",
-          placeholder: "Try a project or builder name…  e.g. Lodha" }),
-        h("button", { type: "submit", className: "btn btn-primary btn-lg" }, "Check it",
-          h(Icon_s, { name: "arrow", size: 17 }))
-      ),
+      // Area-aware: a buyer usually has a locality in mind before a builder.
+      window.AreaSearchBox
+        ? h(window.AreaSearchBox, { value: q, onChange: setQ, onSubmit: onSearch,
+            placeholder: "Project, builder, or area…  e.g. Kharghar" })
+        : h("form", { className: "searchbox", onSubmit: (e) => { e.preventDefault(); onSearch(q); } },
+            h(Icon_s, { name: "search", size: 21, className: "mag" }),
+            h("input", { value: q, onChange: e => setQ(e.target.value),
+              "aria-label": "Search projects or builders",
+              placeholder: "Try a project or builder name…  e.g. Lodha" }),
+            h("button", { type: "submit", className: "btn btn-primary btn-lg" }, "Check it",
+              h(Icon_s, { name: "arrow", size: 17 }))),
       h("div", { className: "chips" },
         window.HH.exampleChips.map(c => h("button", { key: c, className: "chip", onClick: () => onSearch(c) }, c))
       ),
@@ -187,6 +190,7 @@ function Results({ query, go, onSearch }) {
   const [nextOffset, setNextOffset] = useStateS(0);
   const [hasMore, setHasMore] = useStateS(false);
   const [localQ, setLocalQ] = useStateS(query || "");
+  const [area, setArea] = useStateS(null);   // set when the query named a place
 
   useEffectS(() => { setLocalQ(query || ""); }, [query]);
 
@@ -196,7 +200,7 @@ function Results({ query, go, onSearch }) {
     setLoading(true); setFilter("all");
     window.HH.search(query || "", 0).then(res => {
       if (!alive) return;
-      setList(res.cards); setTotal(res.total);
+      setList(res.cards); setTotal(res.total); setArea(res.area || null);
       setNextOffset(res.nextOffset); setHasMore(res.hasMore); setLoading(false);
     });
     return () => { alive = false; };
@@ -217,13 +221,17 @@ function Results({ query, go, onSearch }) {
     h("button", { className: "btn btn-quiet btn-sm", onClick: go.home, style: { marginBottom: 14 } },
       h(Icon_s, { name: "back", size: 15 }), "Home"),
 
-    h("form", { className: "searchbox", style: { margin: "0 0 22px", maxWidth: 560 },
-        onSubmit: e => { e.preventDefault(); onSearch(localQ); } },
-      h(Icon_s, { name: "search", size: 19, className: "mag" }),
-      h("input", { value: localQ, onChange: e => setLocalQ(e.target.value),
-        "aria-label": "Refine search", placeholder: "Search projects or builders…" }),
-      h("button", { type: "submit", className: "btn btn-primary btn-sm" }, "Search")
-    ),
+    h("div", { style: { margin: "0 0 22px", maxWidth: 560 } },
+      window.AreaSearchBox
+        ? h(window.AreaSearchBox, { value: localQ, onChange: setLocalQ, onSubmit: onSearch })
+        : h("form", { className: "searchbox", style: { margin: 0 },
+              onSubmit: e => { e.preventDefault(); onSearch(localQ); } },
+            h(Icon_s, { name: "search", size: 19, className: "mag" }),
+            h("input", { value: localQ, onChange: e => setLocalQ(e.target.value),
+              "aria-label": "Refine search", placeholder: "Search projects or builders…" }),
+            h("button", { type: "submit", className: "btn btn-primary btn-sm" }, "Search"))),
+
+    !loading && area && window.AreaBanner && h(window.AreaBanner, { area, total }),
 
     h("div", { className: "results-head" },
       h("div", null,
