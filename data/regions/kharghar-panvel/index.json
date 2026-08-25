@@ -6,7 +6,7 @@
   "410218",
   "410221"
  ],
- "builtAt": "2026-08-24T17:37:10",
+ "builtAt": "2026-08-25T22:52:05",
  "projectsInRegion": 2721,
  "projectsCaptured": 214,
  "projects": [
@@ -728,8 +728,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700011431"
   },
   {
@@ -785,8 +785,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700010687"
   },
   {
@@ -1070,8 +1070,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700007581"
   },
   {
@@ -1108,8 +1108,8 @@
    "complaints": 1,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700012136"
   },
   {
@@ -2058,8 +2058,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P52000009820"
   },
   {
@@ -2894,8 +2894,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700027232"
   },
   {
@@ -3084,8 +3084,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700008676"
   },
   {
@@ -3445,8 +3445,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P52000001892"
   },
   {
@@ -3540,8 +3540,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700013513"
   },
   {
@@ -3616,8 +3616,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51200012404"
   },
   {
@@ -3635,8 +3635,8 @@
    "complaints": 2,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 2,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P52000007101"
   },
   {
@@ -3730,8 +3730,8 @@
    "complaints": 0,
    "complaintsByBuyer": 0,
    "complaintsByBuilder": 0,
-   "amenityGrade": "E",
-   "amenityScore": 0.0,
+   "amenityGrade": null,
+   "amenityScore": null,
    "folder": "projects/P51700005837"
   },
   {

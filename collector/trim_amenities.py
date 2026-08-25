@@ -28,7 +28,11 @@ KEEP = 8
 # raw tags, opening hours) is for analysis, not display.
 PLACE_FIELDS = ("name", "distanceM", "distanceKm", "walkMinutes", "kind",
                 "operator", "prominence", "prominenceLabel", "notable",
-                "nirf", "wikidata", "mapUrl")
+                "nirf", "wikidata", "mapUrl",
+                # Coordinates travel with the place so the page can offer a map
+                # link. A distance with no way to see where the thing is asks
+                # the reader to take "1.2 km" on trust.
+                "lat", "lon")
 
 
 def trim_one(raw: dict) -> dict:

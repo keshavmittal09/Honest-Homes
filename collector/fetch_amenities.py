@@ -354,6 +354,19 @@ CATEGORY_WEIGHT = {
 
 
 def overall_grade(cats: dict) -> dict:
+    # Not one place in any of fourteen categories within 5 km is not a finding
+    # about the neighbourhood -- no inhabited part of MMR looks like that. It
+    # means the point we searched from is wrong, and the honest output is "we do
+    # not know" rather than "E, poorly served". Publishing the latter told buyers
+    # a Kharghar tower had nothing around it because MahaRERA had geo-tagged it
+    # 450 km away.
+    found = sum(c.get("count") or 0 for c in cats.values())
+    if not found:
+        return {"score": None, "grade": None, "label": "Location not confirmed",
+                "known": False,
+                "basis": "No usable coordinates for this project, so its "
+                         "surroundings have not been assessed"}
+
     got = wt = 0
     for key, c in cats.items():
         w = CATEGORY_WEIGHT.get(key, 1)
@@ -364,7 +377,7 @@ def overall_grade(cats: dict) -> dict:
               "C" if pct >= 50 else "D" if pct >= 35 else "E")
     words = {"A": "Very well served", "B": "Well served", "C": "Adequate",
              "D": "Thin", "E": "Poorly served"}
-    return {"score": pct, "grade": letter, "label": words[letter],
+    return {"score": pct, "grade": letter, "label": words[letter], "known": True,
             "basis": "Weighted across %d categories; daily needs count most" % len(cats)}
 
 
@@ -594,7 +607,7 @@ def main() -> None:
     else:
         print("quality signals: none yet (run collector.enrich_amenities)")
 
-    built = skipped = off_region = 0
+    built = skipped = off_region = cleared = 0
     for i, (rid, row) in enumerate(targets, 1):
         lat = lon = None
         det = detail.get(rid) or {}
@@ -623,6 +636,35 @@ def main() -> None:
                 row["_geo_source"] = "Nominatim (approximate)"
         if lat is None:
             skipped += 1
+            # A skip must not leave an older record standing. These projects
+            # previously had coordinates we now reject, and the stale file said
+            # "E — Poorly served": a confident, wrong statement about someone's
+            # neighbourhood, left behind by a rebuild that simply passed over
+            # them. Overwrite with the honest answer instead of walking away.
+            pdir = root / "projects" / rid / "amenities"
+            if (pdir / "amenities.json").exists() or (pdir / "amenities-lite.json").exists():
+                unknown = {
+                    "reraId": rid,
+                    "projectName": row.get("project_name"),
+                    "location": {"lat": None, "lon": None, "source": None},
+                    "radiusM": args.radius,
+                    "overall": {"score": None, "grade": None, "known": False,
+                                "label": "Location not confirmed",
+                                "basis": "MahaRERA has not published usable "
+                                         "coordinates for this project"},
+                    "categories": {},
+                    "notes": {"location": "The filed coordinates are missing or "
+                                          "fall outside this region, so the "
+                                          "surroundings have not been assessed."},
+                    "builtAt": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                }
+                for fn in ("amenities.json", "amenities-lite.json"):
+                    (pdir / fn).write_text(json.dumps(unknown, ensure_ascii=False),
+                                           encoding="utf-8")
+                # Map images drawn from a rejected point are wrong pictures.
+                for img in pdir.glob("map-*.jpg"):
+                    img.unlink(missing_ok=True)
+                cleared += 1
             continue
 
         pdir = root / "projects" / rid

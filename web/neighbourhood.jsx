@@ -38,16 +38,31 @@ function metres(m) {
 // One place. Kept to two lines: what it is and how far, then the badges that
 // carry real authority.
 function PlaceRow({ p }) {
+  // Every place gets a map link. A distance is only useful if the reader can
+  // see where the thing actually is — "1.2 km" means nothing without knowing
+  // which direction. Google Maps is what people in India actually navigate
+  // with; the OSM link is the source we derived the point from.
+  const gmaps = p.lat != null && p.lon != null
+    ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name || "")}`;
+
   return h("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 10, padding: "9px 0", borderTop: "1px solid var(--line)", alignItems: "start" } },
     h("div", { style: { minWidth: 0 } },
-      h("div", { style: { fontSize: 13.5, fontWeight: 550, lineHeight: 1.35 } }, p.name),
+      h("a", {
+        href: gmaps, target: "_blank", rel: "noopener noreferrer",
+        style: { fontSize: 13.5, fontWeight: 550, lineHeight: 1.35, color: "var(--ink)", textDecoration: "none", borderBottom: "1px dotted var(--line-2, var(--line))" },
+        title: "Open in Google Maps",
+      }, p.name),
       h("div", { className: "faint", style: { fontSize: 11.5, marginTop: 2, display: "flex", gap: 8, flexWrap: "wrap" } },
         p.kind && h("span", null, p.kind.replace(/_/g, " ")),
         p.operator && h("span", null, "· ", p.operator),
         p.openingHours && h("span", null, "· ", p.openingHours))),
     h("div", { style: { textAlign: "right", flex: "none" } },
       h("div", { className: "mono", style: { fontSize: 12.5, fontWeight: 700 } }, metres(p.distanceM)),
-      p.walkMinutes && h("div", { className: "faint", style: { fontSize: 11 } }, "~", p.walkMinutes, " min walk")),
+      p.walkMinutes && h("div", { className: "faint", style: { fontSize: 11 } }, "~", p.walkMinutes, " min walk"),
+      h("a", { href: gmaps, target: "_blank", rel: "noopener noreferrer",
+               className: "faint", style: { fontSize: 10.5, textDecoration: "none", display: "inline-block", marginTop: 3 } },
+        "Map ↗")),
     // Badges span both columns so a long ranking label never squeezes the name.
     (p.nirf || p.wikidata) && h("div", { style: { gridColumn: "1 / -1", display: "flex", gap: 6, flexWrap: "wrap", marginTop: 2 } },
       p.nirf && h("span", { className: "chip", style: { fontSize: 10.5, padding: "2px 8px", background: "var(--green-tint, var(--surface-2))", color: "var(--green)", fontWeight: 700 } },
@@ -149,6 +164,23 @@ function Neighbourhood({ reraId }) {
   }
 
   const o = data.overall || {};
+
+  // The project's coordinates did not survive validation, so we never searched
+  // its real surroundings. Showing the grade the arithmetic produced — "E,
+  // poorly served" — would state as fact that a Navi Mumbai tower has nothing
+  // near it, when what actually happened is that MahaRERA geo-tagged it in the
+  // wrong district.
+  if (o.known === false || !o.grade) {
+    return h("div", { className: "panel", style: { marginTop: 16 } },
+      h("div", { className: "panel-h" },
+        h("div", null,
+          h("h2", null, "What's around this project"),
+          h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 3, lineHeight: 1.55, maxWidth: "72ch" } },
+            "MahaRERA has not published usable coordinates for this project, so we have not assessed its surroundings. ",
+            h("b", null, "This says nothing about the neighbourhood"),
+            " — only that we cannot confirm where the building stands."))));
+  }
+
   const tone = GRADE_TONE[o.grade] || "var(--ink-3)";
   const top = (data.categories || []).slice(0, 3).map(c => c.label).join(", ");
 
