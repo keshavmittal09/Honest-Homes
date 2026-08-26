@@ -52,8 +52,12 @@ function AreaSearchBox({ value, onChange, onSubmit, placeholder, autoFocus }) {
     else if (e.key === "Escape") setOpen(false);
   }
 
-  return h("div", { ref: box, style: { position: "relative", width: "100%" } },
-    h("form", { className: "searchbox", style: { margin: 0 },
+  // `.searchbox` centres itself with `margin: … auto`, which this wrapper used
+  // to defeat: a full-width relative parent with the form's margin zeroed left
+  // the 640px box hard against the left edge while the headline above it stayed
+  // centred. The wrapper carries the centring now, and the form fills it.
+  return h("div", { ref: box, style: { position: "relative", width: "100%", maxWidth: 640, margin: "30px auto 0" } },
+    h("form", { className: "searchbox", style: { margin: 0, maxWidth: "none", width: "100%" },
         onSubmit: e => { e.preventDefault(); setOpen(false); onSubmit(value); } },
       h(window.Icon, { name: "search", size: 19, className: "mag" }),
       h("input", {
