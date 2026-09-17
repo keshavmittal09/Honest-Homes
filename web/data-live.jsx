@@ -94,6 +94,12 @@ const HH = (() => {
       } catch { return { prompts: [], relations: [] }; }
     },
 
+    // Newest posts across every project, for the landing strip.
+    async recentDiscussion(limit = 6) {
+      try { return await _json("/api/hh/discussion/recent?limit=" + limit); }
+      catch { return { posts: [], count: 0 }; }
+    },
+
     async discussion(id) {
       try { return await _json("/api/hh/discussion/" + encodeURIComponent(id)); }
       catch { return { posts: [], count: 0 }; }

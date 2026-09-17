@@ -37,6 +37,8 @@ from .shape import project_to_card, project_to_full, builder_stub, load_reputati
 from .areas import AreaIndex
 from . import neighbourhood
 from . import discussion as disc
+from .notify import notify_lead
+from .ops import router as ops_router, enabled as ops_enabled
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("honesthomes.api")
@@ -46,6 +48,10 @@ WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 app = FastAPI(title="Honest Homes API", version="0.1.0")
 store = ProjectStore()
 AREAS = AreaIndex()
+
+if ops_enabled():
+    app.include_router(ops_router)
+    log.info("operator console mounted at /ops")
 
 
 @app.on_event("startup")
@@ -217,9 +223,20 @@ async def lead(payload: dict, request: Request) -> dict:
         log.error("LEAD NOT DURABLY STORED — SUPABASE_KEY missing or insert failed. "
                   "Submission kept only in the ephemeral %s", LEADS_FILE.name)
     log.info("SUBMIT[%s] %s | %s | %s (durable=%s)", kind, rec["name"], _mask(rec["phone"]), rec["project"], stored)
-    # `stored` tells an operator whether this actually landed somewhere permanent.
+
+    # Instant notification (email / Telegram / WhatsApp), each channel on only
+    # if its env vars are set. Wrapped so a notify failure never fails the
+    # submission — the visitor's form must succeed regardless.
+    notified = {}
+    try:
+        notified = await notify_lead(rec)
+    except Exception as e:
+        log.error("notify_lead failed: %s", e)
+
+    # `stored` tells an operator whether this landed somewhere permanent;
+    # `notified` shows which alert channels actually fired.
     # The visitor still sees success either way — their submission is not their problem.
-    return {"ok": True, "stored": stored}
+    return {"ok": True, "stored": stored, "notified": notified}
 
 
 @app.get("/api/config")
@@ -334,6 +351,24 @@ def hh_discussion_prompts() -> dict:
             "relations": [{"key": k, "label": v} for k, v in disc.RELATION.items()]}
 
 
+@app.get("/api/hh/discussion/recent")
+async def hh_discussion_recent(limit: int = 6) -> dict:
+    """Newest posts across every project, for the landing page.
+
+    Each row is joined to its project name here rather than in the browser: the
+    client would otherwise fire one lookup per post to render six lines.
+    """
+    posts = await disc.recent(max(1, min(limit, 24)))
+    out = []
+    for p in posts:
+        rid = p.get("rera_id") or ""
+        row = store.get(rid)
+        out.append({**p,
+                    "projectName": (row or {}).get("project_name"),
+                    "district": (row or {}).get("district")})
+    return {"count": len(out), "posts": out}
+
+
 @app.get("/api/hh/discussion/{rera_id}")
 async def hh_discussion(rera_id: str, limit: int = 50) -> dict:
     posts = await disc.fetch(rera_id, max(1, min(limit, 100)))
@@ -359,7 +394,10 @@ async def hh_discussion_post(payload: dict, request: Request) -> dict:
              rec["rera_id"], rec["prompt"], rec["author"], stored)
     # `removed` is surfaced so the poster is told their text was edited rather
     # than discovering a "[phone removed]" in their own words later.
-    return {"ok": True, "stored": stored, "removed": rec.get("_removed") or []}
+    # The id goes back so a client can attach a reply to what it just posted
+    # without refetching the thread first.
+    return {"ok": True, "id": rec["id"], "stored": stored,
+            "removed": rec.get("_removed") or []}
 
 
 @app.post("/api/hh/discussion/report")

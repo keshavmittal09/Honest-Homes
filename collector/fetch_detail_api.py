@@ -353,6 +353,21 @@ def main() -> None:
     ap.add_argument("--important-only", action="store_true",
                     help="only the documents a buyer checks (certificates, "
                          "agreement, IOD, title)")
+    ap.add_argument("--ids", default="",
+                    help="scrape ONLY these exact RERA ids (comma-separated), in "
+                         "order. For a targeted list (e.g. a set of projects to "
+                         "put on the portal) rather than an area sweep. Overrides "
+                         "--region/--districts and ignores the already-captured "
+                         "skip so a re-scrape is possible.")
+    ap.add_argument("--pincodes", default="",
+                    help="scrape only projects in these pincodes (comma-separated). "
+                         "Ad-hoc area targeting without editing regions.py -- what "
+                         "the operator console uses for a one-off pincode run.")
+    ap.add_argument("--targets-file", default="",
+                    help="JSON list of {rera_id, detail_url} to scrape (e.g. the "
+                         "output of collector.resolve_targets). Handles projects "
+                         "NOT in our index -- the new PR-series / post-June ones -- "
+                         "by carrying their detail_url with them.")
     args = ap.parse_args()
 
     global _DOC_DELAY, _MAX_DOCS, _IMPORTANT_ONLY
@@ -361,18 +376,54 @@ def main() -> None:
     index = _load_index()
     token, endpoints = _reference()
 
-    # Never spend a token on work already done — each token costs a human captcha.
-    done = set() if args.refetch else already_captured()
+    if args.targets_file:
+        # Resolved targets: scrape exactly these, injecting the detail_url for any
+        # not in our (stale) index so PR-series projects can be captured too.
+        rows = json.loads(Path(args.targets_file).read_text(encoding="utf-8"))
+        queue = []
+        for r in rows:
+            rid, url = r.get("rera_id"), r.get("detail_url")
+            if not (rid and url):
+                continue
+            index.setdefault(rid, {})
+            index[rid].setdefault("detail_url", url)
+            index[rid].setdefault("project_name", r.get("rera_name") or r.get("project") or "")
+            index[rid].setdefault("promoter_name", r.get("promoter") or "")
+            queue.append(rid)
+        done = set()
+        print(f"Targets file: {len(queue)} projects to scrape")
+    elif args.ids:
+        # Explicit id list: a targeted scrape (e.g. a set of projects to put on
+        # the portal), not an area sweep. Exactly these ids, in order, ignoring
+        # the region/district machinery and the already-captured skip so a
+        # re-scrape is possible.
+        want = [x.strip() for x in args.ids.split(",") if x.strip()]
+        queue = [r for r in want if index.get(r, {}).get("detail_url")]
+        missing = [r for r in want if r not in index]
+        no_url = [r for r in want if r in index and not index[r].get("detail_url")]
+        if missing:
+            print(f"NOT in index (skipped): {', '.join(missing)}")
+        if no_url:
+            print(f"in index, no detail_url (skipped): {', '.join(no_url)}")
+        done = set()
+    else:
+        # Never spend a token on work already done — each token costs a captcha.
+        done = set() if args.refetch else already_captured()
 
-    ordered = [r for r in _targets("collector/targets.txt", index, 10_000_000) or []]
-    seen = set(ordered)
-    rest = [r for r in index if r not in seen]
-    if args.districts:
-        want = {d.strip().lower() for d in args.districts.split(",") if d.strip()}
-        rest.sort(key=lambda r: ((index[r].get("district") or "").lower() not in want, r))
-    queue = [r for r in ordered + rest
-             if r not in done and index.get(r, {}).get("detail_url")]
-    if args.region:
+        ordered = [r for r in _targets("collector/targets.txt", index, 10_000_000) or []]
+        seen = set(ordered)
+        rest = [r for r in index if r not in seen]
+        if args.districts:
+            want = {d.strip().lower() for d in args.districts.split(",") if d.strip()}
+            rest.sort(key=lambda r: ((index[r].get("district") or "").lower() not in want, r))
+        queue = [r for r in ordered + rest
+                 if r not in done and index.get(r, {}).get("detail_url")]
+    if not args.ids and not args.targets_file and args.pincodes:
+        want_pins = {p.strip() for p in args.pincodes.split(",") if p.strip()}
+        before = len(queue)
+        queue = [r for r in queue if str(index.get(r, {}).get("pincode") or "") in want_pins]
+        print(f"Pincodes {sorted(want_pins)}: {len(queue)} of {before} queued match")
+    if not args.ids and not args.targets_file and args.region:
         # A token is scarce, so a priority region means *only* that region --
         # sorting it first would still spend the tail of the token elsewhere.
         from collector.regions import region as _region

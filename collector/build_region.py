@@ -72,8 +72,8 @@ def _doc_dirs() -> dict[str, list[Path]]:
     root = DATA / "snapshots" / "detail"
     if not root.exists():
         return idx
-    for d in root.rglob("P[0-9]*"):
-        if d.is_dir() and re.fullmatch(r"P\d{11}", d.name):
+    for d in root.rglob("P*"):          # P* not P[0-9]* — PR-series is P then R
+        if d.is_dir() and re.fullmatch(r"(?:PR\d{13}|P\d{11})", d.name):
             idx.setdefault(d.name, []).append(d)
     return idx
 

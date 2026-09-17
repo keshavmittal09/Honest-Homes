@@ -31,6 +31,7 @@ import json
 import logging
 import os
 import re
+import uuid
 from pathlib import Path
 
 import httpx
@@ -134,9 +135,18 @@ def validate(payload: dict) -> tuple[dict | None, str]:
     if relation not in RELATION:
         relation = "other"
 
+    # A reply belongs to a thread, so it inherits the prompt rather than
+    # carrying its own -- otherwise a reply could be filed under a different
+    # question from the post it answers.
+    parent_id = str(payload.get("parentId", "")).strip()[:64] or None
+
     cleaned, removed = clean_body(body)
     return {
+        # Generated here rather than by the database so a reply can be attached
+        # even when Supabase is unconfigured and posts fall back to the file.
+        "id": str(uuid.uuid4()),
         "rera_id": rera_id,
+        "parent_id": parent_id,
         "prompt": prompt,
         "relation": relation,
         "body": cleaned,
@@ -146,6 +156,44 @@ def validate(payload: dict) -> tuple[dict | None, str]:
         "created_at": datetime.datetime.utcnow().isoformat(timespec="seconds") + "Z",
         "_removed": removed,
     }, ""
+
+
+# Reddit nests until it is unreadable on a phone. Three levels is enough for
+# "question -> answer -> clarification", which is the shape almost every useful
+# exchange takes; deeper replies are flattened onto the third level rather than
+# indented off the screen.
+MAX_DEPTH = 3
+
+
+def threaded(rows: list[dict]) -> list[dict]:
+    """Nest a flat list of posts into reply trees, oldest first.
+
+    Orphans -- a reply whose parent was removed by moderation -- are promoted to
+    top level instead of vanishing with it. Losing a reply because someone else's
+    post was hidden would silently delete a contribution nobody objected to.
+    """
+    by_id = {r["id"]: dict(r, replies=[]) for r in rows if r.get("id")}
+    roots = []
+    for r in sorted(by_id.values(), key=lambda x: x.get("created_at") or ""):
+        parent = by_id.get(r.get("parent_id")) if r.get("parent_id") else None
+        if parent is None or parent is r:
+            roots.append(r)
+        else:
+            parent["replies"].append(r)
+
+    def depth(node, d=1):
+        node["depth"] = d
+        for child in node["replies"]:
+            if d >= MAX_DEPTH:
+                # Flatten: keep it in the conversation, stop the indent.
+                node["replies"].extend(child.pop("replies", []))
+            depth(child, min(d + 1, MAX_DEPTH))
+
+    for r in roots:
+        depth(r)
+    # Newest conversation first, but replies within a thread stay chronological.
+    roots.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+    return roots
 
 
 # --------------------------------------------------------------------------
@@ -201,7 +249,8 @@ async def fetch(rera_id: str, limit: int = 50) -> list[dict]:
         rows = _local_read(rera_id, limit)
     # The hash exists to recognise a repeat poster server-side. It must never
     # leave the server: it is derived from a phone number.
-    return [{k: v for k, v in row.items() if k != "author_hash"} for row in rows]
+    clean = [{k: v for k, v in row.items() if k != "author_hash"} for row in rows]
+    return threaded(clean)
 
 
 def local_write(rec: dict) -> None:
@@ -251,3 +300,41 @@ async def report(post_id: str, reason: str) -> bool:
     except Exception as e:
         log.error("discussion report failed: %s", e)
         return False
+
+
+async def recent(limit: int = 8) -> list[dict]:
+    """Newest posts across every project, for the landing page.
+
+    Top-level posts only. A reply out of context reads as a non-sequitur, and the
+    landing page has no thread around it to supply that context.
+    """
+    url, key = _sb()
+    rows: list[dict] = []
+    if url and key:
+        try:
+            async with httpx.AsyncClient(timeout=10) as c:
+                r = await c.get(
+                    f"{url}/rest/v1/{TABLE}",
+                    headers={"apikey": key, "Authorization": f"Bearer {key}"},
+                    params={"status": "eq.visible", "parent_id": "is.null",
+                            "order": "created_at.desc", "limit": str(limit)},
+                )
+            if r.status_code == 200:
+                rows = r.json()
+        except Exception as e:
+            log.error("discussion recent failed: %s", e)
+    if not rows and LOCAL_FILE.exists():
+        try:
+            all_rows = []
+            for line in LOCAL_FILE.open(encoding="utf-8"):
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if row.get("status") == "visible" and not row.get("parent_id"):
+                    all_rows.append(row)
+            all_rows.sort(key=lambda r: r.get("created_at") or "", reverse=True)
+            rows = all_rows[:limit]
+        except OSError:
+            rows = []
+    return [{k: v for k, v in row.items() if k != "author_hash"} for row in rows]

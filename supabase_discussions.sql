@@ -12,6 +12,10 @@
 create table if not exists public.discussions (
     id            uuid primary key default gen_random_uuid(),
     rera_id       text        not null,
+    -- A reply points at the post it answers. ON DELETE SET NULL rather than
+    -- CASCADE: hiding one post must not silently delete the replies under it,
+    -- which are other people's contributions and were not what was objected to.
+    parent_id     uuid        references public.discussions(id) on delete set null,
     prompt        text        not null default 'other',
     relation      text        not null default 'other',
     body          text        not null,
@@ -28,6 +32,10 @@ create table if not exists public.discussions (
 -- The only query the product makes: visible posts for one project, newest first.
 create index if not exists discussions_project_idx
     on public.discussions (rera_id, status, created_at desc);
+
+-- The landing page asks for the newest top-level posts across every project.
+create index if not exists discussions_recent_idx
+    on public.discussions (status, parent_id, created_at desc);
 
 alter table public.discussions enable row level security;
 

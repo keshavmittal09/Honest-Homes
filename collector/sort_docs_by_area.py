@@ -24,7 +24,7 @@ from pathlib import Path
 
 from engine.detail import RAW_ROOT, PARSED_ROOT
 
-_RID = re.compile(r"^P\d{11}$")
+_RID = re.compile(r"^(?:PR\d{13}|P\d{11})$")
 
 
 def _safe(name: str) -> str:

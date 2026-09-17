@@ -156,6 +156,11 @@ function Landing({ go, onSearch }) {
         "Live MahaRERA projects from our index. Search any builder or project above to see its verdict.")
     ),
 
+    // What buyers are saying — proof the site is alive, and the one kind of
+    // evidence the official record cannot carry. Sits after the project grid so
+    // the sourced material still leads the page.
+    window.RecentDiscussion && h(window.RecentDiscussion, { go }),
+
     // how it works strip
     h("section", { className: "wrap section-pad" },
       h("div", { className: "panel" },

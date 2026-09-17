@@ -76,3 +76,9 @@ data/regions/*/projects/*/amenities/amenities.json
 # Stitched map tiles are cached here so neighbouring projects reuse them; the
 # finished map-street/map-satellite images are committed, this scratch is not.
 data/regions/_tilecache/
+
+# --- Karnataka (K-RERA) working data ---------------------------------------
+# Collected locally; not served by the live portal yet (needs the portal wired
+# for a second data source + R2 for documents). Kept out of git entirely: the
+# cached detail HTML and per-project folders are large and PR-series binary.
+data/regions/bangalore-north-east/

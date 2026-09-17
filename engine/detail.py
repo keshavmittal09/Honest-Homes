@@ -747,7 +747,7 @@ def build_parsed_snapshot(out_name: str | None = None) -> Path:
         # Document folders may be grouped by area (docs/<District>/<Village>/<RID>),
         # so locate them by scanning rather than assuming the flat docs/<RID>/ path.
         doc_dirs = {d.name: d for d in (raw / "docs").rglob("*")
-                    if d.is_dir() and re.fullmatch(r"P\d{11}", d.name)}                    if (raw / "docs").is_dir() else {}
+                    if d.is_dir() and re.fullmatch(r"(?:PR\d{13}|P\d{11})", d.name)}                    if (raw / "docs").is_dir() else {}
         for f in sorted(raw.glob("*.api.json")):
             try:
                 api = json.loads(f.read_text(encoding="utf-8"))
@@ -873,7 +873,7 @@ class DetailStore:
         idx: dict[str, list[Path]] = {}
         for root in self.docs_dirs:                    # already newest-first
             for p in root.rglob("*"):
-                if p.is_dir() and re.fullmatch(r"P\d{11}", p.name):
+                if p.is_dir() and re.fullmatch(r"(?:PR\d{13}|P\d{11})", p.name):
                     idx.setdefault(p.name, []).append(p)
         self._doc_index = idx
 

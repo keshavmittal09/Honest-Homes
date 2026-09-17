@@ -29,7 +29,7 @@ from .fetch_detail_api import (
 
 import httpx
 
-_RID = re.compile(r"^P\d{11}$")
+_RID = re.compile(r"^(?:PR\d{13}|P\d{11})$")
 
 
 def _doc_dirs(raw: Path) -> dict[str, Path]:
