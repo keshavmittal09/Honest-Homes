@@ -102,6 +102,17 @@ def _load() -> None:
     except Exception as e:
         log.error("FAILED to load detail: %s", e, exc_info=True)
 
+    # Adopt any detail records missing from the index (post-snapshot / PR-series
+    # registrations) so the portal can serve them. Must run before the area index
+    # so those projects are searchable by pincode too.
+    try:
+        if DETAIL.loaded:
+            n_add = store.add_from_detail(DETAIL.records)
+            if n_add:
+                log.info("added %d detail-only projects not in the index (e.g. PR-series)", n_add)
+    except Exception as e:
+        log.error("add_from_detail failed: %s", e, exc_info=True)
+
     # Area search is built last: it needs the index rows for coverage and the
     # Tier-2 addresses for the names people actually search by.
     try:

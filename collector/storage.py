@@ -113,10 +113,30 @@ class IndexSnapshotStore:
             pages_fetched=pages_fetched,
             rows=rows,
         )
+        # Stamp the completeness verdict into the snapshot itself. The June 2026
+        # snapshot already recorded total_reported=49371 next to row_count=44279
+        # and nothing compared the two, so a crawl that silently lost 10% of the
+        # state read as authoritative for months. Writing the verdict means a
+        # reader cannot take a partial crawl for a complete one by accident.
+        from .integrity import check_index
+
+        payload = snap.to_dict()
+        verdict = check_index(payload["rows"], total_reported)
+        payload["integrity"] = verdict
         self.snapshot_path.write_text(
-            json.dumps(snap.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8"
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         log.info("wrote snapshot %s (%d rows)", self.snapshot_path, len(rows))
+        if verdict.get("problems"):
+            # Loud, but not fatal: a short snapshot is still worth keeping and
+            # resuming from. It just must not pass as finished.
+            for p in verdict["problems"]:
+                log.error("INTEGRITY: %s", p)
+            log.error("snapshot %s is marked INCOMPLETE -- do not publish from it "
+                      "until re-crawled", self.snapshot_path.parent.name)
+        else:
+            log.info("integrity: snapshot complete (%d of %d reported)",
+                     verdict.get("stored"), total_reported)
         return self.snapshot_path
 
     def dump_html(self, page: int, html: str) -> Path:

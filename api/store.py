@@ -115,6 +115,47 @@ class ProjectStore:
         total = len(scored)
         return [r for _, r in scored[offset:offset + limit]], total
 
+    def add_from_detail(self, detail_records: dict) -> int:
+        """Adopt detail records that are not in the index as synthetic rows.
+
+        The index is a dated snapshot (currently 2 June); a project registered
+        after it -- notably the new PR-series ids -- is captured in the detail
+        set but has no index row, so the portal cannot surface it (it looks
+        projects up by index). This builds a minimal row from the detail record
+        itself so those projects are searchable and servable. The verdict still
+        merges the full detail, so scoring is unaffected. Refreshing the index
+        makes this a no-op; until then it is what puts post-snapshot
+        registrations on the site.
+        """
+        added = 0
+        for rid, rec in (detail_records or {}).items():
+            if rid in self._by_id:
+                continue
+            addr = rec.get("address") or {}
+            geo = rec.get("geo") or {}
+            sp = rec.get("specs") or {}
+            row = {
+                "rera_id": rid,
+                "project_name": rec.get("project_name") or "",
+                "promoter_name": rec.get("promoter_name") or "",
+                "district": addr.get("district") or "",
+                "pincode": str(addr.get("pincode") or ""),
+                "location": addr.get("locality") or "",
+                "status": "registered" if rec.get("registered", True) else "application",
+                "last_modified": sp.get("registeredOn") or rec.get("capturedAt", "")[:10],
+                # No stored detail_url for these; the UI falls back to the generic
+                # MahaRERA portal link, which is correct rather than a wrong guess.
+                "detail_url": rec.get("detail_url") or "",
+                "map_url": ("https://www.google.com/maps/search/?api=1&query=%s,%s"
+                            % (geo["lat"], geo["lng"])) if geo.get("lat") else "",
+                "source_url": "",
+                "_synthetic": True,
+            }
+            self._rows.append(row)
+            self._by_id[rid] = row
+            added += 1
+        return added
+
     def rows(self) -> list[dict]:
         """Every loaded row. Read-only by convention — the area index needs the
         whole set to know which projects sit in which pincode."""

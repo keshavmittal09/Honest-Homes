@@ -55,8 +55,20 @@ SELECTORS = {
 # <span>, so we strip tags between "Final" and "Result" before matching the digits.
 _TOTAL_RE = re.compile(r"Showing\s+Final\s*<[^>]*>\s*([\d,]+)", re.IGNORECASE)
 _TOTAL_RE_TEXT = re.compile(r"Showing\s+Final\s+([\d,]+)", re.IGNORECASE)
-# "# P50500000005" -> P50500000005  (P=project, A=agent; ids are 'P' + digits)
-_RERA_ID_RE = re.compile(r"\b(P\d{8,})\b")
+# "# P50500000005" -> P50500000005. Four project-id schemes are live on the
+# portal, and a project id always starts with P (an agent id starts with A):
+#   P  + 11 digits  legacy, registrations up to ~2025   (P50500000005)
+#   PR + 13 digits  new series, 2025 onward             (PR1330002501329)
+#   PM + 13 digits  new series, 2025 onward             (PM1270002501518)
+#   P  + 13 digits  new series variant                  (P1190002500927)
+# The original pattern was P-then-digits, so it matched nothing on a PR or PM
+# card: _extract_row returned None for every such row, the page parsed as empty,
+# and run_index's empty-page heuristic then ended the crawl early. That is how
+# the June snapshot came back 5,092 short of the portal's own reported total,
+# with the entire loss falling on the newest registrations. The optional letter
+# keeps any future two-letter series (PS, PT, ...) from silently vanishing the
+# same way.
+_RERA_ID_RE = re.compile(r"\b(P[A-Z]?\d{8,})\b")
 
 
 def parse_total_count(html: str) -> int:
