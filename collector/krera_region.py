@@ -32,7 +32,7 @@ import re
 import time
 from pathlib import Path
 
-from .krera import KRera, parse_detail
+from .krera import KRera, header, parse_detail, project_location
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "regions" / "bangalore-north-east"
@@ -54,6 +54,21 @@ AREAS: dict[str, str] = {
     "560087": "Varthur", "560035": "Off Sarjapur Road",
     "560049": "Budigere Cross", "560036": "KR Puram", "562114": "Hoskote",
 }
+# The site's TALUK is always printed and is what "North / East Bengaluru" means
+# (krera.py's original definition); the pin code is printed for only some pages.
+ZONE_OF_TALUK = {
+    "bengaluru north": "North", "bangalore north": "North", "devanahalli": "North",
+    "yelahanka": "North", "bagalur": "North",
+    "bengaluru east": "East", "bangalore east": "East", "hoskote": "East", "hosakote": "East",
+}
+
+
+def zone_of(taluk: str | None, pin: str | None = None) -> str | None:
+    """North / East from the project's own taluk, falling back to a known pin."""
+    z = ZONE_OF_TALUK.get((taluk or "").strip().lower())
+    return z or ZONE.get(pin or "")
+
+
 ZONE = {p: ("North" if p in {
     "560024", "560077", "560045", "560032", "560043", "560064", "560063",
     "560065", "560092", "560106", "562149", "562110"} else "East") for p in AREAS}
@@ -86,15 +101,21 @@ def _latlng(html: str) -> tuple[float | None, float | None]:
 
 
 def location_of(html: str) -> dict:
-    """Just the location fields — the cheap read used to decide a match."""
-    lat, lng = _latlng(html)
-    reg = re.search(r"PRM/KA/RERA/[A-Za-z0-9/\-]+", html)
+    """Where the project IS, and which project this page is.
+
+    Read from the project's own address block and the page header. The labels
+    "District", "Taluk" and "PIN Code" are printed first under Promoter Details
+    -- the builder's office -- so reading them page-wide, as this function once
+    did, filed projects under their builder's postcode. `rera_id` is likewise
+    the header's number, not the first PRM string on the page, which on an
+    application is a sibling project's.
+    """
+    loc = project_location(html)
+    hdr = header(html)
     return {
-        "district": _field(html, "District"),
-        "taluk": _field(html, "Taluk"),
-        "pincode": (_field(html, "PIN Code") or "").strip() or None,
-        "lat": lat, "lng": lng,
-        "rera_id": reg.group(0) if reg else None,
+        "district": loc["district"], "taluk": loc["taluk"], "pincode": loc["pincode"],
+        "lat": loc["lat"], "lng": loc["lng"], "village": loc["village"], "hobli": loc["hobli"],
+        "rera_id": hdr.get("reg") or hdr.get("ack"), "name": hdr.get("name"),
     }
 
 
@@ -142,9 +163,11 @@ def scan(limit: int = 0, delay: float = 0.4) -> None:
 
             loc = location_of(html)
             pin = loc.get("pincode")
-            hit = pin in AREAS
+            zone = zone_of(loc.get("taluk"), pin)
+            hit = zone is not None
             row = {"appNo": ap, "tid": tid, **loc,
-                   "area": AREAS.get(pin), "zone": ZONE.get(pin)}
+                   "area": AREAS.get(pin) or loc.get("hobli") or loc.get("village"),
+                   "zone": zone}
             idx.write(json.dumps(row, ensure_ascii=False) + "\n")
             idx.flush()
             if hit:

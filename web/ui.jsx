@@ -44,14 +44,14 @@ function ProjectCard({ p, onOpen }) {
     h("div", { className: "meta" },
       h("span", { className: "row gap-8" }, h(Icon, { name: "pin", size: 13 }),
         [p.area || p.district, p.locality && p.locality !== p.district ? p.locality : null].filter(Boolean).join(" · ")),
-      h("span", { className: "k" }, p.id),
+      h("span", { className: "k" }, p.reraId || p.id),
       // distance sits inline; as an absolute overlay it landed on the band badge
       p.distanceKm != null && h("span", { className: "pcard-dist mono" }, p.distanceKm, " km")
     ),
     h("div", { className: "pcard-foot" },
       h("span", { className: "row gap-8 faint", style: { fontSize: 12.5 } },
         h(Icon, { name: "shield-check", size: 13, style: { color: "var(--brand)" } }),
-        "MahaRERA"),
+        p.regulator || "MahaRERA"),
       h("div", { className: "row gap-12" },
         h(ScoreChip, { score: p.score, band: p.band }),
         h(Icon, { name: "arrow", size: 16, className: "faint" })
@@ -493,7 +493,7 @@ function Footer({ go }) {
           h("div", { className: "glyph", style: { width: 34, height: 34 } }, h(window.LogoMark, { size: 34 })),
           h("div", { className: "wordmark", style: { fontSize: 17 } }, "Honest", h("span", null, "Homes"))),
         h("p", { className: "faint", style: { fontSize: 12.5, marginTop: 10, maxWidth: "42ch", lineHeight: 1.55 } },
-          "Plain-language trust verdicts on Maharashtra builders, sourced from official MahaRERA public records. Information, not legal advice.")),
+          "Plain-language trust verdicts on Maharashtra and Bengaluru builders, sourced from official MahaRERA and K-RERA public records. Information, not legal advice.")),
       h("div", { className: "footer-col" },
         h("div", { className: "footer-h" }, "Explore"),
         h("button", { className: "footer-link", onClick: go.home }, "Search a project"),
@@ -506,7 +506,7 @@ function Footer({ go }) {
     ),
     h("div", { className: "wrap footer-base" },
       h("span", { className: "row gap-8" }, h(Icon, { name: "shield-check", size: 13, style: { color: "var(--brand)" } }),
-        "Built on official MahaRERA records · Updated monthly"),
+        "Built on official MahaRERA & K-RERA records · Updated monthly"),
       h("span", { className: "faint" }, "© ", new Date().getFullYear(), " Honest Homes"))
   );
 }

@@ -119,6 +119,180 @@ def _dmy(s: str) -> str | None:
     return "%s-%s-%s" % (m.group(3), m.group(2), m.group(1)) if m else None
 
 
+# A detail page is a stack of titled sections, and the SAME label appears in
+# several of them: "PIN Code" and "Taluk" are printed first under Promoter
+# Details (the builder's office) and again, differently capitalised, under
+# Project Ongoing Status (the site). Reading a label page-wide returns whichever
+# comes first, which is how a project in Kengeri was filed under the builder's
+# Hennur office. Everything below is therefore read from its own section.
+_HEADING = re.compile(
+    r'<(?:h[1-6]|div class="[^"]*(?:panel-title|heading|title)[^"]*")[^>]*>(.*?)</(?:h[1-6]|div)>',
+    re.S)
+
+
+def _text(s: str) -> str:
+    import html as _h
+    return re.sub(r"\s+", " ", _h.unescape(re.sub(r"<[^>]+>", " ", s))).strip()
+
+
+def section(html: str, title: str) -> str:
+    """Raw HTML of the section whose heading contains `title`, up to the next heading.
+
+    Empty string when the page has no such section -- callers treat that as
+    "not stated", never as a value.
+    """
+    spans = [(m.start(), m.end(), _text(m.group(1))) for m in _HEADING.finditer(html)
+             if 2 < len(_text(m.group(1))) < 90]
+    want = title.lower()
+    # An exact heading wins: "Project Details" is also a substring of "Previous
+    # Project Details (Last 5 years only)", which comes first on the page.
+    pick = next((i for i, (_a, _e, t) in enumerate(spans) if t.lower() == want), None)
+    if pick is None:
+        pick = next((i for i, (_a, _e, t) in enumerate(spans) if t.lower().startswith(want)), None)
+    if pick is None:
+        return ""
+    end = spans[pick][1]
+    nxt = spans[pick + 1][0] if pick + 1 < len(spans) else len(html)
+    return html[end:nxt]
+
+
+def labelled_in(block: str, label: str) -> str | None:
+    """Like _labelled, but case-insensitive on the label and confined to `block`."""
+    m = re.search(re.escape(label) + r"\s*<span[^>]*>\s*:\s*</span>\s*</p>\s*</div>\s*<div[^>]*>(.*?)</div>",
+                  block, re.S | re.I)
+    if not m:
+        return None
+    v = _text(m.group(1))
+    return v or None
+
+
+def labelled_exact(block: str, label: str) -> str | None:
+    """Value of a field whose label is exactly `label`.
+
+    "Name" is a substring of "Father's Name" and "Agent Name", so the promoter's
+    own name is only read from a label that is nothing else.
+    """
+    m = re.search(r"<p[^>]*>\s*" + re.escape(label) + r"\s*<span[^>]*>\s*:\s*</span>\s*</p>\s*"
+                  r"</div>\s*<div[^>]*>(.*?)</div>", block, re.S | re.I)
+    if not m:
+        return None
+    v = _text(m.group(1))
+    return v or None
+
+
+_HDR = re.compile(r"Project Name\s*:\s*(.*?)\s*Acknowledgement Number\s*:\s*([A-Za-z0-9]+/\S+)?"
+                  r"(?:\s*Registration Number\s*:\s*(PRM/KA/\S+))?")
+
+
+def header(html: str) -> dict:
+    """The page's own identity: project name, acknowledgement and registration no.
+
+    This is the only place a page states which project it IS. The registration
+    number is absent for an application that has not been registered yet.
+    """
+    t = _text(re.sub(r"<script.*?</script>|<style.*?</style>", "", html, flags=re.S))
+    m = _HDR.search(t)
+    if not m:
+        return {}
+    # The label can be followed by a notice instead of a number on abandoned
+    # drafts ("THE BUYERS ARE STRICTLY ADVISED..."); those have no identity.
+    name = m.group(1).strip()
+    if name.upper().startswith("THE BUYERS ARE"):
+        name = ""
+    return {"name": name or None, "ack": m.group(2), "reg": m.group(3)}
+
+
+def registration_rows(html: str) -> list[dict]:
+    """Rows of the 'Registration/Extensions' table: the registration itself, then
+    each extension. Columns are label | Start Date | Proposed Completion Date.
+
+    An extension's Start Date is the PREVIOUS completion date and its Proposed
+    Completion Date is the new one. An earlier version read the first date on
+    the row, i.e. the old one, so every revision showed one step behind.
+    """
+    out = []
+    for tbl in re.findall(r"<table.*?</table>", section(html, "Project Details") or html, flags=re.S):
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", tbl, flags=re.S)
+        if not rows:
+            continue
+        head = [_text(c) for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", rows[0], flags=re.S)]
+        if not head or "registration/extensions" not in head[0].lower():
+            continue
+        for r in rows[1:]:
+            c = [_text(x) for x in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", r, flags=re.S)]
+            if len(c) >= 3 and c[0]:
+                out.append({"label": c[0], "start": _dmy(c[1]), "completion": _dmy(c[2])})
+        break
+    return out
+
+
+def _coord(v: str | None) -> float | None:
+    """A coordinate as printed: decimal degrees, or degrees-minutes-seconds."""
+    if not v:
+        return None
+    v = v.strip()
+    try:
+        return float(v)
+    except ValueError:
+        pass
+    m = re.match(r"\s*(\d+)\s*[°º]\s*(\d+)?\s*['′]?\s*([\d.]+)?\s*[\"″]?\s*([NSEW])?", v)
+    if not m:
+        return None
+    try:
+        deg = float(m.group(1)) + float(m.group(2) or 0) / 60.0 + float(m.group(3) or 0) / 3600.0
+    except ValueError:                  # "13.17.75" and the like: unreadable, not zero
+        return None
+    return -deg if (m.group(4) or "").upper() in ("S", "W") else deg
+
+
+# Bengaluru and its rural taluks. A coordinate outside this box is a typo or a
+# placeholder ("0", "Not Available"), and plotting it would put the project in
+# another state, so it is dropped rather than shown.
+_LAT_BOX = (12.6, 13.6)
+_LNG_BOX = (77.0, 78.2)
+
+
+def project_location(html: str) -> dict:
+    """The SITE's address -- never the promoter's.
+
+    Two layouts exist. Newer pages print the site under "Project Ongoing Status"
+    with its own "Pin Code"; older ones print it under "Project Details" with no
+    separate pin and often only the village/hobli in the address text. Both are
+    read from the project's own blocks, and the promoter's block is never used.
+    """
+    blocks = [section(html, "Project Ongoing Status"), section(html, "Project Details")]
+
+    def first(*labels):
+        for blk in blocks:
+            for lab in labels:
+                v = labelled_in(blk, lab)
+                if v:
+                    return v
+        return None
+
+    addr = first("Project Address")
+    lat = _coord(first("Latitude", "North Latitude"))
+    lng = _coord(first("Longitude", "East Longitude"))
+    if lat is not None and lng is not None and not (
+            _LAT_BOX[0] <= lat <= _LAT_BOX[1] and _LNG_BOX[0] <= lng <= _LNG_BOX[1]):
+        lat = lng = None
+    pin = first("Pin Code")
+    if not (pin and re.fullmatch(r"\d{6}", pin)):
+        m = re.search(r"(?<!\d)(5[6-9]\d{4})(?!\d)", addr or "")
+        pin = m.group(1) if m else None
+
+    hobli = village = None
+    if addr:
+        m = re.search(r"([A-Za-z][A-Za-z.' ]{2,40}?)\s+Hobli", addr, re.I)
+        hobli = re.sub(r"\s+", " ", m.group(1)).strip(" .,") if m else None
+        m = re.search(r"([A-Za-z][A-Za-z.' ]{2,40}?)\s+Village", addr, re.I)
+        village = re.sub(r"\s+", " ", m.group(1)).strip(" .,") if m else None
+    return {
+        "address": addr, "district": first("District"), "taluk": first("Taluk"),
+        "pincode": pin, "lat": lat, "lng": lng, "hobli": hobli, "village": village,
+    }
+
+
 def parse_detail(html: str, row: dict) -> dict:
     """Map a K-RERA detail page into the record shape engine.scoring reads.
 
@@ -126,30 +300,32 @@ def parse_detail(html: str, row: dict) -> dict:
     litigation come from a separate endpoint (projectComplaintDetails) and are
     left empty here rather than guessed -- absent, not zero.
     """
-    reg = re.search(r"PRM/KA/RERA/[A-Za-z0-9/\-]+", html)
-    regdates = _cells(html, "At the time of Registration", 3)
-    start = _dmy(regdates[0]) if regdates else None
-    completion = _dmy(regdates[1]) if len(regdates) > 1 else None
+    hdr = header(html)
+    reg_no, ack_no = hdr.get("reg"), hdr.get("ack")
 
-    taluk = None
-    tk = re.search(r"BANGALORE\s+(?:EAST|NORTH|SOUTH|WEST)", html, re.I) \
-        or re.search(r"BENGALURU\s+(?:URBAN|RURAL)", html, re.I)
-    if tk:
-        taluk = tk.group(0).title()
+    rows = registration_rows(html)
+    first = next((r for r in rows if "at the time of registration" in r["label"].lower()), None)
+    start = first["start"] if first else None
+    completion = first["completion"] if first else None
+    # Each extension row's completion column is the NEW date. `moved` marks the
+    # rows that actually changed it, so a certificate that repeats the old date
+    # is not counted as a delay downstream.
+    exts, prev = [], completion
+    for r in rows:
+        if r is first or not r["completion"]:
+            continue
+        exts.append({"revisedDate": r["completion"], "startDate": r["start"], "kind": r["label"],
+                     "moved": bool(prev and r["completion"] > prev)})
+        if not prev or r["completion"] > prev:
+            prev = r["completion"]
+
+    loc = project_location(html)
 
     units_total = None
     m = re.search(r"Total No of Units\s*</[^>]*>\s*<[^>]*>\s*(\d+)", html) \
         or re.search(r"Total No\. of Units\s*</[^>]*>\s*<[^>]*>\s*(\d+)", html)
     if m:
         units_total = int(m.group(1))
-
-    # extensions: a "Revised" / "extension" registration row beyond the first
-    exts = []
-    for mm in re.finditer(r"(Extension|Revised)\s*</", html, re.I):
-        seg = html[mm.start():mm.start() + 400]
-        d = re.search(r"\d{2}-\d{2}-\d{4}", seg)
-        if d:
-            exts.append({"revisedDate": _dmy(d.group(0))})
 
     docs = []
     for href, label in re.findall(r'href="(/?download_jc\?DOC_ID=[^"]+)"[^>]*>(.*?)</a>', html, re.S):
@@ -158,23 +334,19 @@ def parse_detail(html: str, row: dict) -> dict:
             docs.append({"kind": name, "label": name, "category": _doc_category(name),
                          "file": name, "url": BASE + href.lstrip("/")})
 
-    # Name and promoter come from the detail page itself -- authoritative and
-    # present for every project, unlike the master list which only carries names
-    # for its first visible page. "Promoter Name" is the developer/registrant;
-    # on a small landowner-registered project that is an individual, which is
-    # correct, not a parsing miss.
-    project_name = _labelled(html, "Project Name") or row.get("name")
-    promoter_name = _labelled(html, "Promoter Name") or row.get("promoter")
-
-    # rera_id: the final PRM registration number if present; otherwise the
-    # project is an application/unregistered (ACK only) -- flagged, not dressed
-    # up as registered.
-    ack = re.search(r"ACK/KA/RERA/[A-Za-z0-9/\-]+", html)
-    rera_id = reg.group(0) if reg else (ack.group(0) if ack else row.get("reg"))
-    registered = bool(reg)
+    # Identity comes from the page header, never from a first-match label: the
+    # same labels recur in the table of the promoter's OTHER projects, so a
+    # page-wide search returned a sibling project's name on ~1 page in 6.
+    project_name = hdr.get("name") or row.get("name")
+    pblk = section(html, "Promoter Details")
+    promoter_name = (labelled_exact(pblk, "Promoter Name") or labelled_exact(pblk, "Name")
+                     or row.get("promoter"))
+    registered = bool(reg_no)
+    rera_id = reg_no or ack_no or row.get("reg")
 
     return {
         "rera_id": rera_id,
+        "ack_no": ack_no,
         "registered": registered,
         "project_name": project_name,
         "promoter_name": promoter_name,
@@ -190,9 +362,10 @@ def parse_detail(html: str, row: dict) -> dict:
         },
         "extensions": exts,
         "units": {"total": units_total, "booked": None},
-        "address": {"district": "Bengaluru Urban", "taluka": taluk,
-                    "village": None, "pincode": None, "locality": None},
-        "geo": {},
+        "address": {"district": loc["district"] or "Bengaluru Urban", "taluka": loc["taluk"],
+                    "village": loc["village"], "hobli": loc["hobli"], "pincode": loc["pincode"],
+                    "locality": None, "street": loc["address"]},
+        "geo": {"lat": loc["lat"], "lng": loc["lng"]} if loc["lat"] and loc["lng"] else {},
         "plot": {},
         # From projectComplaintDetails in the full build -- not fabricated here.
         "projectComplaints": {"count": None, "complaints": []},

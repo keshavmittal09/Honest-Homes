@@ -71,6 +71,8 @@ function Report({ id, go, print }) {
   const incomplete = !p.dataComplete;
   const bandWord = { green: "CLEAN", amber: "CAUTION", red: "SERIOUS FLAGS", incomplete: "INCOMPLETE" }[p.band];
   const reraUrl = p.detailUrl || "https://maharera.maharashtra.gov.in/projects-search-result";
+  const reg = p.regulator || "MahaRERA";
+  const regSite = p.regulator === "K-RERA" ? "rera.karnataka.gov.in" : "maharera.maharashtra.gov.in";
 
   const shareUrl = `${location.origin}/verdict/${encodeURIComponent(p.id)}`;
   const shareTitle = `Honest Homes verdict — ${p.name} (${p.builder})`;
@@ -101,7 +103,7 @@ function Report({ id, go, print }) {
         h("div", { className: "report-seal" },
           h("div", null, "REPORT REF · HH-", p.id),
           h("div", null, "GENERATED · ", AS_OF),
-          h("div", null, "SOURCE · MahaRERA public records"))
+          h("div", null, "SOURCE · ", reg, " public records"))
       ),
 
       // title block
@@ -110,7 +112,7 @@ function Report({ id, go, print }) {
           h("div", { className: "eyebrow" }, "Trust assessment for"),
           h("h1", { className: "serif", style: { fontSize: 30, fontWeight: 600, letterSpacing: "-.02em", marginTop: 6 } }, p.name),
           h("div", { className: "muted", style: { fontSize: 14, marginTop: 2 } }, "by ", p.builder, " · ", p.district, " · ", p.pincode),
-          h("div", { className: "mono", style: { fontSize: 12, color: "var(--ink-3)", marginTop: 6 } }, "RERA ID ", p.id)),
+          h("div", { className: "mono", style: { fontSize: 12, color: "var(--ink-3)", marginTop: 6 } }, "RERA ID ", p.reraId || p.id)),
         h("div", { style: { textAlign: "center", flex: "none" } },
           incomplete
             ? h("div", { className: "serif", style: { fontSize: 30, fontWeight: 700, color: "var(--ink-3)" } }, "N/A")
@@ -188,7 +190,7 @@ function Report({ id, go, print }) {
 
       // ---- Tier-2 detail (specs, delays, documents) ----
       p.hasDetail && p.detail && h("div", null,
-        h("div", { className: "rsection-h" }, "Project details — official MahaRERA registration"),
+        h("div", { className: "rsection-h" }, "Project details — official ", reg, " registration"),
         h(RGrid, { rows: [
           ["Type", p.detail.specs.type], ["Status", p.detail.specs.status], ["Current stage", p.detail.specs.stage],
           ["Registered on", p.detail.specs.registeredOn], ["Promised completion", p.detail.specs.originalCompletion],
@@ -211,7 +213,7 @@ function Report({ id, go, print }) {
       h("div", { style: { marginTop: 30, paddingTop: 16, borderTop: "2px solid var(--ink)", display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-end", flexWrap: "wrap" } },
         h("div", { className: "faint", style: { fontSize: 10.5, lineHeight: 1.5, maxWidth: "62ch" } },
           h("b", null, "Disclaimer. "),
-          "This report summarises publicly available MahaRERA records as of ", AS_OF, ". It is information, not legal or financial advice. Records may change after this date. Verify the live status at maharera.maharashtra.gov.in and consult a qualified advisor before any transaction."),
+          "This report summarises publicly available ", reg, " records as of ", AS_OF, ". It is information, not legal or financial advice. Records may change after this date. Verify the live status at ", regSite, " and consult a qualified advisor before any transaction."),
         h("div", { className: "mono", style: { fontSize: 10, color: "var(--ink-3)", textAlign: "right", flex: "none" } },
           h("div", { style: { fontWeight: 700, color: "var(--brand)" } }, "honesthomes.in"),
           h("div", null, "Page 1 of 1")))

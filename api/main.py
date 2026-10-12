@@ -31,9 +31,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from engine.verdict import build_verdict
 from .store import ProjectStore
-from .shape import project_to_card, project_to_full, builder_stub, load_reputation, load_detail, REPUTATION, DETAIL
+from .shape import (project_to_card, project_to_full, builder_stub, load_reputation, load_detail,
+                    verdict_for, REPUTATION, DETAIL)
+from .karnataka import KA, is_ka, REGULATOR as KA_REGULATOR
 from .areas import AreaIndex
 from . import neighbourhood
 from . import discussion as disc
@@ -113,10 +114,27 @@ def _load() -> None:
     except Exception as e:
         log.error("add_from_detail failed: %s", e, exc_info=True)
 
+    # Karnataka RERA (North & East Bengaluru). Its rows join the same list, so
+    # search, browse and the sitemap cover them; verdicts are dispatched to the
+    # K-RERA engine by shape.verdict_for. Before the area index, like PR-series.
+    try:
+        if KA.load():
+            log.info("added %d Karnataka RERA projects", store.add_rows(KA.rows()))
+    except Exception as e:
+        log.error("FAILED to load Karnataka projects: %s", e, exc_info=True)
+
     # Area search is built last: it needs the index rows for coverage and the
     # Tier-2 addresses for the names people actually search by.
     try:
         n = AREAS.build(store.rows(), DETAIL.records if DETAIL.loaded else {})
+        # Karnataka places come from each project's own taluk / hobli / village.
+        # They are added here, not learned from pin codes: the old pin was the
+        # promoter's office. The records say "Bengaluru Urban"; buyers type
+        # "Bangalore".
+        for name, ids in KA.area_groups().items():
+            AREAS.add_area(name, ids, kind="locality")
+        for alias in ("Bangalore", "Bengaluru"):
+            AREAS.add_area(alias, KA.bengaluru_ids())
         log.info("area index: %d searchable areas", n)
     except Exception as e:
         log.error("FAILED to build area index: %s", e, exc_info=True)
@@ -137,6 +155,8 @@ def health() -> dict:
         "snapshot_date": store.snapshot_date,
         "total_in_rera": store.total_reported,
         "detail_projects": len(DETAIL.records) if DETAIL.loaded else 0,
+        "karnataka_projects": len(KA.rows()) if KA.loaded else 0,
+        "karnataka_as_of": KA.as_of or None,
         "lead_storage": "supabase" if key else "EPHEMERAL FILE — submissions are lost on restart",
         "supabase_host": (os.getenv("SUPABASE_URL", "") or "").replace("https://", "").rstrip("/") or None,
         "documents": "local" if DETAIL.docs_available else ("external" if DETAIL.external_ok else "unavailable"),
@@ -288,8 +308,7 @@ def project(rera_id: str) -> dict:
     row = store.get(rera_id)
     if row is None:
         raise HTTPException(status_code=404, detail="project not found in current snapshot")
-    verdict = build_verdict(row, reputation=REPUTATION)
-    return {"project": row, "verdict": verdict.to_dict()}
+    return {"project": row, "verdict": verdict_for(row).to_dict()}
 
 
 # --- design-shaped endpoints (feed the Claude-design HH_DATA front-end) ------------
@@ -442,16 +461,20 @@ def hh_nearby(lat: float, lng: float, km: float = 10.0, limit: int = 24) -> dict
     """
     import math
 
-    if not DETAIL.loaded:
+    points = []
+    if DETAIL.loaded:
+        points += [(rid, rec.get("geo") or {}, rec) for rid, rec in DETAIL.records.items()]
+    if KA.loaded:
+        points += list(KA.geo_points())
+    points = [(rid, g, rec) for rid, g, rec in points if g.get("lat") and g.get("lng")]
+    if not points:
         return {"cards": [], "searched": 0, "radiusKm": km}
 
     km = max(0.5, min(km, 100.0))
     limit = max(1, min(limit, 60))
+    recs = {rid: rec for rid, _g, rec in points}
     hits = []
-    for rid, rec in DETAIL.records.items():
-        g = rec.get("geo") or {}
-        if not (g.get("lat") and g.get("lng")):
-            continue
+    for rid, g, _rec in points:
         # equirectangular approximation — accurate well inside a city, and far
         # cheaper than haversine across every record on each request
         dlat = math.radians(g["lat"] - lat)
@@ -468,15 +491,15 @@ def hh_nearby(lat: float, lng: float, km: float = 10.0, limit: int = 24) -> dict
             continue
         card = project_to_card(row)
         card["distanceKm"] = round(d, 2)
-        rec = DETAIL.records.get(rid) or {}
-        addr = rec.get("address") or {}
-        card["area"] = addr.get("village") or addr.get("taluka") or card.get("district")
+        if not is_ka(row):      # a K-RERA card already carries its locality
+            addr = recs[rid].get("address") or {}
+            card["area"] = addr.get("village") or addr.get("taluka") or card.get("district")
         cards.append(card)
 
     return {
         "cards": cards,
         "radiusKm": km,
-        "searched": sum(1 for r in DETAIL.records.values() if (r.get("geo") or {}).get("lat")),
+        "searched": len(points),
         "found": len(hits),
     }
 
@@ -553,10 +576,11 @@ def og_image(rera_id: str) -> Response:
     except Exception:            # Pillow unavailable — better no card than a 500
         raise HTTPException(status_code=404, detail="image rendering unavailable")
 
-    det = DETAIL.get(rera_id)
-    v = build_verdict(row, reputation=REPUTATION, detail=det)
+    det = KA.get(rera_id) if is_ka(row) else DETAIL.get(rera_id)
+    v = verdict_for(row)
     addr = (det or {}).get("address") or {}
-    area = " · ".join(x for x in (addr.get("village"), addr.get("district") or row.get("district")) if x)
+    area = " · ".join(x for x in (addr.get("village") or addr.get("locality"),
+                                  addr.get("district") or row.get("district")) if x)
     png = card(row.get("project_name") or rera_id, row.get("promoter_name") or "",
                v.score, v.band, v.headline, area)
     return Response(png, media_type="image/png",
@@ -623,13 +647,14 @@ def page_verdict(rera_id: str, request: Request) -> HTMLResponse:
     row = store.get(rera_id)
     if row is None:
         return _page()
-    v = build_verdict(row, reputation=REPUTATION, detail=DETAIL.get(rera_id))
+    v = verdict_for(row)
     name = row.get("project_name") or rera_id
     builder = row.get("promoter_name") or "the builder"
     score = "" if v.score is None else f"{v.score}/10 — "
+    regulator = KA_REGULATOR if is_ka(row) else "MahaRERA"
     return _page(
-        title=f"{name} — MahaRERA verdict | Honest Homes",
-        description=f"{score}{v.headline} Sourced from the official MahaRERA record for {name} by {builder}.",
+        title=f"{name} — {regulator} verdict | Honest Homes",
+        description=f"{score}{v.headline} Sourced from the official {regulator} record for {name} by {builder}.",
         url=str(request.url),
         image=f"{request.url.scheme}://{request.url.netloc}/og/{rera_id}.png",
     )

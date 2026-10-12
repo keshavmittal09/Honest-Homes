@@ -77,8 +77,10 @@ data/regions/*/projects/*/amenities/amenities.json
 # finished map-street/map-satellite images are committed, this scratch is not.
 data/regions/_tilecache/
 
-# --- Karnataka (K-RERA) working data ---------------------------------------
-# Collected locally; not served by the live portal yet (needs the portal wired
-# for a second data source + R2 for documents). Kept out of git entirely: the
-# cached detail HTML and per-project folders are large and PR-series binary.
-data/regions/bangalore-north-east/
+# --- Karnataka (K-RERA) ---------------------------------------------------
+# The live portal serves three small files from here. Everything else (cached
+# detail HTML, per-project folders, superseded builds) is large and stays out.
+data/regions/bangalore-north-east/*
+!data/regions/bangalore-north-east/records.json
+!data/regions/bangalore-north-east/index.json
+!data/regions/bangalore-north-east/krera-register.json

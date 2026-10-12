@@ -7,7 +7,7 @@
 // ============================================================
 
 const AS_OF_FALLBACK = "June 2026";
-const EXAMPLE_CHIPS = ["Lodha", "Godrej", "Runwal", "Pune", "Thane"];
+const EXAMPLE_CHIPS = ["Lodha", "Godrej", "Runwal", "Pune", "Thane", "Bengaluru"];
 
 // ============================================================
 // HH — the one data layer every screen calls. All async.

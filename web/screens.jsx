@@ -98,7 +98,7 @@ function Landing({ go, onSearch }) {
         h("span", { className: "mini-dot", style: { background: "var(--green)" } }),
         h("span", { className: "mini-dot", style: { background: "var(--amber)", marginLeft: -4 } }),
         h("span", { className: "mini-dot", style: { background: "var(--red)", marginLeft: -4 } }),
-        h("span", { style: { marginLeft: 4 } }, "Built on official MahaRERA records")
+        h("span", { style: { marginLeft: 4 } }, "Built on official MahaRERA & K-RERA records")
       ),
       h("h1", { className: "serif" }, "The honest verdict on a builder — ",
         h("span", { style: { color: "var(--brand)" } }, "before you buy.")),
@@ -108,7 +108,7 @@ function Landing({ go, onSearch }) {
       // Area-aware: a buyer usually has a locality in mind before a builder.
       window.AreaSearchBox
         ? h(window.AreaSearchBox, { value: q, onChange: setQ, onSubmit: onSearch,
-            placeholder: "Project, builder, or area…  e.g. Kharghar" })
+            placeholder: "Project, builder, or area…  e.g. Kharghar, Varthur" })
         : h("form", { className: "searchbox", onSubmit: (e) => { e.preventDefault(); onSearch(q); } },
             h(Icon_s, { name: "search", size: 21, className: "mag" }),
             h("input", { value: q, onChange: e => setQ(e.target.value),
@@ -125,7 +125,7 @@ function Landing({ go, onSearch }) {
       ),
       h("div", { className: "creds" },
         h("span", { className: "c" }, h(Icon_s, { name: "shield-check", size: 15, style: { color: "var(--brand)" } }),
-          "Sourced from ", h("b", null, "official MahaRERA")),
+          "Sourced from ", h("b", null, "official MahaRERA & K-RERA")),
         h("span", { className: "div" }),
         h("span", { className: "c" }, h("b", null, (meta.indexed || 0).toLocaleString("en-IN")), " projects indexed"),
         h("span", { className: "div" }),
@@ -286,8 +286,8 @@ function EmptyState({ query, filter, onClear }) {
       filter !== "all" ? `No ${filter} projects in these results` : `No matches for “${query}”`),
     h("p", { className: "muted", style: { fontSize: 14, marginTop: 8, maxWidth: "52ch", marginInline: "auto" } },
       filter !== "all"
-        ? "Try clearing the filter, or search a different name. Our index covers ~44,000 of Maharashtra's RERA projects."
-        : "Our index covers ~44,000 MahaRERA projects. Try a builder name (e.g. Lodha, Godrej) or a district."),
+        ? "Try clearing the filter, or search a different name. Our index covers ~44,000 of Maharashtra's RERA projects, plus Bengaluru projects on K-RERA."
+        : "Our index covers ~44,000 MahaRERA projects and Bengaluru projects on K-RERA. Try a builder name (e.g. Lodha, Godrej) or an area (e.g. Kharghar, Varthur)."),
     h("div", { className: "row gap-8", style: { marginTop: 18, justifyContent: "center", flexWrap: "wrap" } },
       filter !== "all" && h("button", { className: "btn btn-ghost btn-sm", onClick: onClear }, "Clear filter"),
       filter === "all" && h(window.ContactButton, { prefill: query, label: "Can't find it? Tell us", variant: "btn-primary", size: "md" }))

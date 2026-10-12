@@ -195,7 +195,7 @@ function Discussion({ reraId }) {
         h("h2", null, "What buyers say"),
         h("div", { className: "faint", style: { fontSize: 12.5, marginTop: 3, lineHeight: 1.5 } },
           "Unverified accounts from visitors — ",
-          h("b", null, "not part of the MahaRERA record"),
+          h("b", null, "not part of the official RERA record"),
           " and not checked by us. Useful, but weigh it against the sourced sections above.")),
       total > 0 && h("div", { style: { textAlign: "right", flex: "none" } },
         h("div", { className: "mono", style: { fontSize: 22, fontWeight: 800, lineHeight: 1 } }, total),
@@ -243,7 +243,7 @@ function RecentDiscussion({ go }) {
         h("div", { className: "eyebrow" }, "From buyers"),
         h("h2", { className: "section-title", style: { marginTop: 6 } }, "What buyers are saying")),
       h("span", { className: "faint", style: { fontSize: 12.5, maxWidth: "42ch", textAlign: "right" } },
-        "Unverified accounts from visitors, not the MahaRERA record")),
+        "Unverified accounts from visitors, not the official RERA record")),
 
     // auto-FILL, not auto-fit: the shared .grid-3 collapses its empty tracks,
     // which stretches a single post across the whole page and makes one comment

@@ -4,6 +4,10 @@
 const Icon_v = window.Icon;
 const { useState: useStateV, useEffect: useEffectV } = React;
 
+// The regulator a project's record came from. Every MahaRERA project predates
+// this field, so its absence means MahaRERA; Karnataka projects say "K-RERA".
+const regOf = (p) => (p && p.regulator) || "MahaRERA";
+
 function KV({ k, v, mono }) {
   return h("div", { className: "kv" },
     h("div", { className: "k" }, k),
@@ -63,6 +67,8 @@ function ComplaintRow({ c }) {
 
     open && h("div", { className: "cmpl-body" },
       h("div", { className: "faint", style: { fontSize: 12, marginBottom: 10 } }, dir.d, "."),
+      c.relief && h("div", { className: "cmpl-item" },
+        h("b", null, "Relief sought"), ": ", c.relief),
       c.order && h("div", { className: "cmpl-item" },
         h("b", null, "Order passed"), c.order.approvedOn ? ` on ${c.order.approvedOn}` : "",
         c.order.file && h("div", { className: "faint mono", style: { fontSize: 11.5, marginTop: 2 } }, c.order.file)),
@@ -117,6 +123,10 @@ function ProjectComplaints({ p, asOf }) {
   const rows = pc.rows || [], orders = pc.orders || [];
   const misc = pc.nonCompliance || [], warrants = pc.warrants || [];
   const cases = lit.cases || [];
+  // K-RERA publishes no court-case declarations and no resolved/unresolved flag
+  // we can read, so those tiles are not shown for it: a "0" would claim we had
+  // looked and found none.
+  const kra = p.regulator === "K-RERA";
   const clean = pc.count === 0 && !cases.length;
 
   const stat = (n, label, danger) => h("div", { className: "tr-stat" },
@@ -133,15 +143,22 @@ function ProjectComplaints({ p, asOf }) {
     h("div", { className: "panel-b", style: { paddingTop: 16 } },
       clean
         ? h("p", { className: "muted", style: { fontSize: 14, lineHeight: 1.55 } },
-            "No consumer complaints and no declared court cases appear on this project's own ",
-            "MahaRERA record. That is a fact about this project specifically — the builder may ",
-            "still have complaints on its other projects (see Builder track record).")
+            kra
+              ? "No entry on K-RERA's public complaint register carries this project's name and builder. Matching is by exact name, so a complaint filed under a different spelling would not appear here. The builder may still have complaints on its other projects (see Builder track record)."
+              : "No consumer complaints and no declared court cases appear on this project's own MahaRERA record. That is a fact about this project specifically — the builder may still have complaints on its other projects (see Builder track record).")
         : h(React.Fragment, null,
-            h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
-              stat(pc.count, "Complaints", "red"),
-              stat(pc.unresolved || 0, "Unresolved", "red"),
-              stat(pc.byBuyer || 0, "By buyers", "amber"),
-              stat(cases.length, "Court cases", "amber")),
+            kra
+              ? h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
+                  stat(pc.count, "On K-RERA's register", "red"),
+                  stat(pc.withOrder || 0, "With a published order", "amber"),
+                  stat((pc.penalties || []).length, "Penalty orders", "amber"))
+              : h("div", { className: "grid cmpl-stats", style: { gap: 10, marginBottom: 16 } },
+                  stat(pc.count, "Complaints", "red"),
+                  stat(pc.unresolved || 0, "Unresolved", "red"),
+                  stat(pc.byBuyer || 0, "By buyers", "amber"),
+                  stat(cases.length, "Court cases", "amber")),
+            kra && pc.count > (pc.withOrder || 0) && h("p", { className: "muted", style: { fontSize: 13, marginBottom: 12 } },
+              `${pc.count - (pc.withOrder || 0)} of these have no Authority order in K-RERA's published orders list — they may be pending or disposed some other way. Only those with an order are listed below.`),
             (pc.byBuilder || 0) > 0 && h("p", { className: "muted", style: { fontSize: 13, marginBottom: 12 } },
               h("b", null, pc.byBuilder, " of these were filed BY the builder"), " against buyers — the rest were filed against the builder."),
             h(ComplaintList, { complaints: pc.complaints || rows }),
@@ -159,7 +176,7 @@ function ProjectComplaints({ p, asOf }) {
                 c.remark && h("div", { className: "muted", style: { fontSize: 12.5, marginTop: 3 } }, c.remark))))
           ),
       h("div", { className: "src-row", style: { marginTop: 14, display: "flex" } },
-        h(SourceTag, { source: "MahaRERA — this project's complaint record", asOf: d.capturedAt || asOf }))));
+        h(SourceTag, { source: `${regOf(p)} — this project's complaint record`, asOf: d.capturedAt || asOf }))));
 }
 
 // ---- Where the project actually is -----------------------------------------
@@ -195,7 +212,7 @@ function LocationMap({ p }) {
         p.plot.landArea && h(KV, { k: "Plot area", v: `${p.plot.landArea.toLocaleString("en-IN")} sq.m` }),
         p.plot.builtUpArea && h(KV, { k: "Permissible built-up", v: `${p.plot.builtUpArea.toLocaleString("en-IN")} sq.m` })),
       h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
-        h(SourceTag, { source: "MahaRERA — registered project address", asOf: p.dataAsOf }))));
+        h(SourceTag, { source: `${regOf(p)} — registered project address`, asOf: p.dataAsOf }))));
 }
 
 // The Tier-2 detail block: specs, sales/inventory, delays, documents.
@@ -243,7 +260,7 @@ function DetailSection({ p }) {
     h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", null, "Project snapshot"),
-        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Official MahaRERA registration · as of ", d.capturedAt)),
+        h("span", { className: "faint", style: { fontSize: 12.5 } }, "Official ", regOf(p), " registration · as of ", d.capturedAt)),
       h("div", { className: "panel-b" },
         h("div", { className: "spec-grid" },
           h(SpecCell, { k: "Type", v: sp.type }),
@@ -257,7 +274,9 @@ function DetailSection({ p }) {
         ))),
 
     // ---- Sales & inventory ----
-    total > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
+    // Only when a booked count was actually reported: K-RERA gives no sales
+    // figure, and `booked || 0` would print "0 of N units booked" as if it had.
+    total > 0 && u.booked != null && h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", null, "Sales & inventory"),
         h("span", { className: "faint", style: { fontSize: 12.5 } }, "Booked vs total, per configuration")),
@@ -279,7 +298,7 @@ function DetailSection({ p }) {
               h("td", { className: "num" }, h("b", { style: m.booked ? { color: "var(--green)" } : {} }, m.booked)),
               h("td", { className: "num" }, m.count)))))),
         h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
-          h(SourceTag, { source: "MahaRERA — building & unit details", asOf: d.capturedAt })))),
+          h(SourceTag, { source: `${regOf(p)} — building & unit details`, asOf: d.capturedAt })))),
 
     // ---- Delay / extension history ----
     exts.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
@@ -294,14 +313,14 @@ function DetailSection({ p }) {
             e.appNo && h("span", { className: "faint", style: { marginLeft: 8 } }, "· ", e.appNo)),
           e.reason && h("p", { className: "muted", style: { fontSize: 13, marginTop: 5, lineHeight: 1.55 } }, "“", e.reason, "”"))),
         h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
-          h(SourceTag, { source: "MahaRERA — extension certificates", asOf: d.capturedAt })))),
+          h(SourceTag, { source: `${regOf(p)} — extension certificates`, asOf: d.capturedAt })))),
 
     // ---- Documents on record ----
     docs.length > 0 && h("div", { className: "panel", style: { marginTop: 16 } },
       h("div", { className: "panel-h" },
         h("h2", null, "Documents on record"),
         p.detailUrl && h("a", { className: "btn btn-ghost btn-sm", href: p.detailUrl, target: "_blank", rel: "noopener" },
-          h(Icon_v, { name: "link", size: 14 }), "View on MahaRERA")),
+          h(Icon_v, { name: "link", size: 14 }), "View on ", regOf(p))),
       h("div", { className: "panel-b" },
         // Featured key documents
         keyDocs.length > 0 && h("div", { style: { marginBottom: 20 } },
@@ -312,7 +331,7 @@ function DetailSection({ p }) {
                 h("div", { className: "keydoc-ic" }, h(Icon_v, { name: DOC_ICON[o.kind || o.label] || "doc", size: 19 })),
                 h("div", { style: { minWidth: 0, flex: 1 } },
                   h("div", { className: "keydoc-label" }, o.kind || o.label),
-                  h("div", { className: "keydoc-act" }, canOpen(o) ? "Open document" : "On MahaRERA record")));
+                  h("div", { className: "keydoc-act" }, canOpen(o) ? "Open document" : `On ${regOf(p)} record`)));
               return canOpen(o)
                 ? h("a", { key: i, className: "keydoc", href: docHref(o), target: "_blank", rel: "noopener" },
                     body, h(Icon_v, { name: "link", size: 16, className: "faint" }))
@@ -324,7 +343,7 @@ function DetailSection({ p }) {
           h("div", { className: "doc-subcat" }, g, h("span", { className: "faint" }, " · ", groups[g].length)),
           h("div", { className: "doc-grid" }, groups[g].map((o, i) => docItem(o, i))))),
         !anyOpen && h("p", { className: "faint", style: { fontSize: 12, marginTop: 6 } },
-          "Open any of these on the official MahaRERA portal via the button above.")))
+          "Open any of these on the official ", regOf(p), " portal via the button above.")))
   );
 }
 
@@ -470,8 +489,9 @@ function Verdict({ id, go }) {
   const glow = incomplete ? "transparent" : `var(--${p.band}-tint)`;
 
   // Real, working external links.
+  const reg = regOf(p);
   const reraUrl = p.detailUrl || "https://maharera.maharashtra.gov.in/projects-search-result";
-  const mapUrl = p.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || "") + " " + (p.district || "") + " Maharashtra")}`;
+  const mapUrl = p.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || "") + " " + (p.district || "") + " " + (p.stateName || "Maharashtra"))}`;
   const asOf = p.dataAsOf || (p.signals && p.signals[0] && p.signals[0].asOf) || window.HH.meta().asOf;
 
   const shareUrl = `${location.origin}/verdict/${encodeURIComponent(p.id)}`;
@@ -509,7 +529,7 @@ function Verdict({ id, go }) {
       ),
       h("div", { className: "stack-20" },
         h("div", null,
-          h("div", { className: "eyebrow", style: { marginBottom: 10 } }, "Verdict · ", p.id),
+          h("div", { className: "eyebrow", style: { marginBottom: 10 } }, "Verdict · ", p.reraId || p.id),
           h("h1", { className: "verdict-headline" }, p.headline)
         ),
         h("p", { className: "verdict-summary" }, p.summary),
@@ -521,7 +541,7 @@ function Verdict({ id, go }) {
         ),
         h("div", { className: "row gap-12", style: { flexWrap: "wrap" } },
           h("a", { className: "btn btn-ghost btn-sm", href: reraUrl, target: "_blank", rel: "noopener" },
-            h(Icon_v, { name: "link", size: 14 }), "View on MahaRERA portal"),
+            h(Icon_v, { name: "link", size: 14 }), "View on ", reg, " portal"),
           h("a", { className: "btn btn-quiet btn-sm", href: mapUrl, target: "_blank", rel: "noopener" },
             h(Icon_v, { name: "pin", size: 14 }), "Map location")
         )
@@ -532,12 +552,14 @@ function Verdict({ id, go }) {
     incomplete && h("div", { className: "incomplete-banner", style: { marginTop: 22 } },
       h("div", { className: "ib-ico" }, h(Icon_v, { name: "hourglass", size: 26 })),
       h("div", null,
-        h("div", { style: { fontWeight: 700, fontSize: 16 } }, "We won't fake a score we can't defend."),
+        h("div", { style: { fontWeight: 700, fontSize: 16 } }, p.regulator === "K-RERA" && p.band !== "incomplete" ? "A band, not a score — and here is why." : "We won't fake a score we can't defend."),
         h("p", { className: "muted", style: { fontSize: 14, marginTop: 6, lineHeight: 1.55, maxWidth: "70ch" } },
-          "We can confirm this project is RERA-registered from the official index, but its detailed delay history and complaint records are not yet in our dataset. Rather than show false confidence, we're telling you what we don't yet know. Verify complaints and orders directly on the MahaRERA portal before relying on this."),
+          p.regulator === "K-RERA"
+            ? "We rate this project on its Karnataka RERA registration and completion record only — status, dates, extensions and filed documents, shown below. K-RERA's complaint and order records are not yet in our dataset, so there is no numeric score and the band cannot rise above amber. Verify complaints directly on the K-RERA portal before relying on this."
+            : "We can confirm this project is RERA-registered from the official index, but its detailed delay history and complaint records are not yet in our dataset. Rather than show false confidence, we're telling you what we don't yet know. Verify complaints and orders directly on the MahaRERA portal before relying on this."),
         h("div", { className: "row gap-8", style: { marginTop: 12 } },
           h("a", { className: "btn btn-ghost btn-sm", href: reraUrl, target: "_blank", rel: "noopener" },
-            h(Icon_v, { name: "link", size: 14 }), "Open MahaRERA record"))
+            h(Icon_v, { name: "link", size: 14 }), "Open ", reg, " record"))
       )
     ),
 
@@ -591,7 +613,7 @@ function Verdict({ id, go }) {
             h("div", { style: { minWidth: 0 } },
               h("div", { style: { fontWeight: 700, fontSize: 16, overflowWrap: "anywhere" } }, b.name),
               h("div", { className: "faint", style: { fontSize: 12.5 } },
-                b.totalProjects ? `${b.totalProjects} project(s) in the MahaRERA index` : "Project count not available"))),
+                b.totalProjects ? `${b.totalProjects} project(s) ${b.projectsScope || "in the MahaRERA index"}` : "Project count not available"))),
           // Only counts the public record actually supports. "Delivered"/"Delayed"
           // are not in the index, so we don't show tiles for them.
           h("div", { className: "grid", style: { gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 6 } },
@@ -610,7 +632,7 @@ function Verdict({ id, go }) {
                   h("span", { className: "dot" }), o.status))
             )),
           h("div", { className: "src-row", style: { marginTop: 12, display: "flex" } },
-            h(SourceTag, { source: "MahaRERA — promoter index", asOf: asOf }))
+            h(SourceTag, { source: `${reg} — promoter index`, asOf: asOf }))
         )
       ),
       // timeline
@@ -626,7 +648,7 @@ function Verdict({ id, go }) {
               h(KV, { k: p.actualCompletion ? "Delivered" : "Extensions", v: p.actualCompletion || `${p.extensions == null ? "—" : p.extensions} filed`, mono: true })
             )),
           h("div", { className: "src-row", style: { marginTop: 14, display: "flex", gap: 7, flexWrap: "wrap" } },
-            h(SourceTag, { source: "MahaRERA — extension certificates", asOf: asOf }))
+            h(SourceTag, { source: `${reg} — extension certificates`, asOf: asOf }))
         )
       )
     ),
@@ -659,9 +681,9 @@ function Verdict({ id, go }) {
       h("div", { className: "dico" }, h(Icon_v, { name: "info", size: 19 })),
       h("div", null,
         h("b", null, "How to read this. "),
-        "Honest Homes summarises the public MahaRERA record to help you ask better questions. It reflects data as of ",
+        "Honest Homes summarises the public ", reg, " record to help you ask better questions. It reflects data as of ",
         asOf, " and is information, not legal or financial advice. Records can change and our dataset can lag. ",
-        "Always confirm the live status on the official ", h("a", { href: reraUrl, target: "_blank", rel: "noopener", style: { color: "var(--brand)", fontWeight: 600 } }, "MahaRERA portal"),
+        "Always confirm the live status on the official ", h("a", { href: reraUrl, target: "_blank", rel: "noopener", style: { color: "var(--brand)", fontWeight: 600 } }, reg + " portal"),
         " and consult a lawyer before any purchase.")
     )
   );

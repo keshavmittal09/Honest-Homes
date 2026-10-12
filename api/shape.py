@@ -20,6 +20,8 @@ from engine.verdict import build_verdict
 from engine.reputation import ReputationStore
 from engine.detail import DetailStore
 
+from .karnataka import KA, is_ka
+
 # Loaded once at import / startup. When a reputation snapshot exists, real projects get
 # real green/amber/red scores; otherwise they honestly stay 'incomplete' (N/A).
 REPUTATION = ReputationStore()
@@ -119,8 +121,22 @@ def _score_to_band(v) -> tuple[str, float | None]:
     return v.band, round(v.score, 1)
 
 
+def verdict_for(row: dict):
+    """The engine verdict for any portal row, whichever regulator it came from.
+
+    Every caller outside this module goes through here: a K-RERA project must
+    never reach build_verdict with the MahaRERA registers attached.
+    """
+    if is_ka(row):
+        return KA.verdict(row)
+    return build_verdict(row, reputation=REPUTATION, detail=_detail_for(row),
+                         portfolio=_portfolio_for(row.get("promoter_name", "")))
+
+
 def project_to_card(row: dict) -> dict:
     """The lightweight shape used by landing/results cards."""
+    if is_ka(row):
+        return KA.card(row)
     v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row),
                       portfolio=_portfolio_for(row.get("promoter_name", "")))
     band, score = _score_to_band(v)
@@ -140,6 +156,8 @@ def project_to_card(row: dict) -> dict:
 
 def project_to_full(row: dict) -> dict:
     """The rich shape used by the Verdict screen."""
+    if is_ka(row):
+        return KA.full(row)
     v = build_verdict(row, reputation=REPUTATION, detail=_detail_for(row),
                       portfolio=_portfolio_for(row.get("promoter_name", "")))
     band, score = _score_to_band(v)
@@ -263,6 +281,8 @@ def builder_stub(row: dict) -> dict:
     complaint count under a 'Delayed' heading, which stated something the record
     does not say.)
     """
+    if is_ka(row):
+        return KA.builder(row)
     name = row.get("promoter_name") or "Unknown builder"
     if not REPUTATION.loaded:
         return {"name": name, "since": "—", "totalProjects": None,

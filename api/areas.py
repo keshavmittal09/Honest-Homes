@@ -111,6 +111,20 @@ class AreaIndex:
         log.info("area index: %d searchable areas", len(areas))
         return len(areas)
 
+    def add_area(self, name: str, ids: set[str], kind: str = "city") -> None:
+        """Make a name searchable for a fixed set of projects.
+
+        For names no record spells out but buyers type -- "Bangalore" for the
+        Karnataka set, whose records say "Bengaluru Urban".
+        """
+        if not ids:
+            return
+        key = name.strip().lower()
+        self._ids_by_area[key] = self._ids_by_area.get(key, set()) | set(ids)
+        m = self._meta.setdefault(key, {"name": name, "kind": kind, "pincodes": [], "count": 0})
+        m["count"] = len(self._ids_by_area[key])
+        self.loaded = True
+
     # -- lookups ----------------------------------------------------------
 
     def ids_for(self, query: str) -> set[str] | None:
@@ -131,6 +145,10 @@ class AreaIndex:
             out |= self._ids_by_area[k]
         return out
 
+    def is_exact(self, query: str) -> bool:
+        """Whether the query is an area's full name, not just a prefix of one."""
+        return (query or "").strip().lower() in self._ids_by_area
+
     def suggest(self, query: str = "", limit: int = 8) -> list[dict]:
         """Areas matching a query, biggest first — for the search dropdown."""
         if not self.loaded:
@@ -143,7 +161,7 @@ class AreaIndex:
             keys = starts + contains
         # A district is a coarser answer than a locality, so when both match a
         # query the locality is the more useful suggestion.
-        rank = {"locality": 0, "pincode": 1, "district": 2}
+        rank = {"locality": 0, "pincode": 1, "district": 2, "city": 2}
         keys.sort(key=lambda k: (rank.get(self._meta[k]["kind"], 9),
                                  -self._meta[k]["count"]))
         return [dict(self._meta[k], key=k) for k in keys[:limit]]

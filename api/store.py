@@ -84,6 +84,10 @@ class ProjectStore:
             return self._rows[offset:offset + limit], total
 
         area_ids = areas.ids_for(q) if areas is not None else None
+        # K-RERA numbers ("PRM/KA/RERA/...") are stored with dashes, because a
+        # slash cannot live in the URL id; match what the buyer actually typed.
+        q_id = q.replace("/", "-")
+        area_exact = area_ids is not None and areas.is_exact(q)
 
         scored: list[tuple[int, dict]] = []
         for r in self._rows:
@@ -99,16 +103,19 @@ class ProjectStore:
                 scored.append((1, r))
             elif pincode == q:
                 scored.append((2, r))
-            elif q in promoter:
-                scored.append((3, r))
             # An area match ranks below a name match but above a bare district
             # one: someone typing "kharghar" wants Kharghar projects, not every
-            # project in Raigad.
-            elif area_ids is not None and r.get("rera_id") in area_ids:
-                scored.append((4, r))
+            # project in Raigad. Against a builder-name match it depends on the
+            # query: when it is exactly an area's name ("bangalore"), the area
+            # comes first -- otherwise a Palghar project by "VBHDC Bangalore Value
+            # Homes" leads a Bengaluru search. A partial query still favours the
+            # builder, so "shree" finds Shree Developers before Shreenagar.
+            elif q in promoter or (area_ids is not None and r.get("rera_id") in area_ids):
+                in_area = area_ids is not None and r.get("rera_id") in area_ids
+                scored.append((3 if (in_area if area_exact else q in promoter) else 4, r))
             elif q in district:
                 scored.append((5, r))
-            elif q in rid:
+            elif q_id in rid:
                 scored.append((6, r))
 
         scored.sort(key=lambda t: t[0])
@@ -151,6 +158,22 @@ class ProjectStore:
                 "source_url": "",
                 "_synthetic": True,
             }
+            self._rows.append(row)
+            self._by_id[rid] = row
+            added += 1
+        return added
+
+    def add_rows(self, rows: list[dict]) -> int:
+        """Adopt rows from another regulator's dataset (e.g. Karnataka RERA).
+
+        They join the same list, so search, browse and the sitemap cover them
+        without a second code path. Ids are already unique across regulators.
+        """
+        added = 0
+        for row in rows:
+            rid = row.get("rera_id")
+            if not rid or rid in self._by_id:
+                continue
             self._rows.append(row)
             self._by_id[rid] = row
             added += 1
